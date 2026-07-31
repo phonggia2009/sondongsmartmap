@@ -10,7 +10,7 @@ import { InformationPanel } from '@/components/InformationPanel/InformationPanel
 import { Sidebar } from '@/components/Sidebar/Sidebar';
 import { LoadingScreen } from '@/components/Loading/LoadingScreen';
 import { EmptyState } from '@/components/EmptyState/EmptyState';
-import type { Village } from '@/types';
+import type { Village, School } from '@/types';
 
 // ============================================================
 //  MobileSidebarDrawer — overlay drawer, only shown on mobile
@@ -22,11 +22,13 @@ const MobileSidebarDrawer = memo(function MobileSidebarDrawer({
   sidebarOpen,
   onClose,
   onVillageSelect,
+  onSchoolSelect,
 }: {
   villages: Village[];
   sidebarOpen: boolean;
   onClose: () => void;
   onVillageSelect: (village: Village) => void;
+  onSchoolSelect?: (school: School) => void;
 }) {
   return (
     <>
@@ -65,7 +67,12 @@ const MobileSidebarDrawer = memo(function MobileSidebarDrawer({
 
             {/* Sidebar content fills remaining height — always expanded in bottom sheet */}
             <div className="flex-1 min-h-0 overflow-hidden rounded-none">
-              <Sidebar villages={villages} onVillageSelect={onVillageSelect} forceExpanded />
+              <Sidebar
+                villages={villages}
+                onVillageSelect={onVillageSelect}
+                onSchoolSelect={onSchoolSelect}
+                forceExpanded
+              />
             </div>
           </motion.div>
         )}
@@ -108,6 +115,7 @@ export default function HomePage() {
   const {
     selectedVillage,
     selectVillage,
+    selectSchool,
     infoPanelOpen,
     setInfoPanelOpen,
     toggleInfoPanel,
@@ -133,6 +141,15 @@ export default function HomePage() {
   const handleVillageSelectDesktop = useCallback((village: Village) => {
     selectVillage(village);
   }, [selectVillage]);
+
+  const handleSchoolSelectMobile = useCallback((school: School) => {
+    selectSchool(school);
+    setSidebarOpen(false);
+  }, [selectSchool, setSidebarOpen]);
+
+  const handleSchoolSelectDesktop = useCallback((school: School) => {
+    selectSchool(school);
+  }, [selectSchool]);
 
   const handleCloseMobileDrawer = useCallback(() => {
     setSidebarOpen(false);
@@ -173,7 +190,11 @@ export default function HomePage() {
         aria-hidden={isMobile}
       >
         {!isMobile && (
-          <Sidebar villages={villages} onVillageSelect={handleVillageSelectDesktop} />
+          <Sidebar
+            villages={villages}
+            onVillageSelect={handleVillageSelectDesktop}
+            onSchoolSelect={handleSchoolSelectDesktop}
+          />
         )}
       </div>
 
@@ -184,6 +205,7 @@ export default function HomePage() {
           sidebarOpen={sidebarOpen}
           onClose={handleCloseMobileDrawer}
           onVillageSelect={handleVillageSelectMobile}
+          onSchoolSelect={handleSchoolSelectMobile}
         />
       )}
 

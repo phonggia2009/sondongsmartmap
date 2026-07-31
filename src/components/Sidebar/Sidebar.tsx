@@ -13,7 +13,7 @@ import { VillageCard } from '@/components/VillageCard/VillageCard';
 import { EmptyState } from '@/components/EmptyState/EmptyState';
 import { SchoolSidebarContent } from './SchoolSidebarContent';
 import { useSearch } from '@/hooks/useSearch';
-import type { Village } from '@/types';
+import type { Village, School } from '@/types';
 
 // ============================================================
 //  SIDEBAR LAYER REGISTRY — Easily extensible for future POI layers
@@ -55,6 +55,7 @@ const SIDEBAR_LAYERS: SidebarLayerOption[] = [
 interface SidebarProps {
   villages: Village[];
   onVillageSelect: (village: Village) => void;
+  onSchoolSelect?: (school: School) => void;
   /** When true, always render the expanded layout regardless of sidebarOpen state.
    *  Used inside the mobile bottom sheet where the sheet itself controls open/close. */
   forceExpanded?: boolean;
@@ -63,6 +64,7 @@ interface SidebarProps {
 export const Sidebar = memo(function Sidebar({
   villages,
   onVillageSelect,
+  onSchoolSelect,
   forceExpanded = false,
 }: SidebarProps) {
   const {
@@ -364,7 +366,7 @@ export const Sidebar = memo(function Sidebar({
 
       {/* ── Schools Tab ──────────────────────────────── */}
       {activeSidebarTab === 'schools' && (
-        <SchoolSidebarContent />
+        <SchoolSidebarContent onSchoolSelect={onSchoolSelect} />
       )}
 
     </motion.aside>

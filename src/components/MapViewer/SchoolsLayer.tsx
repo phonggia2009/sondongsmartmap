@@ -43,13 +43,25 @@ export function SchoolsLayer() {
 
     map.flyTo([selectedSchool.lat, selectedSchool.lng], 17.5, { duration: 1.2 });
 
-    // Wait for flyTo animation to complete, then open the marker popup.
-    // We use map.once so it only fires a single time per selection.
-    map.once('moveend', () => {
+    const openSchoolPopup = () => {
       const marker = markerRefs.current.get(selectedSchool.id);
-      if (marker) marker.openPopup();
-    });
+      if (marker) {
+        marker.openPopup();
+      } else {
+        // Fallback retry if marker ref is being attached after supercluster unclustering
+        setTimeout(() => {
+          const m = markerRefs.current.get(selectedSchool.id);
+          if (m) m.openPopup();
+        }, 80);
+      }
+    };
+
+    map.once('moveend', openSchoolPopup);
+    return () => {
+      map.off('moveend', openSchoolPopup);
+    };
   }, [selectedSchool, map]);
+
 
 
   // ── Filter by sidebar checkboxes & search query ────────────

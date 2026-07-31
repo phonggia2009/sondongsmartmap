@@ -2,14 +2,20 @@ import { memo, useCallback } from 'react';
 import { useAppContext } from '@/context/AppContext';
 import { POILayerPanel } from './POILayerPanel';
 import { schoolConfig, SCHOOL_CATEGORIES } from '@/utils/schoolUtils';
-import type { SchoolLevel } from '@/types';
+import type { School, SchoolLevel } from '@/types';
 
 // ============================================================
 //  School Sidebar Content
 //  Thin wrapper connecting POILayerPanel to AppContext for schools
 // ============================================================
 
-export const SchoolSidebarContent = memo(function SchoolSidebarContent() {
+interface SchoolSidebarContentProps {
+  onSchoolSelect?: (school: School) => void;
+}
+
+export const SchoolSidebarContent = memo(function SchoolSidebarContent({
+  onSchoolSelect,
+}: SchoolSidebarContentProps) {
   const { 
     selectedSchool, 
     selectSchool, 
@@ -33,6 +39,13 @@ export const SchoolSidebarContent = memo(function SchoolSidebarContent() {
     );
   }, [setSchoolFilters]);
 
+  const handleSelectItem = useCallback((item: School | null) => {
+    selectSchool(item);
+    if (item && onSchoolSelect) {
+      onSchoolSelect(item);
+    }
+  }, [selectSchool, onSchoolSelect]);
+
   return (
     <POILayerPanel
       config={schoolConfig}
@@ -42,7 +55,7 @@ export const SchoolSidebarContent = memo(function SchoolSidebarContent() {
       searchQuery={schoolSearchQuery}
       onSearchQueryChange={setSchoolSearchQuery}
       selectedItemId={selectedSchool?.id ?? null}
-      onSelectItem={(item) => selectSchool(item as any)}
+      onSelectItem={handleSelectItem}
     />
   );
 });
