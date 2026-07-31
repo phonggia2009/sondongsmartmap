@@ -130,15 +130,12 @@ export const Sidebar = memo(function Sidebar({
   // forceExpanded=true when inside mobile bottom sheet—always show full layout.
   if (!sidebarOpen && !forceExpanded) {
     return (
-      <motion.aside
+      <aside
+        key="sidebar-collapsed"
         className={`
-          flex flex-col items-center w-14 h-full flex-shrink-0 py-3 gap-2
-          glass-sidebar z-20
+          flex flex-col items-center w-full h-full flex-shrink-0 py-3 gap-2
+          glass-sidebar z-20 overflow-hidden
         `}
-        initial={{ width: 0, opacity: 0 }}
-        animate={{ width: 56, opacity: 1 }}
-        exit={{ width: 0, opacity: 0 }}
-        transition={{ duration: 0.25, ease: 'easeInOut' }}
       >
         {/* Village tab icon */}
         <motion.button
@@ -184,7 +181,7 @@ export const Sidebar = memo(function Sidebar({
         `}>
           {villages.length}
         </div>
-      </motion.aside>
+      </aside>
     );
   }
 
@@ -192,12 +189,9 @@ export const Sidebar = memo(function Sidebar({
   // Width is controlled by the PARENT container (DesktopSidebarColumn or MobileSidebarDrawer).
   // Sidebar itself just fills 100% of whatever space it's given.
   return (
-    <motion.aside
+    <aside
+      key="sidebar-expanded"
       className="flex flex-col w-full h-full overflow-hidden flex-shrink-0 glass-sidebar z-20"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{ duration: 0.3, ease: 'easeInOut' }}
     >
       {/* ── Dropdown Header Selector ───────────────── */}
       <div
@@ -369,6 +363,6 @@ export const Sidebar = memo(function Sidebar({
         <SchoolSidebarContent onSchoolSelect={onSchoolSelect} />
       )}
 
-    </motion.aside>
+    </aside>
   );
 });
