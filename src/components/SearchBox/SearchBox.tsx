@@ -1,10 +1,10 @@
 import { memo, useRef, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { X, Search } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 
 // ============================================================
-//  SearchBox Component
+//  SearchBox Component — Enhanced with glow focus
 // ============================================================
 
 interface SearchBoxProps {
@@ -44,13 +44,13 @@ export const SearchBox = memo(function SearchBox({
   const isFiltering = query.trim().length > 0;
 
   return (
-    <div className="px-3 py-2">
+    <div>
       <div className={`
         relative flex items-center rounded-xl overflow-hidden
         transition-all duration-200
         ${isDark
-          ? 'bg-gov-800 ring-1 ring-gov-700 focus-within:ring-accent-500'
-          : 'bg-gray-100 ring-1 ring-transparent focus-within:ring-gov-400 focus-within:bg-white'
+          ? 'bg-gov-800/60 ring-1 ring-gov-700/50 focus-within:ring-accent-500/50 focus-within:bg-gov-800/80'
+          : 'bg-gray-100/80 ring-1 ring-gray-200/60 focus-within:ring-gov-400 focus-within:bg-white focus-within:shadow-sm'
         }
       `}>
         <Search className={`
@@ -66,7 +66,7 @@ export const SearchBox = memo(function SearchBox({
           onKeyDown={handleKeyDown}
           placeholder="Tìm kiếm thôn/xã..."
           className={`
-            flex-1 px-3 py-2.5 text-sm bg-transparent outline-none
+            flex-1 px-2.5 py-2 text-sm bg-transparent border-none outline-none focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0
             placeholder:text-opacity-50
             ${isDark
               ? 'text-white placeholder:text-gov-500'
@@ -76,6 +76,20 @@ export const SearchBox = memo(function SearchBox({
           aria-label="Tìm kiếm thôn xã"
           autoComplete="off"
         />
+
+        {/* Ctrl+K hint */}
+        <AnimatePresence>
+          {!isFiltering && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="flex-shrink-0 mr-2"
+            >
+              <kbd className="text-[9px]">Ctrl+K</kbd>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {isFiltering && (
           <motion.button
@@ -99,18 +113,21 @@ export const SearchBox = memo(function SearchBox({
       </div>
 
       {/* Results counter */}
-      {isFiltering && (
-        <motion.p
-          className={`text-xs mt-1.5 px-1 ${isDark ? 'text-gov-500' : 'text-gray-400'}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          {resultCount === 0
-            ? 'Không tìm thấy kết quả'
-            : `${resultCount} / ${totalCount} thôn`
-          }
-        </motion.p>
-      )}
+      <AnimatePresence>
+        {isFiltering && (
+          <motion.p
+            className={`text-[11px] mt-1.5 px-1 ${isDark ? 'text-gov-500' : 'text-gray-400'}`}
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+          >
+            {resultCount === 0
+              ? 'Không tìm thấy kết quả'
+              : `${resultCount} / ${totalCount} thôn`
+            }
+          </motion.p>
+        )}
+      </AnimatePresence>
     </div>
   );
 });

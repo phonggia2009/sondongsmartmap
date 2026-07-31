@@ -1,0 +1,245 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "ten_thon": "YÊN THÁI",
+        "village_id": 11,
+        "village_name": "Thôn Yên Thái"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.68817532095133,
+          21.028545455010192
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ten_thon": "TIỀN LỆ",
+        "village_id": 10,
+        "village_name": "Thôn Tiền Lệ"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.68702205126307,
+          21.021594925703674
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ten_thon": "THÔN NGOẠI",
+        "village_id": 1,
+        "village_name": "Thôn Ngoại"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.70504433727605,
+          21.037838713226556
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ten_thon": "THÔN NỘI",
+        "village_id": 3,
+        "village_name": "Thôn Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.70135052243135,
+          21.033651548392836
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ten_thon": "THÔN ĐÌNH",
+        "village_id": 2,
+        "village_name": "Thôn Đình"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.69641721182417,
+          21.046969613737105
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ten_thon": "QUYẾT TIẾN",
+        "village_id": 9,
+        "village_name": "Thôn Quyết Tiến"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.66820353235052,
+          21.006029927560988
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ten_thon": "PHƯƠNG BẢNG",
+        "village_id": 6,
+        "village_name": "Thôn Phương Bảng"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.68654853094773,
+          21.01324618717286
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ten_thon": "PHƯƠNG VIÊN 1",
+        "village_id": 7,
+        "village_name": "Thôn Phương Viên 1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.69783927044183,
+          21.016821505165076
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ten_thon": "PHƯƠNG VIÊN 2",
+        "village_id": 8,
+        "village_name": "Thôn Phương Viên 2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.70019202159365,
+          21.011126153748286
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ten_thon": "LẠI YÊN 2",
+        "village_id": 5,
+        "village_name": "Thôn Lại Yên 2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.70331714850556,
+          21.025087742070028
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ten_thon": "LẠI YÊN 1",
+        "village_id": 4,
+        "village_name": "Thôn Lại Yên 1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.71299843191447,
+          21.024937447035953
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ten_thon": "KIM HOÀNG",
+        "village_id": 13,
+        "village_name": "Thôn Kim Hoàng"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.72747922265245,
+          21.03061599895643
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ten_thon": "AN TRAI",
+        "village_id": 12,
+        "village_name": "Thôn An Trai"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.73435764727078,
+          21.030148393275372
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ten_thon": "HẬU ÁI",
+        "village_id": 14,
+        "village_name": "Thôn Hậu Ái"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.726088121697,
+          21.037072311939923
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ten_thon": "TỔ DÂN PHỐ SỐ 2",
+        "village_id": 15,
+        "village_name": "Tổ dân phố số 2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.729595303756,
+          21.042913774241274
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "ten_thon": "TỔ DÂN PHỐ SỐ 1",
+        "village_id": 16,
+        "village_name": "Tổ dân phố số 1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.72462681410391,
+          21.017158041321448
+        ]
+      }
+    }
+  ]
+}

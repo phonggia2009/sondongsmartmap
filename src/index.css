@@ -13,6 +13,20 @@
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
+    /* CSS custom properties for glass effects */
+    --glass-bg: rgba(255, 255, 255, 0.72);
+    --glass-border: rgba(255, 255, 255, 0.25);
+    --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+    --sidebar-width: 320px;
+    --sidebar-collapsed: 56px;
+    --header-height: 56px;
+  }
+
+  .dark {
+    --glass-bg: rgba(15, 23, 42, 0.78);
+    --glass-border: rgba(30, 51, 112, 0.3);
+    --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
   }
 
   html,
@@ -26,15 +40,15 @@
   }
 
   body {
-    @apply bg-gray-50 text-gray-900 font-sans;
-    @apply dark:bg-gov-950 dark:text-gray-100;
+    @apply bg-surface-light text-gray-900 font-sans;
+    @apply dark:bg-surface-dark dark:text-gray-100;
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
-  /* Custom scrollbar */
+  /* Custom scrollbar — WebKit */
   ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 5px;
+    height: 5px;
   }
 
   ::-webkit-scrollbar-track {
@@ -42,13 +56,22 @@
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 rounded-full;
-    @apply dark:bg-gov-700;
+    @apply bg-gray-300/60 rounded-full;
+    @apply dark:bg-gov-700/60;
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400;
-    @apply dark:bg-gov-600;
+    @apply bg-gray-400/80;
+    @apply dark:bg-gov-600/80;
+  }
+
+  /* Firefox scrollbar */
+  * {
+    scrollbar-color: rgba(156, 163, 175, 0.4) transparent;
+  }
+
+  .dark * {
+    scrollbar-color: rgba(30, 51, 112, 0.4) transparent;
   }
 }
 
@@ -58,13 +81,57 @@
 
 @layer components {
 
-  /* Glass morphism panel */
+  /* ── Glass morphism panels ─────────────────────────────── */
   .glass-panel {
-    @apply backdrop-blur-md bg-white/80 border border-white/20 shadow-glass;
-    @apply dark:bg-gov-900/80 dark:border-gov-700/20 dark:shadow-glass-dark;
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: blur(16px) saturate(1.8);
+    -webkit-backdrop-filter: blur(16px) saturate(1.8);
   }
 
-  /* Scrollbar utilities */
+  .glass-panel-sm {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 4px 16px rgba(31, 38, 135, 0.06);
+    backdrop-filter: blur(12px) saturate(1.5);
+    -webkit-backdrop-filter: blur(12px) saturate(1.5);
+  }
+
+  .glass-panel-strong {
+    backdrop-filter: blur(24px) saturate(2);
+    -webkit-backdrop-filter: blur(24px) saturate(2);
+  }
+
+  .glass-sidebar {
+    background: rgba(255, 255, 255, 0.88);
+    border-right: 1px solid rgba(226, 232, 240, 0.8);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.04);
+    backdrop-filter: blur(20px) saturate(1.6);
+    -webkit-backdrop-filter: blur(20px) saturate(1.6);
+  }
+
+  .dark .glass-sidebar {
+    background: rgba(15, 23, 42, 0.92);
+    border-right-color: rgba(30, 51, 112, 0.4);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.25);
+  }
+
+  .glass-header {
+    background: rgba(255, 255, 255, 0.82);
+    border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+    box-shadow: 0 1px 12px rgba(0, 0, 0, 0.04);
+    backdrop-filter: blur(20px) saturate(1.8);
+    -webkit-backdrop-filter: blur(20px) saturate(1.8);
+  }
+
+  .dark .glass-header {
+    background: rgba(15, 23, 42, 0.88);
+    border-bottom-color: rgba(30, 51, 112, 0.4);
+    box-shadow: 0 1px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  /* ── Scrollbar utilities ───────────────────────────────── */
   .scrollbar-thin {
     scrollbar-width: thin;
   }
@@ -77,24 +144,72 @@
     display: none;
   }
 
-  /* Keyboard shortcut badge */
+  /* ── Keyboard shortcut badge ───────────────────────────── */
   kbd {
     @apply inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-mono rounded;
-    @apply bg-gray-100 text-gray-700 border border-gray-300;
+    @apply bg-gray-100 text-gray-600 border border-gray-200;
     @apply dark:bg-gov-800 dark:text-gov-300 dark:border-gov-700;
-    font-size: 0.7rem;
-    min-width: 1.4rem;
+    font-size: 0.65rem;
+    min-width: 1.3rem;
+    line-height: 1.2;
   }
 
-  /* Leaflet polygon hover tooltip */
+  /* ── Leaflet polygon hover tooltip ─────────────────────── */
   .custom-polygon-tooltip {
-    @apply rounded-lg shadow-lg border-none px-3 py-2;
-    background: rgba(255, 255, 255, 0.95) !important;
-    backdrop-filter: blur(8px);
+    @apply rounded-xl shadow-lg border-none px-3.5 py-2.5;
+    background: rgba(255, 255, 255, 0.96) !important;
+    backdrop-filter: blur(12px);
+    font-family: 'Be Vietnam Pro', 'Inter', sans-serif !important;
+  }
+
+  .dark .custom-polygon-tooltip {
+    background: rgba(15, 23, 42, 0.96) !important;
+    color: #e2e8f0 !important;
   }
 
   .custom-polygon-tooltip::before {
-    border-top-color: rgba(255, 255, 255, 0.95) !important;
+    border-top-color: rgba(255, 255, 255, 0.96) !important;
+  }
+
+  /* ── Interactive button base ───────────────────────────── */
+  .btn-glass {
+    @apply px-3 py-2 rounded-xl text-sm font-medium;
+    @apply transition-all duration-200 ease-out;
+    @apply hover:shadow-md active:scale-[0.97];
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: blur(12px);
+  }
+
+  /* ── Gradient text ─────────────────────────────────────── */
+  .text-gradient-accent {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #38bdf8, #3b82f6);
+  }
+
+  .text-gradient-gold {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(135deg, #fbbf24, #f59e0b);
+  }
+
+  /* ── Section divider ───────────────────────────────────── */
+  .section-divider {
+    @apply h-px w-full;
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(148, 163, 184, 0.25),
+      transparent
+    );
+  }
+
+  .dark .section-divider {
+    background: linear-gradient(
+      to right,
+      transparent,
+      rgba(30, 51, 112, 0.5),
+      transparent
+    );
   }
 }
 
@@ -106,16 +221,6 @@
   .animate-shimmer {
     background-size: 200% 100%;
     animation: shimmer 1.5s infinite;
-  }
-
-  @keyframes shimmer {
-    0% {
-      background-position: 200% 0;
-    }
-
-    100% {
-      background-position: -200% 0;
-    }
   }
 
   /* Pulse Glow for selected map feature */
@@ -149,6 +254,23 @@
     user-drag: none;
     -webkit-user-drag: none;
   }
+
+  /* Edge gradient overlays for map depth */
+  .map-edge-top {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.06) 0%, transparent 100%);
+  }
+
+  .map-edge-bottom {
+    background: linear-gradient(to top, rgba(0,0,0,0.08) 0%, transparent 100%);
+  }
+
+  .dark .map-edge-top {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 100%);
+  }
+
+  .dark .map-edge-bottom {
+    background: linear-gradient(to top, rgba(0,0,0,0.2) 0%, transparent 100%);
+  }
 }
 
 /* ============================================================
@@ -164,7 +286,8 @@
    ============================================================ */
 
 ::selection {
-  @apply bg-accent-500/30 text-white;
+  @apply bg-accent-500/25;
+  color: inherit;
 }
 
 /* ============================================================
@@ -180,4 +303,82 @@
    ============================================================ */
 .leaflet-container *:focus {
   outline: none !important;
+}
+
+/* ============================================================
+   LEAFLET POPUP OVERRIDES
+   ============================================================ */
+
+/* School popup — clean card style */
+.school-popup .leaflet-popup-content-wrapper {
+  border-radius: 16px !important;
+  padding: 0 !important;
+  box-shadow: 0 12px 40px -6px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0,0,0,0.06) !important;
+  border: 1px solid rgba(0,0,0,0.05) !important;
+  overflow: hidden;
+  backdrop-filter: blur(8px);
+}
+
+.school-popup .leaflet-popup-content {
+  margin: 16px !important;
+  min-width: 200px !important;
+}
+
+.school-popup .leaflet-popup-tip-container {
+  margin-top: -1px;
+}
+
+/* Smooth popup open animation */
+.leaflet-popup {
+  animation: popup-in 0.22s ease-out;
+}
+
+@keyframes popup-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.95); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+
+/* ============================================================
+   LEAFLET CONTROL OVERRIDES — Match glass design
+   ============================================================ */
+
+.leaflet-control-layers {
+  border-radius: 12px !important;
+  border: 1px solid rgba(226, 232, 240, 0.6) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+.dark .leaflet-control-layers {
+  background: rgba(15, 23, 42, 0.9) !important;
+  border-color: rgba(30, 51, 112, 0.4) !important;
+  color: #e2e8f0 !important;
+}
+
+.leaflet-control-zoom {
+  border: none !important;
+  border-radius: 12px !important;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
+}
+
+.leaflet-control-zoom a {
+  border: none !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  backdrop-filter: blur(12px);
+  transition: all 0.15s ease;
+}
+
+.leaflet-control-zoom a:hover {
+  background: rgba(255, 255, 255, 1) !important;
+}
+
+.dark .leaflet-control-zoom a {
+  background: rgba(15, 23, 42, 0.9) !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .leaflet-control-zoom a:hover {
+  background: rgba(23, 37, 84, 0.95) !important;
 }

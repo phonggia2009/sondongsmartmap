@@ -1,39 +1,160 @@
-import { memo, useEffect, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, GeoJSON, LayersControl, Tooltip, useMapEvents } from 'react-leaflet';
+import { memo, useEffect } from 'react';
+import {
+  MapContainer, TileLayer, GeoJSON, LayersControl,
+  useMapEvents, useMap,
+} from 'react-leaflet';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Village } from '@/types';
 import { useAppContext } from '@/context/AppContext';
-import { useVillages } from '@/hooks/useVillages';
+import { useGeoJSONLayers } from '@/hooks/useGeoJSONLayers';
 import { MapOverlayStats } from './MapOverlayStats';
+import { SchoolsLayer } from './SchoolsLayer';
+import { VillageBoundariesLayer } from './VillageBoundariesLayer';
+import { VillageLabelsLayer } from './VillageLabelsLayer';
 import L from 'leaflet';
-import iconUrl from 'leaflet/dist/images/marker-icon.png';
-import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
-import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+import iconUrl        from 'leaflet/dist/images/marker-icon.png';
+import iconRetinaUrl  from 'leaflet/dist/images/marker-icon-2x.png';
+import shadowUrl      from 'leaflet/dist/images/marker-shadow.png';
 
-// Fix Leaflet's default icon path issues with Vite/Webpack bundlers
+// Fix Leaflet default icon paths with Vite bundler
 delete (L.Icon.Default.prototype as any)._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl,
-  iconUrl,
-  shadowUrl,
-});
+L.Icon.Default.mergeOptions({ iconRetinaUrl, iconUrl, shadowUrl });
 
 // ============================================================
 //  MapViewer Component
-//  Center panel with Leaflet map
+//  Center panel — Leaflet map with all layers.
 // ============================================================
 
 interface MapViewerProps {
   selectedVillage: Village | null;
 }
 
-// Click handler: deselect village when clicking empty map area
-function MapClickHandler({ onDeselect }: { onDeselect: () => void }) {
+// Handler: fly/zoom to selected village polygon or label point
+function VillageFlyToHandler({
+  selectedVillage,
+  ranhGioiThonData,
+  thonNhanTenData,
+}: {
+  selectedVillage: Village | null;
+  ranhGioiThonData: any;
+  thonNhanTenData: any;
+}) {
+  const map = useMap();
+
+  useEffect(() => {
+    if (!selectedVillage) {
+      map.flyTo([21.037, 105.703], 14, { duration: 1.2 });
+      return;
+    }
+
+    // Try finding boundary polygon feature
+    if (ranhGioiThonData?.features) {
+      const feature = ranhGioiThonData.features.find(
+        (f: any) => f.properties?.village_id === selectedVillage.id
+      );
+      if (feature) {
+        const bounds = L.geoJSON(feature).getBounds();
+        if (bounds.isValid()) {
+          map.flyToBounds(bounds, {
+            padding: [60, 60],
+            maxZoom: 16,
+            duration: 1.2,
+          });
+          return;
+        }
+      }
+    }
+
+    // Fallback to label point feature
+    if (thonNhanTenData?.features) {
+      const labelFeature = thonNhanTenData.features.find(
+        (f: any) => f.properties?.village_id === selectedVillage.id
+      );
+      if (labelFeature?.geometry?.type === 'Point') {
+        const [lng, lat] = labelFeature.geometry.coordinates;
+        map.flyTo([lat, lng], 15.5, { duration: 1.2 });
+      }
+    }
+  }, [selectedVillage, ranhGioiThonData, thonNhanTenData, map]);
+
+  return null;
+}
+
+// Handler: automatically invalidate Leaflet map size.
+// Uses THREE separate mechanisms to cover all resize scenarios:
+//   1. setTimeout after sidebarOpen toggle (sidebar animation)
+//   2. window.resize event (real browser resize / orientation change)
+//   3. ResizeObserver on the map container (catches isMobile switch,
+//      DevTools viewport simulation, and any layout-driven size changes)
+function MapResizeHandler() {
+  const map = useMap();
+  const { sidebarOpen } = useAppContext();
+
+  // Effect 1: React to sidebar open/close via delayed timeouts only.
+  useEffect(() => {
+    const t1 = setTimeout(() => map.invalidateSize(), 150);
+    const t2 = setTimeout(() => map.invalidateSize(), 400);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [sidebarOpen, map]);
+
+  // Effect 2: React to real window resize events (browser resize, orientation).
+  useEffect(() => {
+    let rafId: number;
+    const handleWindowResize = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => map.invalidateSize());
+    };
+    window.addEventListener('resize', handleWindowResize, { passive: true });
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('resize', handleWindowResize);
+    };
+  }, [map]);
+
+  // Effect 3: ResizeObserver directly on the Leaflet map container.
+  // This catches ALL size changes: isMobile switch, DevTools responsive,
+  // sidebar width CSS transitions, etc. — without needing window.resize.
+  useEffect(() => {
+    const container = map.getContainer();
+    if (!container || typeof ResizeObserver === 'undefined') return;
+
+    let rafId: number;
+    const ro = new ResizeObserver(() => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(() => map.invalidateSize());
+    });
+    ro.observe(container);
+    return () => {
+      cancelAnimationFrame(rafId);
+      ro.disconnect();
+    };
+  }, [map]);
+
+  return null;
+}
+
+
+// Click handler: deselect village or school when clicking empty map area
+function MapClickHandler({
+  onDeselectVillage,
+  onDeselectSchool,
+  isSchoolMode,
+}: {
+  onDeselectVillage: () => void;
+  onDeselectSchool: () => void;
+  isSchoolMode: boolean;
+}) {
   useMapEvents({
     click: (e: any) => {
-      // Only deselect if the click was NOT on a layer (polygon/marker)
       if (!e.originalEvent._stopped) {
-        onDeselect();
+        if (isSchoolMode) {
+          onDeselectSchool();
+        } else {
+          onDeselectVillage();
+        }
       }
     },
   });
@@ -41,63 +162,85 @@ function MapClickHandler({ onDeselect }: { onDeselect: () => void }) {
 }
 
 export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerProps) {
-  const isOverview = !selectedVillage;
   const label = selectedVillage?.name;
 
-  const { selectVillage } = useAppContext();
-  const { villages } = useVillages();
+  const { selectVillage, selectSchool, activeSidebarTab, isDark } = useAppContext();
+  const isSchoolMode = activeSidebarTab === 'schools';
 
-
-  const [ranhGioiXaData, setRanhGioiXaData] = useState<any>(null);
-  const [ranhGioiThonData, setRanhGioiThonData] = useState<any>(null);
-  const [thonNhanTenData, setThonNhanTenData] = useState<any>(null);
-
-  useEffect(() => {
-    fetch('/data/danhgioixa.geojson').then(r => r.json()).then(setRanhGioiXaData).catch(console.error);
-    fetch('/data/ranhgioithon.geojson').then(r => r.json()).then(setRanhGioiThonData).catch(console.error);
-    fetch('/data/thon_nhan_ten.geojson').then(r => r.json()).then(setThonNhanTenData).catch(console.error);
-  }, []);
+  const { ranhGioiXaData, ranhGioiThonData, thonNhanTenData } = useGeoJSONLayers();
 
   return (
-    <div className="relative flex-1 flex flex-col overflow-hidden bg-gov-950">
-      {/* Label overlay */}
+    <div className={`relative flex-1 flex flex-col overflow-hidden ${isDark ? 'bg-gov-950' : 'bg-gray-100'}`}>
+      {/* Selected village label — premium pill */}
       <AnimatePresence>
         {label && (
           <motion.div
             key={label}
             className="absolute top-4 left-1/2 -translate-x-1/2 z-[400] pointer-events-none"
-            initial={{ opacity: 0, y: -12 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -12 }}
-            transition={{ duration: 0.3 }}
+            initial={{ opacity: 0, y: -16, scale: 0.9 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -16, scale: 0.9 }}
+            transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
           >
-            <div className="
-              px-4 py-1.5 rounded-full text-sm font-semibold text-white
-              bg-gov-800/80 backdrop-blur-sm border border-gov-700/60 shadow-glass
-            ">
-              {isOverview ? '🗺 Bản đồ tổng quan' : `📍 ${label}`}
+            <div className={`
+              flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-semibold
+              shadow-elevated backdrop-blur-md border
+              ${isDark
+                ? 'bg-gov-900/85 text-white border-gov-700/50'
+                : 'bg-white/90 text-gov-800 border-gray-200/60'
+              }
+            `}>
+              <span className="w-2 h-2 rounded-full bg-accent-400 animate-pulse" />
+              {label}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      <MapContainer 
-        center={[21.037, 105.703]} 
-        zoom={14} 
+      {/* School mode overlay indicator */}
+      <AnimatePresence>
+        {isSchoolMode && (
+          <motion.div
+            key="school-mode-badge"
+            className="absolute top-4 right-14 z-[400] pointer-events-none"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+          >
+            <div className={`
+              flex items-center gap-2 px-3 py-2 rounded-2xl text-xs font-semibold
+              backdrop-blur-md border shadow-lg
+              ${isDark
+                ? 'bg-green-900/60 text-green-300 border-green-700/40'
+                : 'bg-green-50/90 text-green-700 border-green-200/60'
+              }
+            `}>
+              <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+              🏫 Chế độ xem trường học
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <MapContainer
+        center={[21.037, 105.703]}
+        zoom={14}
         className="w-full h-full z-0"
         zoomControl={true}
       >
         <LayersControl position="topright">
+          {/* Base layers */}
           <LayersControl.BaseLayer name="Bản đồ mặc định (OSM)">
             <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
           </LayersControl.BaseLayer>
-          
+
           <LayersControl.BaseLayer name="Bản đồ vệ tinh (Esri)">
             <TileLayer
-              attribution='&copy; <a href="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer">Esri</a>'
+              attribution='&copy; <a href="https://server.arcgisonline.com">Esri</a>'
               url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
               maxZoom={19}
             />
@@ -116,171 +259,74 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
               url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             />
           </LayersControl.BaseLayer>
+
         </LayersControl>
 
+        {/* Schools layer — automatically displayed when in School mode */}
+        {isSchoolMode && <SchoolsLayer />}
+
+        {/* Commune boundary — always visible */}
         {ranhGioiXaData && (
-          <GeoJSON 
+          <GeoJSON
             data={ranhGioiXaData}
             style={{
-              color: '#eab308', // Yellow for commune boundary
+              color: '#eab308',
               weight: 3,
               opacity: 1,
               fillColor: 'transparent',
               fillOpacity: 0,
-              className: 'animate-marching-ants'
+              className: 'animate-marching-ants',
             }}
           />
         )}
 
-        {ranhGioiThonData && (
-          <GeoJSON 
-            key={`geojson-${selectedVillage?.id || 'none'}`}
+        {/* Village boundaries — visible only in Village mode */}
+        {!isSchoolMode && ranhGioiThonData && (
+          <VillageBoundariesLayer
             data={ranhGioiThonData}
-            style={(feature: any) => {
-              const isSelected = selectedVillage?.id === feature.properties.village_id;
-              const hasSelection = !!selectedVillage;
-
-              if (hasSelection && !isSelected) {
-                return {
-                  color: '#ef4444', // Red border
-                  weight: 2,
-                  opacity: 0.6,
-                  fillColor: '#fecaca', // Light red fill
-                  fillOpacity: 0.2,
-                  dashArray: '4, 4',
-                  className: 'transition-all duration-300'
-                };
-              }
-              
-              return {
-                color: isSelected ? '#facc15' : 'white', // Yellow borders for selected, white for non-selected
-                weight: isSelected ? 4 : 2,
-                opacity: 1,
-                fillColor: isSelected ? '#eab308' : '#dc2626', // Yellow if selected, Red if not
-                fillOpacity: isSelected ? 0.7 : 0.4, // Higher opacity for more color
-                dashArray: isSelected ? '' : '',
-                className: isSelected ? 'animate-pulse-glow transition-all duration-300' : 'transition-all duration-300'
-              };
-            }}
-            onEachFeature={(feature, layer: any) => {
-              const isSelected = selectedVillage?.id === feature.properties.village_id;
-              const hasSelection = !!selectedVillage;
-
-              // Bind tooltip with village name for hover preview
-              const matchedVillage = villages.find((v: Village) => v.id === feature.properties.village_id);
-              if (matchedVillage) {
-                layer.bindTooltip(
-                  `<div style="font-weight:700;font-size:13px;margin-bottom:2px">${matchedVillage.name}</div><div style="font-size:11px;color:#6b7280">Diện tích: ${matchedVillage.area}</div>`,
-                  { sticky: true, direction: 'auto', className: 'custom-polygon-tooltip' }
-                );
-              }
-              
-              layer.on({
-                mouseover: (e: any) => {
-                  const target = e.target;
-                  target.setStyle({
-                    fillColor: isSelected ? '#eab308' : '#ef4444', // Keep yellow if selected, else lighter red
-                    fillOpacity: isSelected ? 0.8 : 0.5,
-                    weight: isSelected ? 4 : 3,
-                  });
-                  target.bringToFront();
-                },
-                mouseout: (e: any) => {
-                  const target = e.target;
-                  if (hasSelection && !isSelected) {
-                    target.setStyle({
-                      color: '#ef4444',
-                      weight: 2,
-                      opacity: 0.6,
-                      fillColor: '#fecaca',
-                      fillOpacity: 0.2,
-                      dashArray: '4, 4'
-                    });
-                  } else {
-                    target.setStyle({
-                      color: isSelected ? '#facc15' : 'white',
-                      weight: isSelected ? 4 : 2,
-                      opacity: 1,
-                      fillColor: isSelected ? '#eab308' : '#dc2626',
-                      fillOpacity: isSelected ? 0.7 : 0.4,
-                      dashArray: isSelected ? '' : ''
-                    });
-                  }
-                },
-                click: (e: any) => {
-                  // Stop propagation so MapClickHandler doesn't deselect
-                  e.originalEvent._stopped = true;
-                  const villageId = feature.properties?.village_id;
-                  if (villageId !== undefined) {
-                    const matchedVillage = villages.find((v: Village) => v.id === villageId);
-                    if (matchedVillage) {
-                      selectVillage(matchedVillage);
-                    }
-                  }
-                }
-              });
-            }}
+            selectedVillage={selectedVillage}
+            isSchoolMode={false}
           />
         )}
 
-        {thonNhanTenData?.features?.map((feature: any, index: number) => {
-          if (feature.geometry?.type === 'Point') {
-            const coordinates = feature.geometry.coordinates;
-            const name = feature.properties.ten_thon;
-            const villageId = feature.properties.village_id;
-            const isSelected = selectedVillage?.id === villageId;
-            const hasSelection = !!selectedVillage;
-            // GeoJSON coordinates are [lng, lat]
-            return (
-              <Marker 
-                key={`label-${index}`} 
-                position={[coordinates[1], coordinates[0]]}
-                icon={L.divIcon({
-                  html: `<div style="
-                    text-align: center;
-                    text-shadow: 1px 1px 0px #fff, -1px 1px 0px #fff, 1px -1px 0px #fff, -1px -1px 0px #fff, 0px 1px 2px rgba(0,0,0,0.5);
-                    font-family: 'Be Vietnam Pro', sans-serif;
-                    font-weight: 800;
-                    font-size: ${isSelected ? '14px' : '11px'};
-                    color: ${isSelected ? '#eab308' : '#374151'};
-                    white-space: nowrap;
-                    text-transform: uppercase;
-                    transition: all 0.3s ease;
-                    letter-spacing: 0.5px;
-                  ">
-                    ${name}
-                  </div>`,
-                  className: 'bg-transparent border-0 shadow-none',
-                  iconSize: [100, 30],
-                  iconAnchor: [50, 15]
-                })}
-                eventHandlers={{
-                  click: () => {
-                    const villageId = feature.properties?.village_id;
-                    if (villageId !== undefined) {
-                      const matchedVillage = villages.find((v: Village) => v.id === villageId);
-                      if (matchedVillage) selectVillage(matchedVillage);
-                    }
-                  }
-                }}
-              />
-            );
-          }
-          return null;
-        })}
-        
+        {/* Village name labels — visible only in Village mode */}
+        {!isSchoolMode && thonNhanTenData && (
+          <VillageLabelsLayer
+            data={thonNhanTenData}
+            selectedVillage={selectedVillage}
+            isSchoolMode={false}
+          />
+        )}
 
+        <VillageFlyToHandler
+          selectedVillage={selectedVillage}
+          ranhGioiThonData={ranhGioiThonData}
+          thonNhanTenData={thonNhanTenData}
+        />
 
+        <MapResizeHandler />
 
-        <MapClickHandler onDeselect={() => selectVillage(null)} />
-
+        <MapClickHandler
+          onDeselectVillage={() => selectVillage(null)}
+          onDeselectSchool={() => selectSchool(null)}
+          isSchoolMode={isSchoolMode}
+        />
       </MapContainer>
 
       {/* Floating stats overlay */}
       <MapOverlayStats />
 
-      {/* Corner grid decoration */}
-      <div className="absolute bottom-0 left-0 right-0 h-1 bg-gradient-to-r from-gov-800 via-accent-600/40 to-gov-800 pointer-events-none z-[400]" />
+      {/* Edge gradients for depth */}
+      <div className="absolute top-0 left-0 right-0 h-6 map-edge-top pointer-events-none z-[399]" />
+      <div className="absolute bottom-0 left-0 right-0 h-10 map-edge-bottom pointer-events-none z-[399]" />
+
+      {/* Bottom accent line */}
+      <div className={`absolute bottom-0 left-0 right-0 h-[2px] pointer-events-none z-[400]
+        ${isDark
+          ? 'bg-gradient-to-r from-transparent via-accent-600/30 to-transparent'
+          : 'bg-gradient-to-r from-transparent via-gov-400/20 to-transparent'
+        }
+      `} />
     </div>
   );
 });

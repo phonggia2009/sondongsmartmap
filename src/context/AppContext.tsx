@@ -6,9 +6,10 @@ import React, {
   useMemo,
   type ReactNode,
 } from 'react';
-import type { Village } from '@/types';
+import type { Village, School, SchoolLevel } from '@/types';
 import { useTheme } from '@/hooks/useTheme';
 import { useFullscreen } from '@/hooks/useFullscreen';
+import { DEFAULT_SCHOOL_FILTERS } from '@/utils/schoolUtils';
 
 // ============================================================
 //  APP CONTEXT
@@ -20,19 +21,26 @@ interface AppContextValue {
   selectedVillage: Village | null;
   selectVillage: (village: Village | null) => void;
 
+  // School selection
+  selectedSchool: School | null;
+  selectSchool: (school: School | null) => void;
+
+  // School filters & search
+  schoolFilters: Record<SchoolLevel, boolean>;
+  toggleSchoolFilter: (level: SchoolLevel) => void;
+  setSchoolFilters: React.Dispatch<React.SetStateAction<Record<SchoolLevel, boolean>>>;
+  schoolSearchQuery: string;
+  setSchoolSearchQuery: (query: string) => void;
+
   // View mode
   isOverview: boolean;
-
-  // Presentation mode
-  isPresenting: boolean;
-  enterPresentation: () => void;
-  exitPresentation: () => void;
-  togglePresentation: () => void;
 
   // Sidebar
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
   toggleSidebar: () => void;
+  activeSidebarTab: 'villages' | 'schools';
+  setActiveSidebarTab: (tab: 'villages' | 'schools') => void;
 
   // Info panel
   infoPanelOpen: boolean;
@@ -52,60 +60,76 @@ const AppContext = createContext<AppContextValue | null>(null);
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [selectedVillage, setSelectedVillage] = useState<Village | null>(null);
-  const [isPresenting, setIsPresenting] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [infoPanelOpen, setInfoPanelOpen] = useState(true);
+  const [selectedSchool, setSelectedSchool]   = useState<School | null>(null);
+  const [schoolFilters, setSchoolFilters]     = useState<Record<SchoolLevel, boolean>>(DEFAULT_SCHOOL_FILTERS);
+  const [schoolSearchQuery, setSchoolSearchQuery] = useState('');
+  const handleSetSchoolSearchQuery = useCallback((query: string) => {
+    setSchoolSearchQuery(query);
+  }, []);
 
-  const { isDark, toggle: toggleTheme } = useTheme();
+  const [sidebarOpen,      setSidebarOpen]      = useState(
+    typeof window !== 'undefined' ? window.innerWidth >= 768 : true
+  );
+  const [activeSidebarTabState, setActiveSidebarTabState] = useState<'villages' | 'schools'>('villages');
+  const [infoPanelOpen,    setInfoPanelOpen]    = useState(true);
+
+  const { isDark, toggle: toggleTheme }         = useTheme();
   const { isFullscreen, toggle: toggleFullscreen } = useFullscreen();
+
+  const setActiveSidebarTab = useCallback((tab: 'villages' | 'schools') => {
+    setActiveSidebarTabState(prev => {
+      if (prev !== tab) {
+        // Deselect item when switching tabs to prevent state leakage between modes
+        setSelectedVillage(null);
+        setSelectedSchool(null);
+      }
+      return tab;
+    });
+  }, []);
 
   const selectVillage = useCallback((village: Village | null) => {
     setSelectedVillage(village);
-    if (village === null) {
-      // Auto-hide panel when returning to overview
-      setInfoPanelOpen(false);
-    } else if (!infoPanelOpen) {
-      setInfoPanelOpen(true);
-    }
-  }, [infoPanelOpen]);
+    if (village) setSelectedSchool(null);
+    // Use functional form to avoid capturing infoPanelOpen in closure
+    setInfoPanelOpen(prev => {
+      if (village === null) return false;
+      return prev ? prev : true; // open panel if not already open
+    });
+  }, []);
+
+  const selectSchool = useCallback((school: School | null) => {
+    setSelectedSchool(school);
+    if (school) setSelectedVillage(null);
+  }, []);
+
+  const toggleSchoolFilter = useCallback((level: SchoolLevel) => {
+    setSchoolFilters(prev => ({ ...prev, [level]: !prev[level] }));
+  }, []);
 
   const toggleInfoPanel = useCallback(() => {
-    setInfoPanelOpen((o) => !o);
+    setInfoPanelOpen(o => !o);
   }, []);
-
-  const enterPresentation = useCallback(() => {
-    setIsPresenting(true);
-    setSidebarOpen(false);
-  }, []);
-
-  const exitPresentation = useCallback(() => {
-    setIsPresenting(false);
-    setSidebarOpen(true);
-  }, []);
-
-  const togglePresentation = useCallback(() => {
-    if (isPresenting) {
-      exitPresentation();
-    } else {
-      enterPresentation();
-    }
-  }, [isPresenting, enterPresentation, exitPresentation]);
 
   const toggleSidebar = useCallback(() => {
-    setSidebarOpen((o) => !o);
+    setSidebarOpen(o => !o);
   }, []);
 
   const value = useMemo<AppContextValue>(() => ({
     selectedVillage,
     selectVillage,
-    isOverview: selectedVillage === null,
-    isPresenting,
-    enterPresentation,
-    exitPresentation,
-    togglePresentation,
+    selectedSchool,
+    selectSchool,
+    schoolFilters,
+    toggleSchoolFilter,
+    setSchoolFilters,
+    schoolSearchQuery,
+    setSchoolSearchQuery: handleSetSchoolSearchQuery,
+    isOverview: selectedVillage === null && selectedSchool === null,
     sidebarOpen,
     setSidebarOpen,
     toggleSidebar,
+    activeSidebarTab: activeSidebarTabState,
+    setActiveSidebarTab,
     infoPanelOpen,
     setInfoPanelOpen,
     toggleInfoPanel,
@@ -115,8 +139,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
     toggleFullscreen,
   }), [
     selectedVillage, selectVillage,
-    isPresenting, enterPresentation, exitPresentation, togglePresentation,
-    sidebarOpen, setSidebarOpen, toggleSidebar,
+    selectedSchool, selectSchool,
+    schoolFilters, toggleSchoolFilter, schoolSearchQuery, handleSetSchoolSearchQuery,
+    sidebarOpen, setSidebarOpen, toggleSidebar, activeSidebarTabState, setActiveSidebarTab,
     infoPanelOpen, setInfoPanelOpen, toggleInfoPanel,
     isDark, toggleTheme,
     isFullscreen, toggleFullscreen,

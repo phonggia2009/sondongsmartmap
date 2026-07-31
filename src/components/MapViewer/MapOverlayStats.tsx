@@ -1,82 +1,108 @@
 import { memo, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Users, Ruler, ChevronUp } from 'lucide-react';
+import { MapPin, Users, Home, GraduationCap } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { useVillages } from '@/hooks/useVillages';
+import { useSchools } from '@/hooks/useSchools';
+import { useIsMobile } from '@/hooks/useIsMobile';
 
 // ============================================================
-//  MapOverlayStats — Floating stats overlay on the map
-//  Shows aggregate data when no village is selected
+//  MapOverlayStats — Floating glass stats overlay
 // ============================================================
 
 export const MapOverlayStats = memo(function MapOverlayStats() {
-  const { selectedVillage, isDark } = useAppContext();
+  const { selectedVillage, isDark, activeSidebarTab, schoolFilters } = useAppContext();
   const { villages } = useVillages();
+  const { schools }  = useSchools();
+  const isMobile = useIsMobile();
 
-  const stats = useMemo(() => {
-    const totalPopulation = villages.reduce((sum, v) => sum + (v.population || 0), 0);
-    const totalHouseholds = villages.reduce((sum, v) => sum + (v.households || 0), 0);
-    return {
-      villageCount: villages.length,
-      totalPopulation,
-      totalHouseholds,
-    };
-  }, [villages]);
+  const isSchoolMode = activeSidebarTab === 'schools';
+
+  const villageStats = useMemo(() => ({
+    count:       villages.length,
+    population:  villages.reduce((s, v) => s + (v.population  || 0), 0),
+    households:  villages.reduce((s, v) => s + (v.households  || 0), 0),
+  }), [villages]);
+
+  const schoolStats = useMemo(() => {
+    const visible = schools.filter(s => schoolFilters[s.level]);
+    return { total: schools.length, visible: visible.length };
+  }, [schools, schoolFilters]);
+
+  const containerClass = `
+    absolute z-[400] pointer-events-auto
+    flex items-center gap-3 rounded-2xl
+    glass-panel-sm
+    ${isMobile
+      ? 'bottom-3 left-3 right-3 justify-center px-4 py-2.5'
+      : 'bottom-6 right-4 px-4 py-2.5'
+    }
+    ${isDark ? 'text-white' : 'text-gray-800'}
+  `;
 
   return (
-    <AnimatePresence>
-      {!selectedVillage && villages.length > 0 && (
+    <AnimatePresence mode="wait">
+      {isSchoolMode ? (
+        /* School mode stats */
         <motion.div
-          key="map-stats"
-          className={`
-            absolute bottom-6 right-4 z-[400] pointer-events-auto
-            flex items-center gap-3 px-4 py-2.5 rounded-2xl
-            backdrop-blur-md border shadow-lg
-            ${isDark
-              ? 'bg-gov-900/85 border-gov-700/50 text-white'
-              : 'bg-white/85 border-gray-200/80 text-gray-800'
-            }
-          `}
+          key="school-stats"
+          className={containerClass}
           initial={{ opacity: 0, y: 20, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
-          transition={{ duration: 0.35, ease: 'easeOut' }}
+          transition={{ duration: 0.3 }}
         >
           <StatChip
-            icon={<MapPin className="w-3.5 h-3.5" />}
-            label="Thôn/Tổ"
-            value={stats.villageCount}
-            isDark={isDark}
-            color="blue"
-          />
-          <Divider isDark={isDark} />
-          <StatChip
-            icon={<Users className="w-3.5 h-3.5" />}
-            label="Dân số"
-            value={stats.totalPopulation.toLocaleString('vi-VN')}
+            icon={<GraduationCap className="w-3.5 h-3.5" />}
+            label="Đang hiện"
+            value={`${schoolStats.visible}/${schoolStats.total}`}
             isDark={isDark}
             color="emerald"
           />
-          <Divider isDark={isDark} />
-          <StatChip
-            icon={<Ruler className="w-3.5 h-3.5" />}
-            label="Hộ dân"
-            value={stats.totalHouseholds.toLocaleString('vi-VN')}
-            isDark={isDark}
-            color="amber"
-          />
         </motion.div>
+      ) : (
+        /* Village mode stats — hidden when village selected */
+        !selectedVillage && villages.length > 0 && (
+          <motion.div
+            key="village-stats"
+            className={containerClass}
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.35, ease: 'easeOut' }}
+          >
+            <StatChip
+              icon={<MapPin className="w-3.5 h-3.5" />}
+              label="Thôn/Tổ"
+              value={villageStats.count}
+              isDark={isDark}
+              color="blue"
+            />
+            <Divider isDark={isDark} />
+            <StatChip
+              icon={<Users className="w-3.5 h-3.5" />}
+              label="Dân số"
+              value={villageStats.population.toLocaleString('vi-VN')}
+              isDark={isDark}
+              color="emerald"
+            />
+            <Divider isDark={isDark} />
+            <StatChip
+              icon={<Home className="w-3.5 h-3.5" />}
+              label="Hộ dân"
+              value={villageStats.households.toLocaleString('vi-VN')}
+              isDark={isDark}
+              color="amber"
+            />
+          </motion.div>
+        )
       )}
     </AnimatePresence>
   );
 });
 
 function StatChip({
-  icon,
-  label,
-  value,
-  isDark,
-  color,
+  icon, label, value, isDark, color,
 }: {
   icon: React.ReactNode;
   label: string;
@@ -85,16 +111,21 @@ function StatChip({
   color: 'blue' | 'emerald' | 'amber';
 }) {
   const colorMap = {
-    blue: isDark ? 'text-blue-400' : 'text-blue-600',
+    blue:    isDark ? 'text-blue-400'    : 'text-blue-600',
     emerald: isDark ? 'text-emerald-400' : 'text-emerald-600',
-    amber: isDark ? 'text-amber-400' : 'text-amber-600',
+    amber:   isDark ? 'text-amber-400'   : 'text-amber-600',
   };
-
   return (
     <div className="flex items-center gap-2">
-      <div className={colorMap[color]}>{icon}</div>
+      <div className={`
+        w-7 h-7 rounded-lg flex items-center justify-center
+        ${isDark ? 'bg-white/5' : 'bg-gray-100/80'}
+        ${colorMap[color]}
+      `}>
+        {icon}
+      </div>
       <div className="flex flex-col">
-        <span className={`text-[10px] uppercase tracking-wider font-medium leading-none ${isDark ? 'text-gov-400' : 'text-gray-400'}`}>
+        <span className={`text-[9px] uppercase tracking-wider font-semibold leading-none ${isDark ? 'text-gray-400' : 'text-gray-400'}`}>
           {label}
         </span>
         <span className="text-sm font-bold font-display leading-tight">{value}</span>
@@ -104,7 +135,5 @@ function StatChip({
 }
 
 function Divider({ isDark }: { isDark: boolean }) {
-  return (
-    <div className={`w-px h-8 ${isDark ? 'bg-gov-700/60' : 'bg-gray-200'}`} />
-  );
+  return <div className={`w-px h-8 ${isDark ? 'bg-white/10' : 'bg-gray-200/80'}`} />;
 }

@@ -26,13 +26,6 @@ export const APP_CONFIG: AppConfig = {
     ease: 'easeInOut',
   },
 
-  // ─── Presentation ──────────────────────────────────────────
-  presentation: {
-    interval: 10000,      // default autoplay interval (ms)
-    autoPlay: false,
-    intervals: [5000, 10000, 15000, 30000], // configurable options
-  },
-
   // ─── Public Asset Paths ────────────────────────────────────
   paths: {
     maps: '/maps',
@@ -58,13 +51,21 @@ export const getVillageImageUrl = (filename: string): string =>
 export const getDataUrl = (): string =>
   `${APP_CONFIG.paths.data}/villages.json`;
 
-/** Interval labels in Vietnamese for the UI */
-export const INTERVAL_LABELS: Record<number, string> = {
-  5000: '5 giây',
-  10000: '10 giây',
-  15000: '15 giây',
-  30000: '30 giây',
-};
+/** Returns the full URL for schools GeoJSON file */
+export const getSchoolsGeoJsonUrl = (): string =>
+  `${APP_CONFIG.paths.data}/danhsach21truong.geojson`;
+
+/** Returns the full URL for commune boundary GeoJSON file */
+export const getCommuneBoundaryGeoJsonUrl = (): string =>
+  `${APP_CONFIG.paths.data}/danhgioixa.geojson`;
+
+/** Returns the full URL for village boundaries GeoJSON file */
+export const getVillageBoundariesGeoJsonUrl = (): string =>
+  `${APP_CONFIG.paths.data}/ranhgioithon.geojson`;
+
+/** Returns the full URL for village name label points GeoJSON file */
+export const getVillageLabelsGeoJsonUrl = (): string =>
+  `${APP_CONFIG.paths.data}/thon_nhan_ten.geojson`;
 
 /** Boundary direction labels in Vietnamese */
 export const DIRECTION_LABELS: Record<string, string> = {

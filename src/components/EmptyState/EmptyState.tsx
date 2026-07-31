@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
-import { AlertTriangle, RefreshCw, Database } from 'lucide-react';
+import { AlertTriangle, RefreshCw, Database, Search } from 'lucide-react';
 
 // ============================================================
-//  EmptyState Component
+//  EmptyState Component — Illustrated states
 // ============================================================
 
 interface EmptyStateProps {
@@ -20,52 +20,58 @@ export function EmptyState({
   error,
   onRetry,
 }: EmptyStateProps) {
-  const defaults = {
+  const config = {
     error: {
-      icon: <AlertTriangle className="w-12 h-12 text-red-400" />,
+      icon: <AlertTriangle className="w-10 h-10" />,
+      iconBg: 'from-red-500/10 to-red-600/5 text-red-400',
+      iconBgLight: 'from-red-50 to-red-100/50 text-red-500',
       title: 'Không thể tải dữ liệu',
       message: 'Đã xảy ra lỗi khi tải thông tin bản đồ.',
     },
     empty: {
-      icon: <Database className="w-12 h-12 text-gov-400" />,
+      icon: <Database className="w-10 h-10" />,
+      iconBg: 'from-gov-700/20 to-gov-800/10 text-gov-400',
+      iconBgLight: 'from-gray-100 to-gray-50 text-gray-400',
       title: 'Chưa có dữ liệu',
-      message: 'Chưa có thông tin thôn/xã nào. Vui lòng kiểm tra tệp dữ liệu.',
+      message: 'Chưa có thông tin thôn/xã nào.',
     },
     search: {
-      icon: (
-        <svg className="w-12 h-12 text-gov-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5}
-            d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-        </svg>
-      ),
-      title: 'Không tìm thấy kết quả',
+      icon: <Search className="w-10 h-10" />,
+      iconBg: 'from-gov-700/20 to-gov-800/10 text-gov-400',
+      iconBgLight: 'from-gray-100 to-gray-50 text-gray-400',
+      title: 'Không tìm thấy',
       message: 'Thử tìm kiếm với từ khóa khác.',
     },
   }[type];
 
   return (
     <motion.div
-      className="flex flex-col items-center justify-center py-12 px-6 text-center"
-      initial={{ opacity: 0, y: 10 }}
+      className="flex flex-col items-center justify-center py-10 px-6 text-center"
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
     >
-      <div className="mb-4 opacity-60">{defaults.icon}</div>
+      <div className={`
+        w-16 h-16 rounded-2xl flex items-center justify-center mb-4
+        bg-gradient-to-br dark:${config.iconBg} ${config.iconBgLight}
+      `}>
+        {config.icon}
+      </div>
 
-      <h3 className="text-base font-semibold text-gray-700 dark:text-gray-300 mb-2">
-        {title ?? defaults.title}
+      <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 mb-1.5">
+        {title ?? config.title}
       </h3>
 
-      <p className="text-sm text-gray-500 dark:text-gray-400 mb-2 max-w-xs">
-        {message ?? defaults.message}
+      <p className="text-xs text-gray-500 dark:text-gray-400 mb-2 max-w-[240px] leading-relaxed">
+        {message ?? config.message}
       </p>
 
       {error && (
         <details className="mt-2 text-left max-w-sm">
-          <summary className="text-xs text-red-400 cursor-pointer hover:text-red-300">
+          <summary className="text-xs text-red-400 cursor-pointer hover:text-red-300 transition-colors">
             Chi tiết lỗi
           </summary>
-          <pre className="mt-2 text-xs text-red-300 bg-red-950/30 rounded-lg p-3 overflow-auto max-h-32 whitespace-pre-wrap">
+          <pre className="mt-2 text-xs text-red-300 bg-red-950/30 rounded-xl p-3 overflow-auto max-h-32 whitespace-pre-wrap border border-red-900/30">
             {error.message}
           </pre>
         </details>
@@ -74,9 +80,10 @@ export function EmptyState({
       {onRetry && (
         <motion.button
           onClick={onRetry}
-          className="mt-4 flex items-center gap-2 px-4 py-2 rounded-lg bg-gov-700 hover:bg-gov-600
-                     text-white text-sm font-medium transition-colors"
-          whileHover={{ scale: 1.02 }}
+          className="mt-4 flex items-center gap-2 px-4 py-2.5 rounded-xl
+                     bg-gov-700 hover:bg-gov-600
+                     text-white text-sm font-medium transition-all shadow-lg"
+          whileHover={{ scale: 1.02, y: -1 }}
           whileTap={{ scale: 0.98 }}
         >
           <RefreshCw className="w-4 h-4" />

@@ -11,10 +11,8 @@ export function useTheme() {
   const [theme, setTheme] = useState<Theme>(() => {
     const stored = localStorage.getItem('gov-map-theme') as Theme | null;
     if (stored === 'light' || stored === 'dark') return stored;
-    // System preference fallback
-    return window.matchMedia('(prefers-color-scheme: dark)').matches
-      ? 'dark'
-      : 'light';
+    // Default to light mode for government context
+    return 'light';
   });
 
   useEffect(() => {

@@ -1,8 +1,10 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 // ============================================================
 //  useKeyboard Hook
 //  Registers global keyboard shortcuts.
+//  Uses a ref to store shortcuts so the listener is only added
+//  once (no re-register on every render).
 // ============================================================
 
 export interface KeyboardShortcut {
@@ -18,6 +20,12 @@ export function useKeyboard(
   shortcuts: KeyboardShortcut[],
   enabled: boolean = true
 ) {
+  // Keep latest shortcuts in a ref so we never need to re-register the listener
+  const shortcutsRef = useRef(shortcuts);
+  useEffect(() => {
+    shortcutsRef.current = shortcuts;
+  });
+
   useEffect(() => {
     if (!enabled) return;
 
@@ -29,7 +37,7 @@ export function useKeyboard(
         target.tagName === 'TEXTAREA' ||
         target.isContentEditable;
 
-      for (const shortcut of shortcuts) {
+      for (const shortcut of shortcutsRef.current) {
         const keyMatch = event.key === shortcut.key;
         const ctrlMatch = (shortcut.ctrlKey ?? false) === event.ctrlKey;
         const altMatch = (shortcut.altKey ?? false) === event.altKey;
@@ -47,5 +55,7 @@ export function useKeyboard(
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [shortcuts, enabled]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [enabled]); // Only re-register if enabled changes — NOT on shortcuts change
 }
+

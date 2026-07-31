@@ -1,5 +1,12 @@
-import type { Village } from '@/types';
-import { getDataUrl } from '@/config';
+import type { Village, School } from '@/types';
+import {
+  getDataUrl,
+  getSchoolsGeoJsonUrl,
+  getCommuneBoundaryGeoJsonUrl,
+  getVillageBoundariesGeoJsonUrl,
+  getVillageLabelsGeoJsonUrl,
+} from '@/config';
+import { parseSchoolLevel } from '@/utils/schoolUtils';
 
 // ============================================================
 //  DATA SERVICE
@@ -78,6 +85,61 @@ export async function fetchVillages(): Promise<Village[]> {
       polygon: raw.polygon as Village['polygon'],
     } satisfies Village;
   });
+}
+
+/**
+ * Fetches and parses school GeoJSON data.
+ */
+export async function fetchSchools(): Promise<School[]> {
+  const url = getSchoolsGeoJsonUrl();
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Không thể tải dữ liệu trường học (HTTP ${response.status})`);
+  }
+  const data = await response.json();
+
+  const parsed: School[] = [];
+  if (Array.isArray(data.features)) {
+    data.features.forEach((feature: any, index: number) => {
+      if (feature.geometry?.type === 'Point') {
+        const name =
+          feature.properties?.commune_name ||
+          feature.properties?.name ||
+          'Trường học';
+        parsed.push({
+          id: `school-${index}`,
+          name,
+          level: parseSchoolLevel(name),
+          lng: feature.geometry.coordinates[0],
+          lat: feature.geometry.coordinates[1],
+        });
+      }
+    });
+  }
+  return parsed;
+}
+
+export interface GeoJSONLayersData {
+  ranhGioiXa: any;
+  ranhGioiThon: any;
+  thonNhanTen: any;
+}
+
+/**
+ * Fetches map GeoJSON layers (commune boundary, village boundaries, village label points).
+ */
+export async function fetchGeoJSONLayers(): Promise<GeoJSONLayersData> {
+  const [xa, thon, ten] = await Promise.all([
+    fetch(getCommuneBoundaryGeoJsonUrl()).then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch(getVillageBoundariesGeoJsonUrl()).then(r => r.ok ? r.json() : null).catch(() => null),
+    fetch(getVillageLabelsGeoJsonUrl()).then(r => r.ok ? r.json() : null).catch(() => null),
+  ]);
+
+  return {
+    ranhGioiXa: xa,
+    ranhGioiThon: thon,
+    thonNhanTen: ten,
+  };
 }
 
 /**

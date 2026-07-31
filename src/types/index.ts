@@ -26,18 +26,27 @@ export interface Village {
 }
 
 // ============================================================
+//  SCHOOL DATA TYPES
+// ============================================================
+
+export type SchoolLevel = 'Mầm non' | 'Tiểu học' | 'THCS' | 'THPT' | 'Khác';
+
+export interface School {
+  id: string;
+  name: string;
+  level: SchoolLevel;
+  lat: number;
+  lng: number;
+}
+
+
+// ============================================================
 //  APP CONFIGURATION TYPES
 // ============================================================
 
 export interface AnimationConfig {
   duration: number;
   ease: string;
-}
-
-export interface PresentationConfig {
-  interval: number;       // ms between slides
-  autoPlay: boolean;
-  intervals: number[];    // available intervals in ms
 }
 
 export interface PathsConfig {
@@ -59,7 +68,6 @@ export interface AppConfig {
   logo: string | null;
   colors: ColorsConfig;
   animation: AnimationConfig;
-  presentation: PresentationConfig;
   paths: PathsConfig;
 }
 
@@ -67,21 +75,8 @@ export interface AppConfig {
 //  UI STATE TYPES
 // ============================================================
 
-export type ViewMode = 'overview' | 'village';
 export type Theme = 'light' | 'dark';
 export type PanelLayout = 'standard' | 'presentation' | 'compact';
-
-export interface AppState {
-  selectedVillage: Village | null;
-  viewMode: ViewMode;
-  theme: Theme;
-  isPresenting: boolean;
-  isFullscreen: boolean;
-  isAutoPlaying: boolean;
-  autoPlayInterval: number;
-  sidebarOpen: boolean;
-  infoPanelOpen: boolean;
-}
 
 // ============================================================
 //  SEARCH TYPES
@@ -101,18 +96,6 @@ export interface ViewerState {
   scale: number;
   positionX: number;
   positionY: number;
-}
-
-// ============================================================
-//  PRESENTATION TYPES
-// ============================================================
-
-export interface PresentationState {
-  currentIndex: number;
-  totalCount: number;
-  isPlaying: boolean;
-  interval: number;
-  progress: number;       // 0–1
 }
 
 // ============================================================

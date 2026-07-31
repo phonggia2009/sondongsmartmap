@@ -21,11 +21,10 @@ const queryClient = new QueryClient({
 });
 
 // ============================================================
-//  Lazy-loaded pages (code splitting)
+//  Lazy-loaded pages
 // ============================================================
 
 const HomePage = lazy(() => import('@/pages/Home/HomePage'));
-const PresentationPage = lazy(() => import('@/pages/Presentation/PresentationPage'));
 
 // ============================================================
 //  App Layout Shell
@@ -40,9 +39,8 @@ function AppShell() {
         <Suspense fallback={<LoadingScreen />}>
           <AnimatePresence mode="wait">
             <Routes>
-              <Route path="/"             element={<HomePage />} />
-              <Route path="/presentation" element={<PresentationPage />} />
-              <Route path="*"             element={<Navigate to="/" replace />} />
+              <Route path="/"  element={<HomePage />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </AnimatePresence>
         </Suspense>

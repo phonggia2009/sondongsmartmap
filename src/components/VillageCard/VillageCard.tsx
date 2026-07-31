@@ -1,11 +1,11 @@
 import { memo } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Users, Maximize2 } from 'lucide-react';
+import { MapPin, Users, BarChart3, ChevronRight } from 'lucide-react';
 import type { Village } from '@/types';
 import { useAppContext } from '@/context/AppContext';
 
 // ============================================================
-//  VillageCard Component
+//  VillageCard Component — Enhanced with richer visuals
 // ============================================================
 
 interface VillageCardProps {
@@ -22,7 +22,7 @@ function highlightText(text: string, query: string): React.ReactNode {
   const parts = text.split(regex);
   return parts.map((part, i) =>
     regex.test(part)
-      ? <mark key={i} className="bg-accent-400/30 text-accent-300 rounded px-0.5 not-italic">{part}</mark>
+      ? <mark key={i} className="bg-accent-400/25 text-accent-400 rounded px-0.5 not-italic font-semibold">{part}</mark>
       : part
   );
 }
@@ -45,14 +45,14 @@ export const VillageCard = memo(function VillageCard({
         flex items-center gap-3 group relative overflow-hidden
         ${isSelected
           ? isDark
-            ? 'bg-gov-700 ring-1 ring-accent-500/60 shadow-glow'
-            : 'bg-gov-50 ring-1 ring-gov-400 shadow-card'
+            ? 'bg-gradient-to-r from-gov-800/90 to-gov-800/60 ring-1 ring-accent-500/50 shadow-glow-accent'
+            : 'bg-gradient-to-r from-gov-50 to-blue-50 ring-1 ring-gov-300 shadow-card'
           : isActive
             ? isDark
-              ? 'bg-gov-800/70 ring-1 ring-gov-600'
+              ? 'bg-gov-800/50 ring-1 ring-gov-600/50'
               : 'bg-gray-50 ring-1 ring-gray-200'
             : isDark
-              ? 'hover:bg-gov-800/60'
+              ? 'hover:bg-gov-800/40'
               : 'hover:bg-gray-50'
         }
       `}
@@ -62,10 +62,10 @@ export const VillageCard = memo(function VillageCard({
       aria-pressed={isSelected}
       aria-label={`Xem thôn ${village.name}`}
     >
-      {/* Selected indicator */}
+      {/* Selected indicator bar */}
       {isSelected && (
         <motion.div
-          className="absolute left-0 top-0 bottom-0 w-0.5 bg-accent-400 rounded-r"
+          className={`absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full ${isDark ? 'bg-accent-400' : 'bg-gov-600'}`}
           layoutId="selectedIndicator"
           transition={{ duration: 0.25, ease: 'easeOut' }}
         />
@@ -73,12 +73,14 @@ export const VillageCard = memo(function VillageCard({
 
       {/* Village number badge */}
       <div className={`
-        flex-shrink-0 w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold
-        transition-colors duration-200
+        flex-shrink-0 w-9 h-9 rounded-xl flex items-center justify-center text-xs font-bold
+        transition-all duration-200
         ${isSelected
-          ? 'bg-accent-500 text-white'
+          ? isDark
+            ? 'bg-accent-500/20 text-accent-400 ring-1 ring-accent-500/30'
+            : 'bg-gov-600 text-white shadow-sm'
           : isDark
-            ? 'bg-gov-800 text-gov-400 group-hover:bg-gov-700 group-hover:text-gov-300'
+            ? 'bg-gov-800/60 text-gov-400 group-hover:bg-gov-700 group-hover:text-gov-300'
             : 'bg-gray-100 text-gray-500 group-hover:bg-gov-100 group-hover:text-gov-600'
         }
       `}>
@@ -97,34 +99,47 @@ export const VillageCard = memo(function VillageCard({
           {highlightText(village.name, searchQuery)}
         </p>
 
-        <div className="flex items-center gap-2 mt-0.5">
+        <div className="flex items-center gap-2.5 mt-1">
           <span className={`
-            flex items-center gap-1 text-xs
+            flex items-center gap-1 text-[11px]
             ${isDark ? 'text-gov-500' : 'text-gray-400'}
           `}>
             <MapPin className="w-3 h-3" />
             {village.area}
           </span>
           <span className={`
-            flex items-center gap-1 text-xs
+            flex items-center gap-1 text-[11px]
             ${isDark ? 'text-gov-500' : 'text-gray-400'}
           `}>
             <Users className="w-3 h-3" />
-            {village.partyMembers} đảng viên
+            {village.partyMembers} ĐV
           </span>
+          {village.population !== undefined && (
+            <span className={`
+              flex items-center gap-1 text-[11px]
+              ${isDark ? 'text-gov-500' : 'text-gray-400'}
+            `}>
+              <BarChart3 className="w-3 h-3" />
+              {village.population.toLocaleString('vi-VN')}
+            </span>
+          )}
         </div>
       </div>
 
-      {/* Arrow icon */}
-      <Maximize2 className={`
-        flex-shrink-0 w-3.5 h-3.5 transition-all duration-200
-        ${isSelected
-          ? 'text-accent-400 opacity-100'
-          : isDark
-            ? 'text-gov-600 opacity-0 group-hover:opacity-100'
-            : 'text-gray-300 opacity-0 group-hover:opacity-100'
-        }
-      `} />
+      {/* Selected chevron */}
+      {isSelected && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center
+            ${isDark ? 'bg-accent-500/20 text-accent-400' : 'bg-gov-100 text-gov-600'}
+          `}
+        >
+          <ChevronRight className="w-3 h-3" />
+        </motion.div>
+      )}
     </motion.button>
   );
 });
+
+
