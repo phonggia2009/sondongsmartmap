@@ -192,10 +192,12 @@ export const Sidebar = memo(function Sidebar({
     <aside
       key="sidebar-expanded"
       className="flex flex-col w-full h-full overflow-hidden flex-shrink-0 glass-sidebar z-20"
+      data-tour="sidebar"
     >
       {/* ── Dropdown Header Selector ───────────────── */}
       <div
         ref={dropdownRef}
+        data-tour="sidebar-selector"
         className={`
           relative flex-shrink-0 px-3 py-2 flex items-center justify-between z-30
           ${isDark ? 'border-b border-gov-800/60 bg-gov-900/50' : 'border-b border-gray-100 bg-gray-50/60'}

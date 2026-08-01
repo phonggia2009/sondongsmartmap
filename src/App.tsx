@@ -6,6 +6,7 @@ import { AppProvider } from '@/context/AppContext';
 import { Header } from '@/components/Header/Header';
 import { Footer } from '@/components/Footer/Footer';
 import { LoadingScreen } from '@/components/Loading/LoadingScreen';
+import { OnboardingTour } from '@/components/Onboarding/OnboardingTour';
 
 // ============================================================
 //  React Query Client
@@ -47,6 +48,7 @@ function AppShell() {
       </main>
 
       <Footer />
+      <OnboardingTour />
     </div>
   );
 }

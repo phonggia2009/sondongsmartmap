@@ -51,6 +51,7 @@ export const Toolbar = memo(function Toolbar({
 
   return (
     <motion.div
+      data-tour="map-toolbar"
       className={`
         absolute bottom-4 right-4 z-20 flex flex-col gap-1 p-1.5 rounded-xl
         backdrop-blur-md border shadow-glass

@@ -9,6 +9,7 @@ import {
   ChevronRight,
   PanelLeftClose,
   PanelLeftOpen,
+  HelpCircle,
 } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { APP_CONFIG } from '@/config';
@@ -26,6 +27,7 @@ export const Header = memo(function Header() {
     selectedVillage,
     sidebarOpen,
     toggleSidebar,
+    startTour,
   } = useAppContext();
 
   return (
@@ -50,6 +52,7 @@ export const Header = memo(function Header() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           title={sidebarOpen ? 'Thu gọn sidebar' : 'Mở sidebar'}
+          data-tour="sidebar-toggle"
         >
           <AnimatePresence mode="wait" initial={false}>
             {sidebarOpen ? (
@@ -139,7 +142,26 @@ export const Header = memo(function Header() {
       </div>
 
       {/* Right — Controls */}
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1 sm:gap-1.5" data-tour="header-controls">
+        {/* Help / Tour button */}
+        <motion.button
+          onClick={startTour}
+          className={`
+            flex items-center gap-1.5 px-2.5 py-1.5 rounded-xl text-xs font-semibold transition-all border
+            ${isDark
+              ? 'bg-accent-500/15 text-accent-400 border-accent-500/30 hover:bg-accent-500/25'
+              : 'bg-accent-50 text-accent-700 border-accent-200 hover:bg-accent-100'
+            }
+          `}
+          whileHover={{ scale: 1.04, y: -1 }}
+          whileTap={{ scale: 0.96 }}
+          title="Hướng dẫn sử dụng website"
+          data-tour="help-btn"
+        >
+          <HelpCircle className="w-4 h-4 text-accent-500" />
+          <span className="hidden sm:inline">Hướng dẫn</span>
+        </motion.button>
+
         {/* Dark mode toggle */}
         <motion.button
           onClick={toggleTheme}
@@ -199,3 +221,4 @@ export const Header = memo(function Header() {
     </motion.header>
   );
 });
+

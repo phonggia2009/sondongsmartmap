@@ -54,9 +54,18 @@ interface AppContextValue {
   // Fullscreen
   isFullscreen: boolean;
   toggleFullscreen: () => void;
+
+  // Onboarding Tour
+  isTourOpen: boolean;
+  startTour: () => void;
+  closeTour: () => void;
+  completeTour: () => void;
+  hasSeenTour: boolean;
 }
 
 const AppContext = createContext<AppContextValue | null>(null);
+
+const TOUR_STORAGE_KEY = 'storymap_tour_seen';
 
 export function AppProvider({ children }: { children: ReactNode }) {
   const [selectedVillage, setSelectedVillage] = useState<Village | null>(null);
@@ -72,6 +81,40 @@ export function AppProvider({ children }: { children: ReactNode }) {
   );
   const [activeSidebarTabState, setActiveSidebarTabState] = useState<'villages' | 'schools'>('villages');
   const [infoPanelOpen,    setInfoPanelOpen]    = useState(true);
+
+  // Onboarding Tour state
+  const [isTourOpen, setIsTourOpen] = useState(false);
+  const [hasSeenTour, setHasSeenTour] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    return localStorage.getItem(TOUR_STORAGE_KEY) === 'true';
+  });
+
+  React.useEffect(() => {
+    if (!hasSeenTour) {
+      const timer = setTimeout(() => {
+        setIsTourOpen(true);
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [hasSeenTour]);
+
+  const startTour = useCallback(() => {
+    setIsTourOpen(true);
+  }, []);
+
+  const closeTour = useCallback(() => {
+    setIsTourOpen(false);
+  }, []);
+
+  const completeTour = useCallback(() => {
+    setIsTourOpen(false);
+    setHasSeenTour(true);
+    try {
+      localStorage.setItem(TOUR_STORAGE_KEY, 'true');
+    } catch (err) {
+      console.error('Failed to save tour state to localStorage:', err);
+    }
+  }, []);
 
   const { isDark, toggle: toggleTheme }         = useTheme();
   const { isFullscreen, toggle: toggleFullscreen } = useFullscreen();
@@ -137,6 +180,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     toggleTheme,
     isFullscreen,
     toggleFullscreen,
+    isTourOpen,
+    startTour,
+    closeTour,
+    completeTour,
+    hasSeenTour,
   }), [
     selectedVillage, selectVillage,
     selectedSchool, selectSchool,
@@ -145,6 +193,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     infoPanelOpen, setInfoPanelOpen, toggleInfoPanel,
     isDark, toggleTheme,
     isFullscreen, toggleFullscreen,
+    isTourOpen, startTour, closeTour, completeTour, hasSeenTour,
   ]);
 
   return (
@@ -161,3 +210,4 @@ export function useAppContext(): AppContextValue {
   }
   return ctx;
 }
+
