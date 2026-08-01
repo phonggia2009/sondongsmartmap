@@ -12,6 +12,7 @@ interface POILayerPanelProps<T extends POIItem> {
   onSelectItem: (item: T | null) => void;
   searchQuery?: string;
   onSearchQueryChange?: (query: string) => void;
+  renderItemSubtitle?: (item: T) => React.ReactNode;
 }
 
 export function POILayerPanel<T extends POIItem>({
@@ -23,6 +24,7 @@ export function POILayerPanel<T extends POIItem>({
   onSelectItem,
   searchQuery: externalSearchQuery,
   onSearchQueryChange,
+  renderItemSubtitle,
 }: POILayerPanelProps<T>) {
   const [internalSearchQuery, setInternalSearchQuery] = useState('');
   const searchQuery = externalSearchQuery ?? internalSearchQuery;
@@ -141,17 +143,25 @@ export function POILayerPanel<T extends POIItem>({
                 const category = config.categories.find(c => c.id === item.categoryId);
                 
                 return (
-                  <motion.button
+                  <motion.div
                     key={item.id}
                     layout="position"
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, scale: 0.95 }}
                     transition={{ duration: 0.2 }}
+                    role="button"
+                    tabIndex={0}
                     onClick={() => onSelectItem(isSelected ? null : item)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        onSelectItem(isSelected ? null : item);
+                      }
+                    }}
                     className={`
-                      w-full text-left p-3 rounded-xl transition-all duration-200 border
-                      flex items-start gap-3 group
+                      w-full text-left p-3 rounded-xl transition-all duration-200 border cursor-pointer
+                      flex items-start gap-3 group select-none
                       ${isSelected
                         ? 'shadow-sm dark:bg-gov-900'
                         : 'bg-white dark:bg-transparent border-transparent hover:bg-gray-50 dark:hover:bg-gov-900 hover:border-gray-200 dark:hover:border-gov-800'
@@ -167,10 +177,10 @@ export function POILayerPanel<T extends POIItem>({
                         {item.name}
                       </div>
                       <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">
-                        {category?.name || 'Chưa phân loại'}
+                        {renderItemSubtitle ? renderItemSubtitle(item) : (category?.name || 'Chưa phân loại')}
                       </div>
                     </div>
-                  </motion.button>
+                  </motion.div>
                 );
               })}
             </AnimatePresence>

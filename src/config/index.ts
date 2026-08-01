@@ -67,6 +67,10 @@ export const getVillageBoundariesGeoJsonUrl = (): string =>
 export const getVillageLabelsGeoJsonUrl = (): string =>
   `${APP_CONFIG.paths.data}/thon_nhan_ten.geojson`;
 
+/** Returns the full URL for health stations (Trạm y tế) GeoJSON file */
+export const getHealthStationsGeoJsonUrl = (): string =>
+  `${APP_CONFIG.paths.data}/tramyte.geojson`;
+
 /** Boundary direction labels in Vietnamese */
 export const DIRECTION_LABELS: Record<string, string> = {
   north: 'Phía Bắc',

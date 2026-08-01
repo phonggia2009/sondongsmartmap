@@ -6,14 +6,16 @@ import {
   GraduationCap,
   ChevronDown,
   Check,
+  Cross,
 } from 'lucide-react';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext, SidebarTab } from '@/context/AppContext';
 import { SearchBox } from '@/components/SearchBox/SearchBox';
 import { VillageCard } from '@/components/VillageCard/VillageCard';
 import { EmptyState } from '@/components/EmptyState/EmptyState';
 import { SchoolSidebarContent } from './SchoolSidebarContent';
+import { HealthStationSidebarContent } from './HealthStationSidebarContent';
 import { useSearch } from '@/hooks/useSearch';
-import type { Village, School } from '@/types';
+import type { Village, School, HealthStation } from '@/types';
 
 // ============================================================
 //  SIDEBAR LAYER REGISTRY — Easily extensible for future POI layers
@@ -21,7 +23,7 @@ import type { Village, School } from '@/types';
 // ============================================================
 
 interface SidebarLayerOption {
-  id: 'villages' | 'schools';
+  id: SidebarTab;
   title: string;
   subtitle: string;
   icon: typeof Map;
@@ -46,6 +48,14 @@ const SIDEBAR_LAYERS: SidebarLayerOption[] = [
     activeColorClass: 'text-green-600 dark:text-green-400',
     badgeBg: 'bg-green-500/10',
   },
+  {
+    id: 'healthStations',
+    title: 'Danh Sách Trạm Y Tế',
+    subtitle: 'Trạm y tế & y tế cơ sở',
+    icon: Cross,
+    activeColorClass: 'text-red-600 dark:text-red-400',
+    badgeBg: 'bg-red-500/10',
+  },
 ];
 
 // ============================================================
@@ -56,6 +66,7 @@ interface SidebarProps {
   villages: Village[];
   onVillageSelect: (village: Village) => void;
   onSchoolSelect?: (school: School) => void;
+  onHealthStationSelect?: (station: HealthStation) => void;
   /** When true, always render the expanded layout regardless of sidebarOpen state.
    *  Used inside the mobile bottom sheet where the sheet itself controls open/close. */
   forceExpanded?: boolean;
@@ -65,6 +76,7 @@ export const Sidebar = memo(function Sidebar({
   villages,
   onVillageSelect,
   onSchoolSelect,
+  onHealthStationSelect,
   forceExpanded = false,
 }: SidebarProps) {
   const {
@@ -132,6 +144,7 @@ export const Sidebar = memo(function Sidebar({
     return (
       <aside
         key="sidebar-collapsed"
+        data-tour="sidebar"
         className={`
           flex flex-col items-center w-full h-full flex-shrink-0 py-3 gap-2
           glass-sidebar z-20 overflow-hidden
@@ -169,6 +182,23 @@ export const Sidebar = memo(function Sidebar({
           title="Trường học"
         >
           <GraduationCap className="w-5 h-5" />
+        </motion.button>
+
+        {/* Health Station tab icon */}
+        <motion.button
+          onClick={() => { setActiveSidebarTab('healthStations'); toggleSidebar(); }}
+          className={`
+            w-10 h-10 rounded-xl flex items-center justify-center transition-all
+            ${activeSidebarTab === 'healthStations'
+              ? (isDark ? 'bg-red-500/15 text-red-400' : 'bg-red-50 text-red-600')
+              : (isDark ? 'text-gov-500 hover:text-gov-300 hover:bg-gov-800' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100')
+            }
+          `}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.95 }}
+          title="Trạm y tế"
+        >
+          <Cross className="w-5 h-5" />
         </motion.button>
 
         {/* Divider */}
@@ -363,6 +393,11 @@ export const Sidebar = memo(function Sidebar({
       {/* ── Schools Tab ──────────────────────────────── */}
       {activeSidebarTab === 'schools' && (
         <SchoolSidebarContent onSchoolSelect={onSchoolSelect} />
+      )}
+
+      {/* ── Health Stations Tab ──────────────────────── */}
+      {activeSidebarTab === 'healthStations' && (
+        <HealthStationSidebarContent onHealthStationSelect={onHealthStationSelect} />
       )}
 
     </aside>

@@ -10,7 +10,7 @@ import { InformationPanel } from '@/components/InformationPanel/InformationPanel
 import { Sidebar } from '@/components/Sidebar/Sidebar';
 import { LoadingScreen } from '@/components/Loading/LoadingScreen';
 import { EmptyState } from '@/components/EmptyState/EmptyState';
-import type { Village, School } from '@/types';
+import type { Village, School, HealthStation } from '@/types';
 
 // ============================================================
 //  MobileSidebarDrawer — overlay drawer, only shown on mobile
@@ -23,12 +23,14 @@ const MobileSidebarDrawer = memo(function MobileSidebarDrawer({
   onClose,
   onVillageSelect,
   onSchoolSelect,
+  onHealthStationSelect,
 }: {
   villages: Village[];
   sidebarOpen: boolean;
   onClose: () => void;
   onVillageSelect: (village: Village) => void;
   onSchoolSelect?: (school: School) => void;
+  onHealthStationSelect?: (station: HealthStation) => void;
 }) {
   return (
     <>
@@ -71,6 +73,7 @@ const MobileSidebarDrawer = memo(function MobileSidebarDrawer({
                 villages={villages}
                 onVillageSelect={onVillageSelect}
                 onSchoolSelect={onSchoolSelect}
+                onHealthStationSelect={onHealthStationSelect}
                 forceExpanded
               />
             </div>
@@ -116,6 +119,7 @@ export default function HomePage() {
     selectedVillage,
     selectVillage,
     selectSchool,
+    selectHealthStation,
     infoPanelOpen,
     setInfoPanelOpen,
     toggleInfoPanel,
@@ -150,6 +154,15 @@ export default function HomePage() {
   const handleSchoolSelectDesktop = useCallback((school: School) => {
     selectSchool(school);
   }, [selectSchool]);
+
+  const handleHealthStationSelectMobile = useCallback((station: HealthStation) => {
+    selectHealthStation(station);
+    setSidebarOpen(false);
+  }, [selectHealthStation, setSidebarOpen]);
+
+  const handleHealthStationSelectDesktop = useCallback((station: HealthStation) => {
+    selectHealthStation(station);
+  }, [selectHealthStation]);
 
   const handleCloseMobileDrawer = useCallback(() => {
     setSidebarOpen(false);
@@ -194,6 +207,7 @@ export default function HomePage() {
             villages={villages}
             onVillageSelect={handleVillageSelectDesktop}
             onSchoolSelect={handleSchoolSelectDesktop}
+            onHealthStationSelect={handleHealthStationSelectDesktop}
           />
         )}
       </div>
@@ -206,6 +220,7 @@ export default function HomePage() {
           onClose={handleCloseMobileDrawer}
           onVillageSelect={handleVillageSelectMobile}
           onSchoolSelect={handleSchoolSelectMobile}
+          onHealthStationSelect={handleHealthStationSelectMobile}
         />
       )}
 

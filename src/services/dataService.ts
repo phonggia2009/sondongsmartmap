@@ -1,7 +1,8 @@
-import type { Village, School } from '@/types';
+import type { Village, School, HealthStation } from '@/types';
 import {
   getDataUrl,
   getSchoolsGeoJsonUrl,
+  getHealthStationsGeoJsonUrl,
   getCommuneBoundaryGeoJsonUrl,
   getVillageBoundariesGeoJsonUrl,
   getVillageLabelsGeoJsonUrl,
@@ -110,6 +111,39 @@ export async function fetchSchools(): Promise<School[]> {
           id: `school-${index}`,
           name,
           level: parseSchoolLevel(name),
+          lng: feature.geometry.coordinates[0],
+          lat: feature.geometry.coordinates[1],
+        });
+      }
+    });
+  }
+  return parsed;
+}
+
+/**
+ * Fetches and parses health stations GeoJSON data.
+ */
+export async function fetchHealthStations(): Promise<HealthStation[]> {
+  const url = getHealthStationsGeoJsonUrl();
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Không thể tải dữ liệu trạm y tế (HTTP ${response.status})`);
+  }
+  const data = await response.json();
+
+  const parsed: HealthStation[] = [];
+  if (Array.isArray(data.features)) {
+    data.features.forEach((feature: any, index: number) => {
+      if (feature.geometry?.type === 'Point') {
+        const name =
+          feature.properties?.commune_name ||
+          feature.properties?.name ||
+          'Trạm y tế';
+        parsed.push({
+          id: `health-station-${index}`,
+          name,
+          doctor: feature.properties?.doctor || '',
+          phone: feature.properties?.phone || '',
           lng: feature.geometry.coordinates[0],
           lat: feature.geometry.coordinates[1],
         });

@@ -6,15 +6,18 @@ import React, {
   useMemo,
   type ReactNode,
 } from 'react';
-import type { Village, School, SchoolLevel } from '@/types';
+import type { Village, School, SchoolLevel, HealthStation } from '@/types';
 import { useTheme } from '@/hooks/useTheme';
 import { useFullscreen } from '@/hooks/useFullscreen';
 import { DEFAULT_SCHOOL_FILTERS } from '@/utils/schoolUtils';
+import { DEFAULT_HEALTH_STATION_FILTERS } from '@/utils/healthStationUtils';
 
 // ============================================================
 //  APP CONTEXT
 //  Global UI state shared across all components.
 // ============================================================
+
+export type SidebarTab = 'villages' | 'schools' | 'healthStations';
 
 interface AppContextValue {
   // Village selection
@@ -25,12 +28,23 @@ interface AppContextValue {
   selectedSchool: School | null;
   selectSchool: (school: School | null) => void;
 
+  // Health station selection
+  selectedHealthStation: HealthStation | null;
+  selectHealthStation: (station: HealthStation | null) => void;
+
   // School filters & search
   schoolFilters: Record<SchoolLevel, boolean>;
   toggleSchoolFilter: (level: SchoolLevel) => void;
   setSchoolFilters: React.Dispatch<React.SetStateAction<Record<SchoolLevel, boolean>>>;
   schoolSearchQuery: string;
   setSchoolSearchQuery: (query: string) => void;
+
+  // Health station filters & search
+  healthStationFilters: Record<string, boolean>;
+  toggleHealthStationFilter: (category: string) => void;
+  setHealthStationFilters: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
+  healthStationSearchQuery: string;
+  setHealthStationSearchQuery: (query: string) => void;
 
   // View mode
   isOverview: boolean;
@@ -39,8 +53,8 @@ interface AppContextValue {
   sidebarOpen: boolean;
   setSidebarOpen: (open: boolean) => void;
   toggleSidebar: () => void;
-  activeSidebarTab: 'villages' | 'schools';
-  setActiveSidebarTab: (tab: 'villages' | 'schools') => void;
+  activeSidebarTab: SidebarTab;
+  setActiveSidebarTab: (tab: SidebarTab) => void;
 
   // Info panel
   infoPanelOpen: boolean;
@@ -68,22 +82,28 @@ const AppContext = createContext<AppContextValue | null>(null);
 const TOUR_STORAGE_KEY = 'storymap_tour_seen';
 
 export function AppProvider({ children }: { children: ReactNode }) {
-  const [selectedVillage, setSelectedVillage] = useState<Village | null>(null);
-  const [selectedSchool, setSelectedSchool]   = useState<School | null>(null);
-  const [schoolFilters, setSchoolFilters]     = useState<Record<SchoolLevel, boolean>>(DEFAULT_SCHOOL_FILTERS);
-  const [schoolSearchQuery, setSchoolSearchQuery] = useState('');
+  const [selectedVillage, setSelectedVillage]             = useState<Village | null>(null);
+  const [selectedSchool, setSelectedSchool]               = useState<School | null>(null);
+  const [selectedHealthStation, setSelectedHealthStation] = useState<HealthStation | null>(null);
+
+  const [schoolFilters, setSchoolFilters]                 = useState<Record<SchoolLevel, boolean>>(DEFAULT_SCHOOL_FILTERS);
+  const [schoolSearchQuery, setSchoolSearchQuery]         = useState('');
   const handleSetSchoolSearchQuery = useCallback((query: string) => {
     setSchoolSearchQuery(query);
   }, []);
 
-  const [sidebarOpen,      setSidebarOpen]      = useState(
-    typeof window !== 'undefined' ? window.innerWidth >= 768 : true
-  );
-  const [activeSidebarTabState, setActiveSidebarTabState] = useState<'villages' | 'schools'>('villages');
-  const [infoPanelOpen,    setInfoPanelOpen]    = useState(true);
+  const [healthStationFilters, setHealthStationFilters]         = useState<Record<string, boolean>>(DEFAULT_HEALTH_STATION_FILTERS);
+  const [healthStationSearchQuery, setHealthStationSearchQuery] = useState('');
+  const handleSetHealthStationSearchQuery = useCallback((query: string) => {
+    setHealthStationSearchQuery(query);
+  }, []);
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [activeSidebarTabState, setActiveSidebarTabState] = useState<SidebarTab>('villages');
+  const [infoPanelOpen, setInfoPanelOpen]                = useState(true);
 
   // Onboarding Tour state
-  const [isTourOpen, setIsTourOpen] = useState(false);
+  const [isTourOpen, setIsTourOpen]   = useState(false);
   const [hasSeenTour, setHasSeenTour] = useState(() => {
     if (typeof window === 'undefined') return true;
     return localStorage.getItem(TOUR_STORAGE_KEY) === 'true';
@@ -116,15 +136,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const { isDark, toggle: toggleTheme }         = useTheme();
+  const { isDark, toggle: toggleTheme }            = useTheme();
   const { isFullscreen, toggle: toggleFullscreen } = useFullscreen();
 
-  const setActiveSidebarTab = useCallback((tab: 'villages' | 'schools') => {
+  const setActiveSidebarTab = useCallback((tab: SidebarTab) => {
     setActiveSidebarTabState(prev => {
       if (prev !== tab) {
         // Deselect item when switching tabs to prevent state leakage between modes
         setSelectedVillage(null);
         setSelectedSchool(null);
+        setSelectedHealthStation(null);
       }
       return tab;
     });
@@ -132,21 +153,38 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const selectVillage = useCallback((village: Village | null) => {
     setSelectedVillage(village);
-    if (village) setSelectedSchool(null);
-    // Use functional form to avoid capturing infoPanelOpen in closure
+    if (village) {
+      setSelectedSchool(null);
+      setSelectedHealthStation(null);
+    }
     setInfoPanelOpen(prev => {
       if (village === null) return false;
-      return prev ? prev : true; // open panel if not already open
+      return prev ? prev : true;
     });
   }, []);
 
   const selectSchool = useCallback((school: School | null) => {
     setSelectedSchool(school);
-    if (school) setSelectedVillage(null);
+    if (school) {
+      setSelectedVillage(null);
+      setSelectedHealthStation(null);
+    }
+  }, []);
+
+  const selectHealthStation = useCallback((station: HealthStation | null) => {
+    setSelectedHealthStation(station);
+    if (station) {
+      setSelectedVillage(null);
+      setSelectedSchool(null);
+    }
   }, []);
 
   const toggleSchoolFilter = useCallback((level: SchoolLevel) => {
     setSchoolFilters(prev => ({ ...prev, [level]: !prev[level] }));
+  }, []);
+
+  const toggleHealthStationFilter = useCallback((category: string) => {
+    setHealthStationFilters(prev => ({ ...prev, [category]: !prev[category] }));
   }, []);
 
   const toggleInfoPanel = useCallback(() => {
@@ -162,12 +200,19 @@ export function AppProvider({ children }: { children: ReactNode }) {
     selectVillage,
     selectedSchool,
     selectSchool,
+    selectedHealthStation,
+    selectHealthStation,
     schoolFilters,
     toggleSchoolFilter,
     setSchoolFilters,
     schoolSearchQuery,
     setSchoolSearchQuery: handleSetSchoolSearchQuery,
-    isOverview: selectedVillage === null && selectedSchool === null,
+    healthStationFilters,
+    toggleHealthStationFilter,
+    setHealthStationFilters,
+    healthStationSearchQuery,
+    setHealthStationSearchQuery: handleSetHealthStationSearchQuery,
+    isOverview: selectedVillage === null && selectedSchool === null && selectedHealthStation === null,
     sidebarOpen,
     setSidebarOpen,
     toggleSidebar,
@@ -188,7 +233,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }), [
     selectedVillage, selectVillage,
     selectedSchool, selectSchool,
+    selectedHealthStation, selectHealthStation,
     schoolFilters, toggleSchoolFilter, schoolSearchQuery, handleSetSchoolSearchQuery,
+    healthStationFilters, toggleHealthStationFilter, healthStationSearchQuery, handleSetHealthStationSearchQuery,
     sidebarOpen, setSidebarOpen, toggleSidebar, activeSidebarTabState, setActiveSidebarTab,
     infoPanelOpen, setInfoPanelOpen, toggleInfoPanel,
     isDark, toggleTheme,

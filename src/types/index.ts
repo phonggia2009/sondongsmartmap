@@ -37,8 +37,18 @@ export interface School {
   level: SchoolLevel;
   lat: number;
   lng: number;
-}
+// ============================================================
+//  HEALTH STATION DATA TYPES
+// ============================================================
 
+export interface HealthStation {
+  id: string;
+  name: string;
+  doctor?: string;
+  phone?: string;
+  lat: number;
+  lng: number;
+}
 
 // ============================================================
 //  APP CONFIGURATION TYPES

@@ -1,9 +1,10 @@
 import { memo, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Users, Home, GraduationCap } from 'lucide-react';
+import { MapPin, Users, Home, GraduationCap, Cross } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { useVillages } from '@/hooks/useVillages';
 import { useSchools } from '@/hooks/useSchools';
+import { useHealthStations } from '@/hooks/useHealthStations';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 // ============================================================
@@ -12,11 +13,13 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 
 export const MapOverlayStats = memo(function MapOverlayStats() {
   const { selectedVillage, isDark, activeSidebarTab, schoolFilters } = useAppContext();
-  const { villages } = useVillages();
-  const { schools }  = useSchools();
-  const isMobile = useIsMobile();
+  const { villages }       = useVillages();
+  const { schools }        = useSchools();
+  const { healthStations } = useHealthStations();
+  const isMobile           = useIsMobile();
 
-  const isSchoolMode = activeSidebarTab === 'schools';
+  const isSchoolMode        = activeSidebarTab === 'schools';
+  const isHealthStationMode = activeSidebarTab === 'healthStations';
 
   const villageStats = useMemo(() => ({
     count:       villages.length,
@@ -28,6 +31,10 @@ export const MapOverlayStats = memo(function MapOverlayStats() {
     const visible = schools.filter(s => schoolFilters[s.level]);
     return { total: schools.length, visible: visible.length };
   }, [schools, schoolFilters]);
+
+  const healthStats = useMemo(() => {
+    return { total: healthStations.length };
+  }, [healthStations]);
 
   const containerClass = `
     absolute z-[400] pointer-events-auto
@@ -58,6 +65,24 @@ export const MapOverlayStats = memo(function MapOverlayStats() {
             value={`${schoolStats.visible}/${schoolStats.total}`}
             isDark={isDark}
             color="emerald"
+          />
+        </motion.div>
+      ) : isHealthStationMode ? (
+        /* Health station mode stats */
+        <motion.div
+          key="health-stats"
+          className={containerClass}
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.95 }}
+          transition={{ duration: 0.3 }}
+        >
+          <StatChip
+            icon={<Cross className="w-3.5 h-3.5" />}
+            label="Trạm y tế"
+            value={healthStats.total}
+            isDark={isDark}
+            color="amber"
           />
         </motion.div>
       ) : (

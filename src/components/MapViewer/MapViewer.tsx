@@ -9,6 +9,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useGeoJSONLayers } from '@/hooks/useGeoJSONLayers';
 import { MapOverlayStats } from './MapOverlayStats';
 import { SchoolsLayer } from './SchoolsLayer';
+import { HealthStationsLayer } from './HealthStationsLayer';
 import { VillageBoundariesLayer } from './VillageBoundariesLayer';
 import { VillageLabelsLayer } from './VillageLabelsLayer';
 import L from 'leaflet';
@@ -81,16 +82,10 @@ function VillageFlyToHandler({
 }
 
 // Handler: automatically invalidate Leaflet map size.
-// Uses THREE separate mechanisms to cover all resize scenarios:
-//   1. setTimeout after sidebarOpen toggle (sidebar animation)
-//   2. window.resize event (real browser resize / orientation change)
-//   3. ResizeObserver on the map container (catches isMobile switch,
-//      DevTools viewport simulation, and any layout-driven size changes)
 function MapResizeHandler() {
   const map = useMap();
   const { sidebarOpen } = useAppContext();
 
-  // Effect 1: React to sidebar open/close via delayed timeouts only.
   useEffect(() => {
     const t1 = setTimeout(() => map.invalidateSize(), 150);
     const t2 = setTimeout(() => map.invalidateSize(), 400);
@@ -100,7 +95,6 @@ function MapResizeHandler() {
     };
   }, [sidebarOpen, map]);
 
-  // Effect 2: React to real window resize events (browser resize, orientation).
   useEffect(() => {
     let rafId: number;
     const handleWindowResize = () => {
@@ -114,9 +108,6 @@ function MapResizeHandler() {
     };
   }, [map]);
 
-  // Effect 3: ResizeObserver directly on the Leaflet map container.
-  // This catches ALL size changes: isMobile switch, DevTools responsive,
-  // sidebar width CSS transitions, etc. — without needing window.resize.
   useEffect(() => {
     const container = map.getContainer();
     if (!container || typeof ResizeObserver === 'undefined') return;
@@ -136,25 +127,16 @@ function MapResizeHandler() {
   return null;
 }
 
-
-// Click handler: deselect village or school when clicking empty map area
+// Click handler: deselect items when clicking empty map area
 function MapClickHandler({
-  onDeselectVillage,
-  onDeselectSchool,
-  isSchoolMode,
+  onDeselectAll,
 }: {
-  onDeselectVillage: () => void;
-  onDeselectSchool: () => void;
-  isSchoolMode: boolean;
+  onDeselectAll: () => void;
 }) {
   useMapEvents({
     click: (e: any) => {
       if (!e.originalEvent._stopped) {
-        if (isSchoolMode) {
-          onDeselectSchool();
-        } else {
-          onDeselectVillage();
-        }
+        onDeselectAll();
       }
     },
   });
@@ -162,42 +144,24 @@ function MapClickHandler({
 }
 
 export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerProps) {
-  const label = selectedVillage?.name;
+  const {
+    selectVillage,
+    selectSchool,
+    selectHealthStation,
+    activeSidebarTab,
+    isDark,
+  } = useAppContext();
 
-  const { selectVillage, selectSchool, activeSidebarTab, isDark } = useAppContext();
-  const isSchoolMode = activeSidebarTab === 'schools';
+  const isSchoolMode        = activeSidebarTab === 'schools';
+  const isHealthStationMode = activeSidebarTab === 'healthStations';
+  const isVillageMode       = activeSidebarTab === 'villages';
 
   const { ranhGioiXaData, ranhGioiThonData, thonNhanTenData } = useGeoJSONLayers();
 
   return (
     <div className={`relative flex-1 flex flex-col overflow-hidden ${isDark ? 'bg-gov-950' : 'bg-gray-100'}`}>
-      {/* Selected village label — premium pill */}
-      <AnimatePresence>
-        {label && (
-          <motion.div
-            key={label}
-            className="absolute top-4 left-1/2 -translate-x-1/2 z-[400] pointer-events-none"
-            initial={{ opacity: 0, y: -16, scale: 0.9 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -16, scale: 0.9 }}
-            transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
-          >
-            <div className={`
-              flex items-center gap-2 px-4 py-2 rounded-2xl text-sm font-semibold
-              shadow-elevated backdrop-blur-md border
-              ${isDark
-                ? 'bg-gov-900/85 text-white border-gov-700/50'
-                : 'bg-white/90 text-gov-800 border-gray-200/60'
-              }
-            `}>
-              <span className="w-2 h-2 rounded-full bg-accent-400 animate-pulse" />
-              {label}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
 
-      {/* School mode overlay indicator */}
+      {/* Mode overlay indicator */}
       <AnimatePresence>
         {isSchoolMode && (
           <motion.div
@@ -221,6 +185,29 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
             </div>
           </motion.div>
         )}
+
+        {isHealthStationMode && (
+          <motion.div
+            key="health-mode-badge"
+            className="absolute top-4 right-14 z-[400] pointer-events-none"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+          >
+            <div className={`
+              flex items-center gap-2 px-3 py-2 rounded-2xl text-xs font-semibold
+              backdrop-blur-md border shadow-lg
+              ${isDark
+                ? 'bg-red-900/60 text-red-300 border-red-700/40'
+                : 'bg-red-50/90 text-red-700 border-red-200/60'
+              }
+            `}>
+              <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-pulse" />
+              🏥 Chế độ xem trạm y tế
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       <MapContainer
@@ -230,7 +217,6 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
         zoomControl={true}
       >
         <LayersControl position="topright">
-          {/* Base layers */}
           <LayersControl.BaseLayer name="Bản đồ mặc định (OSM)">
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -259,11 +245,13 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
               url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
             />
           </LayersControl.BaseLayer>
-
         </LayersControl>
 
-        {/* Schools layer — automatically displayed when in School mode */}
+        {/* Schools layer — displayed in School mode */}
         {isSchoolMode && <SchoolsLayer />}
+
+        {/* Health Stations layer — displayed in Health Station mode */}
+        {isHealthStationMode && <HealthStationsLayer />}
 
         {/* Commune boundary — always visible */}
         {ranhGioiXaData && (
@@ -281,7 +269,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
         )}
 
         {/* Village boundaries — visible only in Village mode */}
-        {!isSchoolMode && ranhGioiThonData && (
+        {isVillageMode && ranhGioiThonData && (
           <VillageBoundariesLayer
             data={ranhGioiThonData}
             selectedVillage={selectedVillage}
@@ -290,7 +278,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
         )}
 
         {/* Village name labels — visible only in Village mode */}
-        {!isSchoolMode && thonNhanTenData && (
+        {isVillageMode && thonNhanTenData && (
           <VillageLabelsLayer
             data={thonNhanTenData}
             selectedVillage={selectedVillage}
@@ -307,9 +295,11 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
         <MapResizeHandler />
 
         <MapClickHandler
-          onDeselectVillage={() => selectVillage(null)}
-          onDeselectSchool={() => selectSchool(null)}
-          isSchoolMode={isSchoolMode}
+          onDeselectAll={() => {
+            selectVillage(null);
+            selectSchool(null);
+            selectHealthStation(null);
+          }}
         />
       </MapContainer>
 
