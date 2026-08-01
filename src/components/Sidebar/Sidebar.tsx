@@ -252,7 +252,7 @@ export const Sidebar = memo(function Sidebar({
                 <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''} ${isDark ? 'text-gov-400' : 'text-gray-400'}`} />
               </div>
               <p className={`text-[10px] leading-tight truncate ${isDark ? 'text-gov-400' : 'text-gray-400'}`}>
-                {activeSidebarTab === 'villages' ? `${villages.length} thôn xã Sơn Đồng` : 'Trường học địa phương'}
+                {activeSidebarTab === 'villages' ? `${villages.length} thôn xã Sơn Đồng` : activeLayer.subtitle}
               </p>
             </div>
           </div>

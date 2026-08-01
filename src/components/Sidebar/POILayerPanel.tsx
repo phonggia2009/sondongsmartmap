@@ -61,24 +61,10 @@ export function POILayerPanel<T extends POIItem>({
       
       {/* ── Header & Search ──────────────────────────────────── */}
       <div className="flex-shrink-0 px-4 pt-3 pb-2 border-b border-gray-100 dark:border-gov-800">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-2 text-sm font-semibold text-gray-700 dark:text-gray-200 uppercase tracking-wider">
-            <span>{config.icon}</span>
-            <span>{config.title}</span>
-            <span className="text-[10px] bg-gray-100 dark:bg-gov-800 text-gray-500 px-1.5 py-0.5 rounded-md ml-1">
-              {filteredItems.length}/{items.length}
-            </span>
-          </div>
-          <button
-            onClick={() => onToggleAll(!allActive)}
-            className="text-[11px] font-medium px-2 py-1 rounded-md transition-colors bg-gray-100 hover:bg-gray-200 text-gray-600 dark:bg-gov-800 dark:hover:bg-gov-700 dark:text-gray-300"
-          >
-            {allActive ? 'Ẩn tất cả' : 'Hiện tất cả'}
-          </button>
-        </div>
+
 
         {/* Search Bar */}
-        <div className="relative mb-3">
+        <div className={`relative ${config.categories.length > 1 ? 'mb-2.5' : 'mb-1'}`}>
           <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
           <input
             type="text"
@@ -90,32 +76,34 @@ export function POILayerPanel<T extends POIItem>({
         </div>
 
         {/* Category Filter Chips */}
-        <div className="flex flex-wrap gap-1.5 pb-1">
-          {config.categories.map(cat => {
-            const isActive = activeCategories[cat.id];
-            // Count items in this category
-            const count = items.filter(i => i.categoryId === cat.id).length;
-            
-            return (
-              <button
-                key={cat.id}
-                onClick={() => onToggleCategory(cat.id)}
-                className={`
-                  flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all duration-200 border
-                  ${isActive 
-                    ? 'border-transparent shadow-sm' 
-                    : 'bg-white dark:bg-gov-900 border-gray-200 dark:border-gov-700 text-gray-400 dark:text-gray-500 opacity-60 hover:opacity-100'
-                  }
-                `}
-                style={isActive ? { backgroundColor: cat.bgColor, color: cat.color } : {}}
-              >
-                <span>{cat.icon}</span>
-                <span>{cat.name}</span>
-                <span className="opacity-70 text-[10px] ml-0.5">{count}</span>
-              </button>
-            );
-          })}
-        </div>
+        {config.categories.length > 1 && (
+          <div className="flex flex-wrap gap-1.5 pb-1">
+            {config.categories.map(cat => {
+              const isActive = activeCategories[cat.id];
+              // Count items in this category
+              const count = items.filter(i => i.categoryId === cat.id).length;
+              
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => onToggleCategory(cat.id)}
+                  className={`
+                    flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all duration-200 border
+                    ${isActive 
+                      ? 'border-transparent shadow-sm' 
+                      : 'bg-white dark:bg-gov-900 border-gray-200 dark:border-gov-700 text-gray-400 dark:text-gray-500 opacity-60 hover:opacity-100'
+                    }
+                  `}
+                  style={isActive ? { backgroundColor: cat.bgColor, color: cat.color } : {}}
+                >
+                  <span>{cat.icon}</span>
+                  <span>{cat.name}</span>
+                  <span className="opacity-70 text-[10px] ml-0.5">{count}</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
       </div>
 
       {/* ── Scrollable List ──────────────────────────────────── */}
