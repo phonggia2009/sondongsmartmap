@@ -7,6 +7,7 @@ import {
   ChevronDown,
   Check,
   Cross,
+  Landmark,
 } from 'lucide-react';
 import { useAppContext, SidebarTab } from '@/context/AppContext';
 import { SearchBox } from '@/components/SearchBox/SearchBox';
@@ -14,8 +15,9 @@ import { VillageCard } from '@/components/VillageCard/VillageCard';
 import { EmptyState } from '@/components/EmptyState/EmptyState';
 import { SchoolSidebarContent } from './SchoolSidebarContent';
 import { HealthStationSidebarContent } from './HealthStationSidebarContent';
+import { RelicSidebarContent } from './RelicSidebarContent';
 import { useSearch } from '@/hooks/useSearch';
-import type { Village, School, HealthStation } from '@/types';
+import type { Village, School, HealthStation, Relic } from '@/types';
 
 // ============================================================
 //  SIDEBAR LAYER REGISTRY — Easily extensible for future POI layers
@@ -56,6 +58,14 @@ const SIDEBAR_LAYERS: SidebarLayerOption[] = [
     activeColorClass: 'text-red-600 dark:text-red-400',
     badgeBg: 'bg-red-500/10',
   },
+  {
+    id: 'relics',
+    title: 'Danh Sách Di Tích',
+    subtitle: 'Di tích xếp hạng Quốc gia & Thành phố',
+    icon: Landmark,
+    activeColorClass: 'text-purple-600 dark:text-purple-400',
+    badgeBg: 'bg-purple-500/10',
+  },
 ];
 
 // ============================================================
@@ -67,6 +77,7 @@ interface SidebarProps {
   onVillageSelect: (village: Village) => void;
   onSchoolSelect?: (school: School) => void;
   onHealthStationSelect?: (station: HealthStation) => void;
+  onRelicSelect?: (relic: Relic) => void;
   /** When true, always render the expanded layout regardless of sidebarOpen state.
    *  Used inside the mobile bottom sheet where the sheet itself controls open/close. */
   forceExpanded?: boolean;
@@ -77,6 +88,7 @@ export const Sidebar = memo(function Sidebar({
   onVillageSelect,
   onSchoolSelect,
   onHealthStationSelect,
+  onRelicSelect,
   forceExpanded = false,
 }: SidebarProps) {
   const {
@@ -199,6 +211,23 @@ export const Sidebar = memo(function Sidebar({
           title="Trạm y tế"
         >
           <Cross className="w-5 h-5" />
+        </motion.button>
+
+        {/* Relic tab icon */}
+        <motion.button
+          onClick={() => { setActiveSidebarTab('relics'); toggleSidebar(); }}
+          className={`
+            w-10 h-10 rounded-xl flex items-center justify-center transition-all
+            ${activeSidebarTab === 'relics'
+              ? (isDark ? 'bg-purple-500/15 text-purple-400' : 'bg-purple-50 text-purple-600')
+              : (isDark ? 'text-gov-500 hover:text-gov-300 hover:bg-gov-800' : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100')
+            }
+          `}
+          whileHover={{ scale: 1.08 }}
+          whileTap={{ scale: 0.95 }}
+          title="Di tích lịch sử"
+        >
+          <Landmark className="w-5 h-5" />
         </motion.button>
 
         {/* Divider */}
@@ -398,6 +427,11 @@ export const Sidebar = memo(function Sidebar({
       {/* ── Health Stations Tab ──────────────────────── */}
       {activeSidebarTab === 'healthStations' && (
         <HealthStationSidebarContent onHealthStationSelect={onHealthStationSelect} />
+      )}
+
+      {/* ── Relics Tab ──────────────────────────────── */}
+      {activeSidebarTab === 'relics' && (
+        <RelicSidebarContent onRelicSelect={onRelicSelect} />
       )}
 
     </aside>

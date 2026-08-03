@@ -51,6 +51,26 @@ export interface HealthStation {
 }
 
 // ============================================================
+//  HISTORICAL RELIC DATA TYPES
+// ============================================================
+
+export type RelicType = 'Đình' | 'Chùa' | 'Đền, Quán' | 'Lăng - Miếu - Nhà thờ';
+export type RelicRank = 'Quốc Gia' | 'Thành phố' | 'Chưa xếp hạng';
+
+export interface Relic {
+  id: string;
+  name: string;
+  type: RelicType;
+  rank: RelicRank;
+  decisionNo: string;
+  village: string;
+  lat: number;
+  lng: number;
+  description?: string;
+}
+
+
+// ============================================================
 //  APP CONFIGURATION TYPES
 // ============================================================
 

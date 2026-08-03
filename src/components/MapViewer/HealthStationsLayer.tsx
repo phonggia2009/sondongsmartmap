@@ -22,34 +22,28 @@ export function HealthStationsLayer() {
   const [hoveredId, setHoveredId] = useState<string | null>(null);
   const markerRefs = useRef<Map<string, L.Marker>>(new Map());
 
-  // ── FlyTo + auto-open popup when selectedHealthStation changes ────
+  // ── FlyTo and auto open popup when selectedHealthStation changes ──────
   useEffect(() => {
     if (!selectedHealthStation) return;
+    map.flyTo([selectedHealthStation.lat, selectedHealthStation.lng], 17.5, { duration: 0.8 });
 
-    map.flyTo([selectedHealthStation.lat, selectedHealthStation.lng], 17, { duration: 1.2 });
-
-    const openPopup = () => {
+    const timer = setTimeout(() => {
       const marker = markerRefs.current.get(selectedHealthStation.id);
-      if (marker && (marker as any)._popup) {
-        marker.openPopup();
-      } else {
-        setTimeout(() => {
-          const m = markerRefs.current.get(selectedHealthStation.id);
-          if (m && (m as any)._popup) m.openPopup();
-        }, 100);
+      if (marker) {
+        try {
+          marker.openPopup();
+        } catch {}
       }
-    };
+    }, 850);
 
-    map.once('moveend', openPopup);
-    return () => {
-      map.off('moveend', openPopup);
-    };
+    return () => clearTimeout(timer);
   }, [selectedHealthStation, map]);
 
   // ── Filter health stations by active filters & search query ────
   const filteredStations = useMemo(
     () =>
       healthStations.filter(s => {
+        if (selectedHealthStation?.id === s.id) return true;
         if (!healthStationFilters['Trạm y tế']) return false;
         if (healthStationSearchQuery.trim()) {
           const q = healthStationSearchQuery.toLowerCase().trim();
@@ -61,7 +55,7 @@ export function HealthStationsLayer() {
         }
         return true;
       }),
-    [healthStations, healthStationFilters, healthStationSearchQuery]
+    [healthStations, healthStationFilters, healthStationSearchQuery, selectedHealthStation]
   );
 
   return (
@@ -103,6 +97,13 @@ export function HealthStationsLayer() {
             ref={instance => {
               if (instance) {
                 markerRefs.current.set(station.id, instance);
+                if (isSelected) {
+                  setTimeout(() => {
+                    try {
+                      instance.openPopup();
+                    } catch {}
+                  }, 50);
+                }
               } else {
                 markerRefs.current.delete(station.id);
               }

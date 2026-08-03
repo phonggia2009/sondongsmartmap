@@ -10,7 +10,7 @@ import { InformationPanel } from '@/components/InformationPanel/InformationPanel
 import { Sidebar } from '@/components/Sidebar/Sidebar';
 import { LoadingScreen } from '@/components/Loading/LoadingScreen';
 import { EmptyState } from '@/components/EmptyState/EmptyState';
-import type { Village, School, HealthStation } from '@/types';
+import type { Village, School, HealthStation, Relic } from '@/types';
 
 // ============================================================
 //  MobileSidebarDrawer — overlay drawer, only shown on mobile
@@ -24,6 +24,7 @@ const MobileSidebarDrawer = memo(function MobileSidebarDrawer({
   onVillageSelect,
   onSchoolSelect,
   onHealthStationSelect,
+  onRelicSelect,
 }: {
   villages: Village[];
   sidebarOpen: boolean;
@@ -31,6 +32,7 @@ const MobileSidebarDrawer = memo(function MobileSidebarDrawer({
   onVillageSelect: (village: Village) => void;
   onSchoolSelect?: (school: School) => void;
   onHealthStationSelect?: (station: HealthStation) => void;
+  onRelicSelect?: (relic: Relic) => void;
 }) {
   return (
     <>
@@ -74,6 +76,7 @@ const MobileSidebarDrawer = memo(function MobileSidebarDrawer({
                 onVillageSelect={onVillageSelect}
                 onSchoolSelect={onSchoolSelect}
                 onHealthStationSelect={onHealthStationSelect}
+                onRelicSelect={onRelicSelect}
                 forceExpanded
               />
             </div>
@@ -120,6 +123,7 @@ export default function HomePage() {
     selectVillage,
     selectSchool,
     selectHealthStation,
+    selectRelic,
     infoPanelOpen,
     setInfoPanelOpen,
     toggleInfoPanel,
@@ -163,6 +167,15 @@ export default function HomePage() {
   const handleHealthStationSelectDesktop = useCallback((station: HealthStation) => {
     selectHealthStation(station);
   }, [selectHealthStation]);
+
+  const handleRelicSelectMobile = useCallback((relic: Relic) => {
+    selectRelic(relic);
+    setSidebarOpen(false);
+  }, [selectRelic, setSidebarOpen]);
+
+  const handleRelicSelectDesktop = useCallback((relic: Relic) => {
+    selectRelic(relic);
+  }, [selectRelic]);
 
   const handleCloseMobileDrawer = useCallback(() => {
     setSidebarOpen(false);
@@ -208,6 +221,7 @@ export default function HomePage() {
             onVillageSelect={handleVillageSelectDesktop}
             onSchoolSelect={handleSchoolSelectDesktop}
             onHealthStationSelect={handleHealthStationSelectDesktop}
+            onRelicSelect={handleRelicSelectDesktop}
           />
         )}
       </div>
@@ -221,6 +235,7 @@ export default function HomePage() {
           onVillageSelect={handleVillageSelectMobile}
           onSchoolSelect={handleSchoolSelectMobile}
           onHealthStationSelect={handleHealthStationSelectMobile}
+          onRelicSelect={handleRelicSelectMobile}
         />
       )}
 

@@ -1,8 +1,9 @@
-import type { Village, School, HealthStation } from '@/types';
+import type { Village, School, HealthStation, Relic } from '@/types';
 import {
   getDataUrl,
   getSchoolsGeoJsonUrl,
   getHealthStationsGeoJsonUrl,
+  getRelicsDataUrl,
   getCommuneBoundaryGeoJsonUrl,
   getVillageBoundariesGeoJsonUrl,
   getVillageLabelsGeoJsonUrl,
@@ -151,6 +152,22 @@ export async function fetchHealthStations(): Promise<HealthStation[]> {
     });
   }
   return parsed;
+}
+
+/**
+ * Fetches and parses historical relics (Di tích) JSON data.
+ */
+export async function fetchRelics(): Promise<Relic[]> {
+  const url = getRelicsDataUrl();
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Không thể tải dữ liệu di tích (HTTP ${response.status})`);
+  }
+  const data = await response.json();
+  if (!Array.isArray(data)) {
+    throw new Error('Dữ liệu di tích không đúng định dạng mảng.');
+  }
+  return data as Relic[];
 }
 
 export interface GeoJSONLayersData {

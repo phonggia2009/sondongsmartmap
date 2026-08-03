@@ -37,43 +37,34 @@ export function SchoolsLayer() {
   useMapEvents({ moveend: updateMapState, zoomend: updateMapState });
   useEffect(() => { updateMapState(); }, [updateMapState]);
 
-  // ── FlyTo + auto-open popup when selectedSchool changes ────
+  // ── FlyTo and auto open popup when selectedSchool changes ──
   useEffect(() => {
     if (!selectedSchool) return;
+    map.flyTo([selectedSchool.lat, selectedSchool.lng], 17.5, { duration: 0.8 });
 
-    map.flyTo([selectedSchool.lat, selectedSchool.lng], 17.5, { duration: 1.2 });
-
-    const openSchoolPopup = () => {
+    const timer = setTimeout(() => {
       const marker = markerRefs.current.get(selectedSchool.id);
       if (marker) {
-        marker.openPopup();
-      } else {
-        // Fallback retry if marker ref is being attached after supercluster unclustering
-        setTimeout(() => {
-          const m = markerRefs.current.get(selectedSchool.id);
-          if (m) m.openPopup();
-        }, 80);
+        try {
+          marker.openPopup();
+        } catch {}
       }
-    };
+    }, 850);
 
-    map.once('moveend', openSchoolPopup);
-    return () => {
-      map.off('moveend', openSchoolPopup);
-    };
+    return () => clearTimeout(timer);
   }, [selectedSchool, map]);
-
-
 
   // ── Filter by sidebar checkboxes & search query ────────────
   const filteredSchools = useMemo(
     () => schools.filter(s => {
+      if (selectedSchool?.id === s.id) return true;
       if (!schoolFilters[s.level]) return false;
       if (schoolSearchQuery.trim()) {
         return s.name.toLowerCase().includes(schoolSearchQuery.toLowerCase().trim());
       }
       return true;
     }),
-    [schools, schoolFilters, schoolSearchQuery],
+    [schools, schoolFilters, schoolSearchQuery, selectedSchool],
   );
 
   // ── Convert to GeoJSON points for supercluster ─────────────
@@ -192,6 +183,13 @@ export function SchoolsLayer() {
             ref={(markerInstance) => {
               if (markerInstance) {
                 markerRefs.current.set(schoolId, markerInstance);
+                if (isSelected) {
+                  setTimeout(() => {
+                    try {
+                      markerInstance.openPopup();
+                    } catch {}
+                  }, 50);
+                }
               } else {
                 markerRefs.current.delete(schoolId);
               }

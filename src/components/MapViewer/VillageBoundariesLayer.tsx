@@ -24,8 +24,18 @@ export const VillageBoundariesLayer = memo(function VillageBoundariesLayer({
   const { selectVillage } = useAppContext();
   const { villages } = useVillages();
 
+  const isFeatureSelected = (feature: any) => {
+    if (!selectedVillage) return false;
+    if (selectedVillage.id === feature.properties?.village_id) return true;
+    if (selectedVillage.geojson_boundary_index === feature.properties?.village_id) return true;
+    const cleanName = selectedVillage.name.toLowerCase().replace(/^thôn\s+/, '').trim();
+    if (feature.properties?.village_name && feature.properties.village_name.toLowerCase().includes(cleanName)) return true;
+    if (feature.properties?.ten_thon && feature.properties.ten_thon.toLowerCase().includes(cleanName)) return true;
+    return false;
+  };
+
   const styleFeature = (feature: any) => {
-    const isSelected  = selectedVillage?.id === feature.properties.village_id;
+    const isSelected  = isFeatureSelected(feature);
     const hasSelection = !!selectedVillage;
 
     // School mode — faded, non-interactive appearance
@@ -70,9 +80,13 @@ export const VillageBoundariesLayer = memo(function VillageBoundariesLayer({
   const onEachFeature = (feature: any, layer: any) => {
     if (isSchoolMode) return;
 
-    const isSelected  = selectedVillage?.id === feature.properties.village_id;
+    const isSelected  = isFeatureSelected(feature);
     const hasSelection = !!selectedVillage;
-    const matchedVillage = villages.find((v: Village) => v.id === feature.properties.village_id);
+    const matchedVillage = villages.find((v: Village) =>
+      v.id === feature.properties?.village_id ||
+      v.geojson_boundary_index === feature.properties?.village_id ||
+      (feature.properties?.village_name && v.name.toLowerCase().includes(feature.properties.village_name.toLowerCase().replace(/^thôn\s+/, '').trim()))
+    );
 
     // Tooltip
     if (matchedVillage) {
@@ -110,10 +124,8 @@ export const VillageBoundariesLayer = memo(function VillageBoundariesLayer({
       click: (e: any) => {
         if (isSchoolMode) return;
         e.originalEvent._stopped = true;
-        const villageId = feature.properties?.village_id;
-        if (villageId !== undefined) {
-          const v = villages.find((v: Village) => v.id === villageId);
-          if (v) selectVillage(v);
+        if (matchedVillage) {
+          selectVillage(matchedVillage);
         }
       },
     });

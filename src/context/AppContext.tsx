@@ -6,18 +6,19 @@ import React, {
   useMemo,
   type ReactNode,
 } from 'react';
-import type { Village, School, SchoolLevel, HealthStation } from '@/types';
+import type { Village, School, SchoolLevel, HealthStation, Relic, RelicType } from '@/types';
 import { useTheme } from '@/hooks/useTheme';
 import { useFullscreen } from '@/hooks/useFullscreen';
 import { DEFAULT_SCHOOL_FILTERS } from '@/utils/schoolUtils';
 import { DEFAULT_HEALTH_STATION_FILTERS } from '@/utils/healthStationUtils';
+import { DEFAULT_RELIC_FILTERS } from '@/utils/relicUtils';
 
 // ============================================================
 //  APP CONTEXT
 //  Global UI state shared across all components.
 // ============================================================
 
-export type SidebarTab = 'villages' | 'schools' | 'healthStations';
+export type SidebarTab = 'villages' | 'schools' | 'healthStations' | 'relics';
 
 interface AppContextValue {
   // Village selection
@@ -32,6 +33,10 @@ interface AppContextValue {
   selectedHealthStation: HealthStation | null;
   selectHealthStation: (station: HealthStation | null) => void;
 
+  // Relic selection
+  selectedRelic: Relic | null;
+  selectRelic: (relic: Relic | null) => void;
+
   // School filters & search
   schoolFilters: Record<SchoolLevel, boolean>;
   toggleSchoolFilter: (level: SchoolLevel) => void;
@@ -45,6 +50,13 @@ interface AppContextValue {
   setHealthStationFilters: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
   healthStationSearchQuery: string;
   setHealthStationSearchQuery: (query: string) => void;
+
+  // Relic filters & search
+  relicFilters: Record<RelicType, boolean>;
+  toggleRelicFilter: (type: RelicType) => void;
+  setRelicFilters: React.Dispatch<React.SetStateAction<Record<RelicType, boolean>>>;
+  relicSearchQuery: string;
+  setRelicSearchQuery: (query: string) => void;
 
   // View mode
   isOverview: boolean;
@@ -85,6 +97,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [selectedVillage, setSelectedVillage]             = useState<Village | null>(null);
   const [selectedSchool, setSelectedSchool]               = useState<School | null>(null);
   const [selectedHealthStation, setSelectedHealthStation] = useState<HealthStation | null>(null);
+  const [selectedRelic, setSelectedRelic]                 = useState<Relic | null>(null);
 
   const [schoolFilters, setSchoolFilters]                 = useState<Record<SchoolLevel, boolean>>(DEFAULT_SCHOOL_FILTERS);
   const [schoolSearchQuery, setSchoolSearchQuery]         = useState('');
@@ -96,6 +109,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [healthStationSearchQuery, setHealthStationSearchQuery] = useState('');
   const handleSetHealthStationSearchQuery = useCallback((query: string) => {
     setHealthStationSearchQuery(query);
+  }, []);
+
+  const [relicFilters, setRelicFilters]         = useState<Record<RelicType, boolean>>(DEFAULT_RELIC_FILTERS);
+  const [relicSearchQuery, setRelicSearchQuery] = useState('');
+  const handleSetRelicSearchQuery = useCallback((query: string) => {
+    setRelicSearchQuery(query);
   }, []);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -146,6 +165,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setSelectedVillage(null);
         setSelectedSchool(null);
         setSelectedHealthStation(null);
+        setSelectedRelic(null);
       }
       return tab;
     });
@@ -156,6 +176,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (village) {
       setSelectedSchool(null);
       setSelectedHealthStation(null);
+      setSelectedRelic(null);
     }
     setInfoPanelOpen(prev => {
       if (village === null) return false;
@@ -168,6 +189,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (school) {
       setSelectedVillage(null);
       setSelectedHealthStation(null);
+      setSelectedRelic(null);
     }
   }, []);
 
@@ -176,6 +198,16 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (station) {
       setSelectedVillage(null);
       setSelectedSchool(null);
+      setSelectedRelic(null);
+    }
+  }, []);
+
+  const selectRelic = useCallback((relic: Relic | null) => {
+    setSelectedRelic(relic);
+    if (relic) {
+      setSelectedVillage(null);
+      setSelectedSchool(null);
+      setSelectedHealthStation(null);
     }
   }, []);
 
@@ -185,6 +217,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const toggleHealthStationFilter = useCallback((category: string) => {
     setHealthStationFilters(prev => ({ ...prev, [category]: !prev[category] }));
+  }, []);
+
+  const toggleRelicFilter = useCallback((type: RelicType) => {
+    setRelicFilters(prev => ({ ...prev, [type]: !prev[type] }));
   }, []);
 
   const toggleInfoPanel = useCallback(() => {
@@ -202,6 +238,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     selectSchool,
     selectedHealthStation,
     selectHealthStation,
+    selectedRelic,
+    selectRelic,
     schoolFilters,
     toggleSchoolFilter,
     setSchoolFilters,
@@ -212,7 +250,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setHealthStationFilters,
     healthStationSearchQuery,
     setHealthStationSearchQuery: handleSetHealthStationSearchQuery,
-    isOverview: selectedVillage === null && selectedSchool === null && selectedHealthStation === null,
+    relicFilters,
+    toggleRelicFilter,
+    setRelicFilters,
+    relicSearchQuery,
+    setRelicSearchQuery: handleSetRelicSearchQuery,
+    isOverview: selectedVillage === null && selectedSchool === null && selectedHealthStation === null && selectedRelic === null,
     sidebarOpen,
     setSidebarOpen,
     toggleSidebar,
@@ -234,8 +277,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
     selectedVillage, selectVillage,
     selectedSchool, selectSchool,
     selectedHealthStation, selectHealthStation,
+    selectedRelic, selectRelic,
     schoolFilters, toggleSchoolFilter, schoolSearchQuery, handleSetSchoolSearchQuery,
     healthStationFilters, toggleHealthStationFilter, healthStationSearchQuery, handleSetHealthStationSearchQuery,
+    relicFilters, toggleRelicFilter, relicSearchQuery, handleSetRelicSearchQuery,
     sidebarOpen, setSidebarOpen, toggleSidebar, activeSidebarTabState, setActiveSidebarTab,
     infoPanelOpen, setInfoPanelOpen, toggleInfoPanel,
     isDark, toggleTheme,

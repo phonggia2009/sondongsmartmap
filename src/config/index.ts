@@ -71,6 +71,11 @@ export const getVillageLabelsGeoJsonUrl = (): string =>
 export const getHealthStationsGeoJsonUrl = (): string =>
   `${APP_CONFIG.paths.data}/tramyte.geojson`;
 
+/** Returns the full URL for relics (Di tích) JSON file */
+export const getRelicsDataUrl = (): string =>
+  `${APP_CONFIG.paths.data}/relics.json`;
+
+
 /** Boundary direction labels in Vietnamese */
 export const DIRECTION_LABELS: Record<string, string> = {
   north: 'Phía Bắc',

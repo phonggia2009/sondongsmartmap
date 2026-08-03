@@ -1,10 +1,11 @@
 import { memo, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Users, Home, GraduationCap, Cross } from 'lucide-react';
+import { MapPin, Users, Home, GraduationCap, Cross, Landmark, Award } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { useVillages } from '@/hooks/useVillages';
 import { useSchools } from '@/hooks/useSchools';
 import { useHealthStations } from '@/hooks/useHealthStations';
+import { useRelics } from '@/hooks/useRelics';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 // ============================================================
@@ -12,14 +13,16 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 // ============================================================
 
 export const MapOverlayStats = memo(function MapOverlayStats() {
-  const { selectedVillage, isDark, activeSidebarTab, schoolFilters } = useAppContext();
+  const { selectedVillage, isDark, activeSidebarTab, schoolFilters, relicFilters } = useAppContext();
   const { villages }       = useVillages();
   const { schools }        = useSchools();
   const { healthStations } = useHealthStations();
+  const { relics }         = useRelics();
   const isMobile           = useIsMobile();
 
   const isSchoolMode        = activeSidebarTab === 'schools';
   const isHealthStationMode = activeSidebarTab === 'healthStations';
+  const isRelicMode         = activeSidebarTab === 'relics';
 
   const villageStats = useMemo(() => ({
     count:       villages.length,
@@ -35,6 +38,13 @@ export const MapOverlayStats = memo(function MapOverlayStats() {
   const healthStats = useMemo(() => {
     return { total: healthStations.length };
   }, [healthStations]);
+
+  const relicStats = useMemo(() => {
+    const visible = relics.filter(r => relicFilters[r.type]);
+    const national = relics.filter(r => r.rank === 'Quốc Gia').length;
+    const city = relics.filter(r => r.rank === 'Thành phố').length;
+    return { total: relics.length, visible: visible.length, national, city };
+  }, [relics, relicFilters]);
 
   const containerClass = `
     absolute z-[400] pointer-events-auto
@@ -83,6 +93,40 @@ export const MapOverlayStats = memo(function MapOverlayStats() {
             value={healthStats.total}
             isDark={isDark}
             color="amber"
+          />
+        </motion.div>
+      ) : isRelicMode ? (
+        /* Relic mode stats */
+        <motion.div
+          key="relic-stats"
+          className={containerClass}
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.95 }}
+          transition={{ duration: 0.3 }}
+        >
+          <StatChip
+            icon={<Landmark className="w-3.5 h-3.5" />}
+            label="Tổng di tích"
+            value={relicStats.total}
+            isDark={isDark}
+            color="amber"
+          />
+          <Divider isDark={isDark} />
+          <StatChip
+            icon={<Award className="w-3.5 h-3.5" />}
+            label="Cấp Quốc Gia"
+            value={relicStats.national}
+            isDark={isDark}
+            color="emerald"
+          />
+          <Divider isDark={isDark} />
+          <StatChip
+            icon={<Award className="w-3.5 h-3.5" />}
+            label="Cấp Thành phố"
+            value={relicStats.city}
+            isDark={isDark}
+            color="blue"
           />
         </motion.div>
       ) : (

@@ -10,6 +10,7 @@ import { useGeoJSONLayers } from '@/hooks/useGeoJSONLayers';
 import { MapOverlayStats } from './MapOverlayStats';
 import { SchoolsLayer } from './SchoolsLayer';
 import { HealthStationsLayer } from './HealthStationsLayer';
+import { RelicsLayer } from './RelicsLayer';
 import { VillageBoundariesLayer } from './VillageBoundariesLayer';
 import { VillageLabelsLayer } from './VillageLabelsLayer';
 import L from 'leaflet';
@@ -41,42 +42,63 @@ function VillageFlyToHandler({
   thonNhanTenData: any;
 }) {
   const map = useMap();
+  const { activeSidebarTab } = useAppContext();
 
   useEffect(() => {
+    // Only execute flyTo for villages when in Village mode
+    if (activeSidebarTab !== 'villages') return;
+
     if (!selectedVillage) {
-      map.flyTo([21.037, 105.703], 14, { duration: 1.2 });
+      map.flyTo([21.037, 105.703], 14, { duration: 1.0 });
       return;
     }
 
-    // Try finding boundary polygon feature
+    // 1. Try finding boundary polygon feature
     if (ranhGioiThonData?.features) {
+      const cleanName = selectedVillage.name.toLowerCase().replace(/^thôn\s+/, '').trim();
       const feature = ranhGioiThonData.features.find(
-        (f: any) => f.properties?.village_id === selectedVillage.id
+        (f: any) =>
+          f.properties?.village_id === selectedVillage.id ||
+          f.properties?.village_id === selectedVillage.geojson_boundary_index ||
+          (f.properties?.village_name &&
+            f.properties.village_name.toLowerCase().includes(cleanName)) ||
+          (f.properties?.ten_thon &&
+            f.properties.ten_thon.toLowerCase().includes(cleanName))
       );
       if (feature) {
         const bounds = L.geoJSON(feature).getBounds();
         if (bounds.isValid()) {
           map.flyToBounds(bounds, {
-            padding: [60, 60],
+            padding: [45, 45],
             maxZoom: 16,
-            duration: 1.2,
+            duration: 1.0,
           });
           return;
         }
       }
     }
 
-    // Fallback to label point feature
+    // 2. Fallback to label point feature
     if (thonNhanTenData?.features) {
+      const cleanName = selectedVillage.name.toLowerCase().replace(/^thôn\s+/, '').trim();
       const labelFeature = thonNhanTenData.features.find(
-        (f: any) => f.properties?.village_id === selectedVillage.id
+        (f: any) =>
+          f.properties?.village_id === selectedVillage.id ||
+          f.properties?.village_id === selectedVillage.geojson_label_index ||
+          (f.properties?.name && f.properties.name.toLowerCase().includes(cleanName))
       );
       if (labelFeature?.geometry?.type === 'Point') {
         const [lng, lat] = labelFeature.geometry.coordinates;
-        map.flyTo([lat, lng], 15.5, { duration: 1.2 });
+        map.flyTo([lat, lng], 15.5, { duration: 1.0 });
+        return;
       }
     }
-  }, [selectedVillage, ranhGioiThonData, thonNhanTenData, map]);
+
+    // 3. Fallback to village coordinates
+    if (selectedVillage.coordinates) {
+      map.flyTo([selectedVillage.coordinates.lat, selectedVillage.coordinates.lng], 15.5, { duration: 1.0 });
+    }
+  }, [selectedVillage, activeSidebarTab, ranhGioiThonData, thonNhanTenData, map]);
 
   return null;
 }
@@ -148,12 +170,14 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
     selectVillage,
     selectSchool,
     selectHealthStation,
+    selectRelic,
     activeSidebarTab,
     isDark,
   } = useAppContext();
 
   const isSchoolMode        = activeSidebarTab === 'schools';
   const isHealthStationMode = activeSidebarTab === 'healthStations';
+  const isRelicMode         = activeSidebarTab === 'relics';
   const isVillageMode       = activeSidebarTab === 'villages';
 
   const { ranhGioiXaData, ranhGioiThonData, thonNhanTenData } = useGeoJSONLayers();
@@ -208,6 +232,29 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
             </div>
           </motion.div>
         )}
+
+        {isRelicMode && (
+          <motion.div
+            key="relic-mode-badge"
+            className="absolute top-4 right-14 z-[400] pointer-events-none"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+          >
+            <div className={`
+              flex items-center gap-2 px-3 py-2 rounded-2xl text-xs font-semibold
+              backdrop-blur-md border shadow-lg
+              ${isDark
+                ? 'bg-purple-900/60 text-purple-300 border-purple-700/40'
+                : 'bg-purple-50/90 text-purple-700 border-purple-200/60'
+              }
+            `}>
+              <span className="w-1.5 h-1.5 rounded-full bg-purple-400 animate-pulse" />
+              🏛️ Chế độ xem di tích lịch sử
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       <MapContainer
@@ -252,6 +299,9 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
 
         {/* Health Stations layer — displayed in Health Station mode */}
         {isHealthStationMode && <HealthStationsLayer />}
+
+        {/* Relics layer — displayed in Relics mode */}
+        {isRelicMode && <RelicsLayer />}
 
         {/* Commune boundary — always visible */}
         {ranhGioiXaData && (
@@ -299,6 +349,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
             selectVillage(null);
             selectSchool(null);
             selectHealthStation(null);
+            selectRelic(null);
           }}
         />
       </MapContainer>

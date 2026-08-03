@@ -1,0 +1,352 @@
+[
+  {
+    "id": "relic-dinh-1",
+    "name": "Đình Tiền Lệ",
+    "type": "Đình",
+    "rank": "Quốc Gia",
+    "decisionNo": "1712/QĐ-BVHTTDL (02/06/2011)",
+    "village": "Tiền Yên",
+    "lat": 21.02234,
+    "lng": 105.681726
+  },
+  {
+    "id": "relic-dinh-2",
+    "name": "Đình Yên Thái",
+    "type": "Đình",
+    "rank": "Thành phố",
+    "decisionNo": "369/QĐ-UBND (16/01/2020)",
+    "village": "Tiền Lệ",
+    "lat": 21.030411,
+    "lng": 105.681957
+  },
+  {
+    "id": "relic-dinh-3",
+    "name": "Đình Phương Bảng",
+    "type": "Đình",
+    "rank": "Quốc Gia",
+    "decisionNo": "423QĐ/VH (20/02/1997)",
+    "village": "Song Phương",
+    "lat": 21.030028,
+    "lng": 105.695863
+  },
+  {
+    "id": "relic-dinh-4",
+    "name": "Đình Phương Viên",
+    "type": "Đình",
+    "rank": "Quốc Gia",
+    "decisionNo": "1460QĐ/VH (28/06/1996)",
+    "village": "Song Phương",
+    "lat": 21.012235,
+    "lng": 105.698326
+  },
+  {
+    "id": "relic-dinh-5",
+    "name": "Đình Sơn Đồng",
+    "type": "Đình",
+    "rank": "Quốc Gia",
+    "decisionNo": "25VH/QĐ (03/02/1986)",
+    "village": "Sơn Đồng",
+    "lat": 21.043127,
+    "lng": 105.698717
+  },
+  {
+    "id": "relic-dinh-6",
+    "name": "Đình An Trai",
+    "type": "Đình",
+    "rank": "Quốc Gia",
+    "decisionNo": "993/QĐ (28/09/1990)",
+    "village": "Vân Canh",
+    "lat": 21.030774,
+    "lng": 105.734326
+  },
+  {
+    "id": "relic-dinh-7",
+    "name": "Đình Kim Hoàng",
+    "type": "Đình",
+    "rank": "Quốc Gia",
+    "decisionNo": "993/QĐ (28/09/1990)",
+    "village": "Vân Canh",
+    "lat": 21.033649,
+    "lng": 105.732007
+  },
+  {
+    "id": "relic-dinh-8",
+    "name": "Đình Hậu Ái",
+    "type": "Đình",
+    "rank": "Quốc Gia",
+    "decisionNo": "1570VH/QĐ (05/09/1989)",
+    "village": "Vân Canh",
+    "lat": 21.038518,
+    "lng": 105.728813
+  },
+  {
+    "id": "relic-dinh-9",
+    "name": "Đình Lại Yên",
+    "type": "Đình",
+    "rank": "Quốc Gia",
+    "decisionNo": "1991/QĐ-BVHTTDL (29/06/2021)",
+    "village": "Lại Yên",
+    "lat": 21.024021,
+    "lng": 105.708182
+  },
+  {
+    "id": "relic-dinh-10",
+    "name": "Đình Thuỷ Thần Vân Canh",
+    "type": "Đình",
+    "rank": "Thành phố",
+    "decisionNo": "882/QĐ-UBND (27/02/2026)",
+    "village": "Vân Canh",
+    "lat": 21.0342,
+    "lng": 105.731
+  },
+  {
+    "id": "relic-chua-1",
+    "name": "Chùa Thích Ca (Chùa Phương Viên)",
+    "type": "Chùa",
+    "rank": "Quốc Gia",
+    "decisionNo": "1460QĐ/VH (28/06/1996)",
+    "village": "Song Phương",
+    "lat": 21.017168,
+    "lng": 105.697377
+  },
+  {
+    "id": "relic-chua-2",
+    "name": "Chùa Hưng Long (Chùa Phương Bảng)",
+    "type": "Chùa",
+    "rank": "Quốc Gia",
+    "decisionNo": "423QĐ/VH (20/02/1997)",
+    "village": "Song Phương",
+    "lat": 21.020318,
+    "lng": 105.69532
+  },
+  {
+    "id": "relic-chua-3",
+    "name": "Chùa Nhạ Phúc",
+    "type": "Chùa",
+    "rank": "Quốc Gia",
+    "decisionNo": "2890VH/QĐ (27/09/1997)",
+    "village": "Lại Yên",
+    "lat": 21.025767,
+    "lng": 105.70206
+  },
+  {
+    "id": "relic-chua-4",
+    "name": "Chùa Diên Phúc (Diên Phúc tự, Chùa Ngoài)",
+    "type": "Chùa",
+    "rank": "Quốc Gia",
+    "decisionNo": "25-VH/QĐ (03/02/1986)",
+    "village": "Sơn Đồng",
+    "lat": 21.04808,
+    "lng": 105.70194
+  },
+  {
+    "id": "relic-chua-5",
+    "name": "Chùa Kỳ Đà (Chùa Trong)",
+    "type": "Chùa",
+    "rank": "Quốc Gia",
+    "decisionNo": "25-VH/QĐ (03/02/1986)",
+    "village": "Sơn Đồng",
+    "lat": 21.041284,
+    "lng": 105.698196
+  },
+  {
+    "id": "relic-chua-6",
+    "name": "Chùa Ngọc Quang (Chùa An Trai)",
+    "type": "Chùa",
+    "rank": "Quốc Gia",
+    "decisionNo": "993/QĐ (28/09/1990)",
+    "village": "Vân Canh",
+    "lat": 21.030897,
+    "lng": 105.731664
+  },
+  {
+    "id": "relic-chua-7",
+    "name": "Chùa Đại Bi (Chùa Kim Hoàng)",
+    "type": "Chùa",
+    "rank": "Thành phố",
+    "decisionNo": "500/QĐ-UBND (26/03/2007)",
+    "village": "Vân Canh",
+    "lat": 21.034632,
+    "lng": 105.729975
+  },
+  {
+    "id": "relic-chua-8",
+    "name": "Chùa Hậu Ái (Đại Ý Tự)",
+    "type": "Chùa",
+    "rank": "Thành phố",
+    "decisionNo": "978/QĐ-UBND (18/02/2013)",
+    "village": "Vân Canh",
+    "lat": 21.039377,
+    "lng": 105.726926
+  },
+  {
+    "id": "relic-chua-9",
+    "name": "Chùa Rừng (Cảnh Linh tự)",
+    "type": "Chùa",
+    "rank": "Thành phố",
+    "decisionNo": "388/QĐ-UBND (17/01/2023)",
+    "village": "Tiền Yên",
+    "lat": 21.012936,
+    "lng": 105.681432
+  },
+  {
+    "id": "relic-chua-10",
+    "name": "Chùa Bến (Kim Phong tự)",
+    "type": "Chùa",
+    "rank": "Thành phố",
+    "decisionNo": "2617/QĐ-UBND (24/05/2025)",
+    "village": "Tiền Yên",
+    "lat": 21.024353,
+    "lng": 105.682932
+  },
+  {
+    "id": "relic-chua-11",
+    "name": "Chùa Yên Thái (Phúc Lâm tự)",
+    "type": "Chùa",
+    "rank": "Thành phố",
+    "decisionNo": "2617/QĐ-UBND (24/05/2025)",
+    "village": "Tiền Yên",
+    "lat": 21.0298,
+    "lng": 105.6822
+  },
+  {
+    "id": "relic-chua-12",
+    "name": "Chùa Phượng Tiên",
+    "type": "Chùa",
+    "rank": "Thành phố",
+    "decisionNo": "882/QĐ-UBND (27/02/2026)",
+    "village": "Song Phương",
+    "lat": 21.013767,
+    "lng": 105.698425
+  },
+  {
+    "id": "relic-chua-13",
+    "name": "Chùa Đồng Giá",
+    "type": "Chùa",
+    "rank": "Thành phố",
+    "decisionNo": "UBND TP",
+    "village": "Lại Yên",
+    "lat": 21.026705,
+    "lng": 105.70067
+  },
+  {
+    "id": "relic-den-1",
+    "name": "Đền Thượng",
+    "type": "Đền, Quán",
+    "rank": "Quốc Gia",
+    "decisionNo": "25-VH/QĐ (03/02/1986)",
+    "village": "Sơn Đồng",
+    "lat": 21.048398,
+    "lng": 105.701891
+  },
+  {
+    "id": "relic-den-2",
+    "name": "Quán Phương Bảng",
+    "type": "Đền, Quán",
+    "rank": "Quốc Gia",
+    "decisionNo": "423QĐ/VH (20/02/1997)",
+    "village": "Song Phương",
+    "lat": 21.02401,
+    "lng": 105.697832
+  },
+  {
+    "id": "relic-den-3",
+    "name": "Quán Lại Yên",
+    "type": "Đền, Quán",
+    "rank": "Quốc Gia",
+    "decisionNo": "2890VH/QĐ (27/09/1997)",
+    "village": "Lại Yên",
+    "lat": 21.025252,
+    "lng": 105.708391
+  },
+  {
+    "id": "relic-den-4",
+    "name": "Điện Lưu Ly",
+    "type": "Đền, Quán",
+    "rank": "Thành phố",
+    "decisionNo": "1772/QĐ-UBND (03/04/2014)",
+    "village": "Vân Côn",
+    "lat": 21.006842,
+    "lng": 105.670331
+  },
+  {
+    "id": "relic-den-5",
+    "name": "Quán nước",
+    "type": "Đền, Quán",
+    "rank": "Thành phố",
+    "decisionNo": "359/QĐ-UBND (16/01/2012)",
+    "village": "Tiền Lệ",
+    "lat": 21.018018,
+    "lng": 105.684851
+  },
+  {
+    "id": "relic-den-6",
+    "name": "Quán Thượng",
+    "type": "Đền, Quán",
+    "rank": "Thành phố",
+    "decisionNo": "1458/QĐ-UBND (26/03/2021)",
+    "village": "Tiền Yên",
+    "lat": 21.020936,
+    "lng": 105.684666
+  },
+  {
+    "id": "relic-lang-1",
+    "name": "Lăng đá Huệ Linh (Lăng xóm chợ)",
+    "type": "Lăng - Miếu - Nhà thờ",
+    "rank": "Quốc Gia",
+    "decisionNo": "29-VH/QĐ (13/01/1964)",
+    "village": "Lại Yên",
+    "lat": 21.024423,
+    "lng": 105.703779
+  },
+  {
+    "id": "relic-lang-2",
+    "name": "Lăng đá Hiển Linh (Lăng đá Cây Gạo)",
+    "type": "Lăng - Miếu - Nhà thờ",
+    "rank": "Quốc Gia",
+    "decisionNo": "29-VH/QĐ (13/01/1964)",
+    "village": "Lại Yên",
+    "lat": 21.021884,
+    "lng": 105.709746
+  },
+  {
+    "id": "relic-lang-3",
+    "name": "Mộ Đỗ Kính Tu",
+    "type": "Lăng - Miếu - Nhà thờ",
+    "rank": "Quốc Gia",
+    "decisionNo": "1570VH/QĐ (05/09/1989)",
+    "village": "Vân Canh",
+    "lat": 21.037243,
+    "lng": 105.730554
+  },
+  {
+    "id": "relic-lang-4",
+    "name": "Nhà lưu niệm Bác Hồ",
+    "type": "Lăng - Miếu - Nhà thờ",
+    "rank": "Quốc Gia",
+    "decisionNo": "15/2003/QĐ BVHTT (14/04/2003)",
+    "village": "Vân Canh",
+    "lat": 21.039593,
+    "lng": 105.728611
+  },
+  {
+    "id": "relic-lang-5",
+    "name": "Nhà thờ Đại Tôn",
+    "type": "Lăng - Miếu - Nhà thờ",
+    "rank": "Quốc Gia",
+    "decisionNo": "25-VH/QĐ (03/02/1986)",
+    "village": "Sơn Đồng",
+    "lat": 21.04524,
+    "lng": 105.700476
+  },
+  {
+    "id": "relic-lang-6",
+    "name": "Nhà thờ Từ Vũ",
+    "type": "Lăng - Miếu - Nhà thờ",
+    "rank": "Quốc Gia",
+    "decisionNo": "25-VH/QĐ (03/02/1986)",
+    "village": "Sơn Đồng",
+    "lat": 21.0441,
+    "lng": 105.6998
+  }
+]
