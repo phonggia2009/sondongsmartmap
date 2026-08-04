@@ -75,6 +75,23 @@ export interface Relic {
   description?: string;
 }
 
+// ============================================================
+//  ADMINISTRATIVE & PUBLIC SERVICE UNIT DATA TYPES
+// ============================================================
+
+export type GovUnitCategory = 'Hành chính' | 'Đảng - Đoàn thể' | 'Lực lượng vũ trang';
+
+export interface GovUnit {
+  id: string;
+  name: string;
+  category: GovUnitCategory;
+  categoryId: string;
+  lat: number;
+  lng: number;
+  address?: string;
+  phone?: string;
+}
+
 
 // ============================================================
 //  APP CONFIGURATION TYPES

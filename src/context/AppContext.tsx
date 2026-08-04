@@ -6,19 +6,20 @@ import React, {
   useMemo,
   type ReactNode,
 } from 'react';
-import type { Village, School, SchoolLevel, HealthStation, Relic, RelicType } from '@/types';
+import type { Village, School, SchoolLevel, HealthStation, Relic, RelicType, GovUnit, GovUnitCategory } from '@/types';
 import { useTheme } from '@/hooks/useTheme';
 import { useFullscreen } from '@/hooks/useFullscreen';
 import { DEFAULT_SCHOOL_FILTERS } from '@/utils/schoolUtils';
 import { DEFAULT_HEALTH_STATION_FILTERS } from '@/utils/healthStationUtils';
 import { DEFAULT_RELIC_FILTERS } from '@/utils/relicUtils';
+import { DEFAULT_GOV_UNIT_FILTERS } from '@/utils/govUnitUtils';
 
 // ============================================================
 //  APP CONTEXT
 //  Global UI state shared across all components.
 // ============================================================
 
-export type SidebarTab = 'villages' | 'schools' | 'healthStations' | 'relics';
+export type SidebarTab = 'villages' | 'schools' | 'healthStations' | 'relics' | 'govUnits';
 
 interface AppContextValue {
   // Village selection
@@ -36,6 +37,10 @@ interface AppContextValue {
   // Relic selection
   selectedRelic: Relic | null;
   selectRelic: (relic: Relic | null) => void;
+
+  // GovUnit selection
+  selectedGovUnit: GovUnit | null;
+  selectGovUnit: (unit: GovUnit | null) => void;
 
   // School filters & search
   schoolFilters: Record<SchoolLevel, boolean>;
@@ -57,6 +62,13 @@ interface AppContextValue {
   setRelicFilters: React.Dispatch<React.SetStateAction<Record<RelicType, boolean>>>;
   relicSearchQuery: string;
   setRelicSearchQuery: (query: string) => void;
+
+  // GovUnit filters & search
+  govUnitFilters: Record<GovUnitCategory, boolean>;
+  toggleGovUnitFilter: (category: GovUnitCategory) => void;
+  setGovUnitFilters: React.Dispatch<React.SetStateAction<Record<GovUnitCategory, boolean>>>;
+  govUnitSearchQuery: string;
+  setGovUnitSearchQuery: (query: string) => void;
 
   // View mode
   isOverview: boolean;
@@ -98,6 +110,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [selectedSchool, setSelectedSchool]               = useState<School | null>(null);
   const [selectedHealthStation, setSelectedHealthStation] = useState<HealthStation | null>(null);
   const [selectedRelic, setSelectedRelic]                 = useState<Relic | null>(null);
+  const [selectedGovUnit, setSelectedGovUnit]             = useState<GovUnit | null>(null);
 
   const [schoolFilters, setSchoolFilters]                 = useState<Record<SchoolLevel, boolean>>(DEFAULT_SCHOOL_FILTERS);
   const [schoolSearchQuery, setSchoolSearchQuery]         = useState('');
@@ -115,6 +128,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [relicSearchQuery, setRelicSearchQuery] = useState('');
   const handleSetRelicSearchQuery = useCallback((query: string) => {
     setRelicSearchQuery(query);
+  }, []);
+
+  const [govUnitFilters, setGovUnitFilters]         = useState<Record<GovUnitCategory, boolean>>(DEFAULT_GOV_UNIT_FILTERS);
+  const [govUnitSearchQuery, setGovUnitSearchQuery] = useState('');
+  const handleSetGovUnitSearchQuery = useCallback((query: string) => {
+    setGovUnitSearchQuery(query);
   }, []);
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -166,6 +185,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setSelectedSchool(null);
         setSelectedHealthStation(null);
         setSelectedRelic(null);
+        setSelectedGovUnit(null);
       }
       return tab;
     });
@@ -177,6 +197,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSelectedSchool(null);
       setSelectedHealthStation(null);
       setSelectedRelic(null);
+      setSelectedGovUnit(null);
     }
     setInfoPanelOpen(prev => {
       if (village === null) return false;
@@ -190,6 +211,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSelectedVillage(null);
       setSelectedHealthStation(null);
       setSelectedRelic(null);
+      setSelectedGovUnit(null);
     }
   }, []);
 
@@ -199,6 +221,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSelectedVillage(null);
       setSelectedSchool(null);
       setSelectedRelic(null);
+      setSelectedGovUnit(null);
     }
   }, []);
 
@@ -208,6 +231,17 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSelectedVillage(null);
       setSelectedSchool(null);
       setSelectedHealthStation(null);
+      setSelectedGovUnit(null);
+    }
+  }, []);
+
+  const selectGovUnit = useCallback((unit: GovUnit | null) => {
+    setSelectedGovUnit(unit);
+    if (unit) {
+      setSelectedVillage(null);
+      setSelectedSchool(null);
+      setSelectedHealthStation(null);
+      setSelectedRelic(null);
     }
   }, []);
 
@@ -221,6 +255,10 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const toggleRelicFilter = useCallback((type: RelicType) => {
     setRelicFilters(prev => ({ ...prev, [type]: !prev[type] }));
+  }, []);
+
+  const toggleGovUnitFilter = useCallback((category: GovUnitCategory) => {
+    setGovUnitFilters(prev => ({ ...prev, [category]: !prev[category] }));
   }, []);
 
   const toggleInfoPanel = useCallback(() => {
@@ -240,6 +278,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     selectHealthStation,
     selectedRelic,
     selectRelic,
+    selectedGovUnit,
+    selectGovUnit,
     schoolFilters,
     toggleSchoolFilter,
     setSchoolFilters,
@@ -255,7 +295,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setRelicFilters,
     relicSearchQuery,
     setRelicSearchQuery: handleSetRelicSearchQuery,
-    isOverview: selectedVillage === null && selectedSchool === null && selectedHealthStation === null && selectedRelic === null,
+    govUnitFilters,
+    toggleGovUnitFilter,
+    setGovUnitFilters,
+    govUnitSearchQuery,
+    setGovUnitSearchQuery: handleSetGovUnitSearchQuery,
+    isOverview: selectedVillage === null && selectedSchool === null && selectedHealthStation === null && selectedRelic === null && selectedGovUnit === null,
     sidebarOpen,
     setSidebarOpen,
     toggleSidebar,
@@ -278,9 +323,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
     selectedSchool, selectSchool,
     selectedHealthStation, selectHealthStation,
     selectedRelic, selectRelic,
+    selectedGovUnit, selectGovUnit,
     schoolFilters, toggleSchoolFilter, schoolSearchQuery, handleSetSchoolSearchQuery,
     healthStationFilters, toggleHealthStationFilter, healthStationSearchQuery, handleSetHealthStationSearchQuery,
     relicFilters, toggleRelicFilter, relicSearchQuery, handleSetRelicSearchQuery,
+    govUnitFilters, toggleGovUnitFilter, govUnitSearchQuery, handleSetGovUnitSearchQuery,
     sidebarOpen, setSidebarOpen, toggleSidebar, activeSidebarTabState, setActiveSidebarTab,
     infoPanelOpen, setInfoPanelOpen, toggleInfoPanel,
     isDark, toggleTheme,

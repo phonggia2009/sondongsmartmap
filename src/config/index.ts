@@ -75,6 +75,10 @@ export const getHealthStationsGeoJsonUrl = (): string =>
 export const getRelicsDataUrl = (): string =>
   `${APP_CONFIG.paths.data}/relics.json`;
 
+/** Returns the full URL for administrative & public service units GeoJSON file */
+export const getGovUnitsGeoJsonUrl = (): string =>
+  `${APP_CONFIG.paths.data}/danhsachdonvihanhchinhsunghiep.geojson`;
+
 
 /** Boundary direction labels in Vietnamese */
 export const DIRECTION_LABELS: Record<string, string> = {

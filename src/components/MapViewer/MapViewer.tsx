@@ -12,6 +12,7 @@ import { MapOverlayStats } from './MapOverlayStats';
 import { SchoolsLayer } from './SchoolsLayer';
 import { HealthStationsLayer } from './HealthStationsLayer';
 import { RelicsLayer } from './RelicsLayer';
+import { GovUnitsLayer } from './GovUnitsLayer';
 import { VillageBoundariesLayer } from './VillageBoundariesLayer';
 import { VillageLabelsLayer } from './VillageLabelsLayer';
 import L from 'leaflet';
@@ -180,6 +181,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
   const isSchoolMode        = activeSidebarTab === 'schools';
   const isHealthStationMode = activeSidebarTab === 'healthStations';
   const isRelicMode         = activeSidebarTab === 'relics';
+  const isGovUnitMode       = activeSidebarTab === 'govUnits';
   const isVillageMode       = activeSidebarTab === 'villages';
 
   const { ranhGioiXaData, ranhGioiThonData, thonNhanTenData } = useGeoJSONLayers();
@@ -257,6 +259,29 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
             </div>
           </motion.div>
         )}
+
+        {isGovUnitMode && (
+          <motion.div
+            key="gov-unit-mode-badge"
+            className="absolute top-4 right-14 z-[400] pointer-events-none"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25 }}
+          >
+            <div className={`
+              flex items-center gap-2 px-3 py-2 rounded-2xl text-xs font-semibold
+              backdrop-blur-md border shadow-lg
+              ${isDark
+                ? 'bg-indigo-900/60 text-indigo-300 border-indigo-700/40'
+                : 'bg-indigo-50/90 text-indigo-700 border-indigo-200/60'
+              }
+            `}>
+              <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
+              🏢 Chế độ xem Đơn vị HCSN
+            </div>
+          </motion.div>
+        )}
       </AnimatePresence>
 
       <MapContainer
@@ -316,6 +341,9 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
 
         {/* Relics layer — displayed in Relics mode */}
         {isRelicMode && <RelicsLayer />}
+
+        {/* Administrative & Public Service Units layer */}
+        {isGovUnitMode && <GovUnitsLayer />}
 
         {/* Commune boundary — always visible */}
         {ranhGioiXaData && (

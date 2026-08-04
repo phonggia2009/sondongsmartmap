@@ -10,7 +10,7 @@ import { InformationPanel } from '@/components/InformationPanel/InformationPanel
 import { Sidebar } from '@/components/Sidebar/Sidebar';
 import { LoadingScreen } from '@/components/Loading/LoadingScreen';
 import { EmptyState } from '@/components/EmptyState/EmptyState';
-import type { Village, School, HealthStation, Relic } from '@/types';
+import type { Village, School, HealthStation, Relic, GovUnit } from '@/types';
 
 // ============================================================
 //  MobileSidebarDrawer — overlay drawer, only shown on mobile
@@ -25,6 +25,7 @@ const MobileSidebarDrawer = memo(function MobileSidebarDrawer({
   onSchoolSelect,
   onHealthStationSelect,
   onRelicSelect,
+  onGovUnitSelect,
 }: {
   villages: Village[];
   sidebarOpen: boolean;
@@ -33,6 +34,7 @@ const MobileSidebarDrawer = memo(function MobileSidebarDrawer({
   onSchoolSelect?: (school: School) => void;
   onHealthStationSelect?: (station: HealthStation) => void;
   onRelicSelect?: (relic: Relic) => void;
+  onGovUnitSelect?: (unit: GovUnit) => void;
 }) {
   return (
     <>
@@ -77,6 +79,7 @@ const MobileSidebarDrawer = memo(function MobileSidebarDrawer({
                 onSchoolSelect={onSchoolSelect}
                 onHealthStationSelect={onHealthStationSelect}
                 onRelicSelect={onRelicSelect}
+                onGovUnitSelect={onGovUnitSelect}
                 forceExpanded
               />
             </div>
@@ -124,6 +127,7 @@ export default function HomePage() {
     selectSchool,
     selectHealthStation,
     selectRelic,
+    selectGovUnit,
     infoPanelOpen,
     setInfoPanelOpen,
     toggleInfoPanel,
@@ -177,6 +181,15 @@ export default function HomePage() {
     selectRelic(relic);
   }, [selectRelic]);
 
+  const handleGovUnitSelectMobile = useCallback((unit: GovUnit) => {
+    selectGovUnit(unit);
+    setSidebarOpen(false);
+  }, [selectGovUnit, setSidebarOpen]);
+
+  const handleGovUnitSelectDesktop = useCallback((unit: GovUnit) => {
+    selectGovUnit(unit);
+  }, [selectGovUnit]);
+
   const handleCloseMobileDrawer = useCallback(() => {
     setSidebarOpen(false);
   }, [setSidebarOpen]);
@@ -222,6 +235,7 @@ export default function HomePage() {
             onSchoolSelect={handleSchoolSelectDesktop}
             onHealthStationSelect={handleHealthStationSelectDesktop}
             onRelicSelect={handleRelicSelectDesktop}
+            onGovUnitSelect={handleGovUnitSelectDesktop}
           />
         )}
       </div>
@@ -236,6 +250,7 @@ export default function HomePage() {
           onSchoolSelect={handleSchoolSelectMobile}
           onHealthStationSelect={handleHealthStationSelectMobile}
           onRelicSelect={handleRelicSelectMobile}
+          onGovUnitSelect={handleGovUnitSelectMobile}
         />
       )}
 

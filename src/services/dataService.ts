@@ -1,9 +1,10 @@
-import type { Village, School, HealthStation, Relic } from '@/types';
+import type { Village, School, HealthStation, Relic, GovUnit, GovUnitCategory } from '@/types';
 import {
   getDataUrl,
   getSchoolsGeoJsonUrl,
   getHealthStationsGeoJsonUrl,
   getRelicsDataUrl,
+  getGovUnitsGeoJsonUrl,
   getCommuneBoundaryGeoJsonUrl,
   getVillageBoundariesGeoJsonUrl,
   getVillageLabelsGeoJsonUrl,
@@ -171,6 +172,50 @@ export async function fetchRelics(): Promise<Relic[]> {
     throw new Error('Dữ liệu di tích không đúng định dạng mảng.');
   }
   return data as Relic[];
+}
+
+/**
+ * Fetches and parses administrative & public service units (Đơn vị HCSN) GeoJSON data.
+ */
+export async function fetchGovUnits(): Promise<GovUnit[]> {
+  const url = getGovUnitsGeoJsonUrl();
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Không thể tải dữ liệu đơn vị HCSN (HTTP ${response.status})`);
+  }
+  const data = await response.json();
+
+  const parsed: GovUnit[] = [];
+  if (Array.isArray(data.features)) {
+    data.features.forEach((feature: any, index: number) => {
+      if (feature.geometry?.type === 'Point') {
+        const name =
+          feature.properties?.commune_name ||
+          feature.properties?.name ||
+          'Đơn vị HCSN';
+
+        let category: GovUnitCategory = 'Hành chính';
+        if (name.includes('Đảng')) {
+          category = 'Đảng - Đoàn thể';
+        } else if (name.includes('Quân Sự') || name.includes('Công an')) {
+          category = 'Lực lượng vũ trang';
+        } else if (name.includes('UBND') || name.includes('Phục vụ Hành chính')) {
+          category = 'Hành chính';
+        }
+
+        parsed.push({
+          id: `gov-unit-${index}`,
+          name,
+          category,
+          categoryId: category,
+          lng: feature.geometry.coordinates[0],
+          lat: feature.geometry.coordinates[1],
+          address: feature.properties?.address || 'Xã Sơn Đồng, Thành phố Hà Nội',
+        });
+      }
+    });
+  }
+  return parsed;
 }
 
 export interface GeoJSONLayersData {
