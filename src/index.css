@@ -195,21 +195,17 @@
   /* ── Section divider ───────────────────────────────────── */
   .section-divider {
     @apply h-px w-full;
-    background: linear-gradient(
-      to right,
-      transparent,
-      rgba(148, 163, 184, 0.25),
-      transparent
-    );
+    background: linear-gradient(to right,
+        transparent,
+        rgba(148, 163, 184, 0.25),
+        transparent);
   }
 
   .dark .section-divider {
-    background: linear-gradient(
-      to right,
-      transparent,
-      rgba(30, 51, 112, 0.5),
-      transparent
-    );
+    background: linear-gradient(to right,
+        transparent,
+        rgba(30, 51, 112, 0.5),
+        transparent);
   }
 }
 
@@ -229,8 +225,15 @@
   }
 
   @keyframes pulse-glow {
-    0%, 100% { filter: drop-shadow(0 0 4px rgba(250, 204, 21, 0.4)); }
-    50% { filter: drop-shadow(0 0 12px rgba(250, 204, 21, 0.9)); }
+
+    0%,
+    100% {
+      filter: drop-shadow(0 0 4px rgba(250, 204, 21, 0.4));
+    }
+
+    50% {
+      filter: drop-shadow(0 0 12px rgba(250, 204, 21, 0.9));
+    }
   }
 
   /* Marching ants for commune boundary */
@@ -240,7 +243,9 @@
   }
 
   @keyframes march {
-    to { stroke-dashoffset: -24; }
+    to {
+      stroke-dashoffset: -24;
+    }
   }
 
   /* Gradient text */
@@ -257,19 +262,19 @@
 
   /* Edge gradient overlays for map depth */
   .map-edge-top {
-    background: linear-gradient(to bottom, rgba(0,0,0,0.06) 0%, transparent 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.06) 0%, transparent 100%);
   }
 
   .map-edge-bottom {
-    background: linear-gradient(to top, rgba(0,0,0,0.08) 0%, transparent 100%);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.08) 0%, transparent 100%);
   }
 
   .dark .map-edge-top {
-    background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, transparent 100%);
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.15) 0%, transparent 100%);
   }
 
   .dark .map-edge-bottom {
-    background: linear-gradient(to top, rgba(0,0,0,0.2) 0%, transparent 100%);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.2) 0%, transparent 100%);
   }
 }
 
@@ -318,8 +323,8 @@
 .relic-popup .leaflet-popup-content-wrapper {
   border-radius: 16px !important;
   padding: 0 !important;
-  box-shadow: 0 12px 40px -6px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0,0,0,0.06) !important;
-  border: 1px solid rgba(0,0,0,0.05) !important;
+  box-shadow: 0 12px 40px -6px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid rgba(0, 0, 0, 0.05) !important;
   overflow: hidden;
   backdrop-filter: blur(8px);
 }
@@ -361,8 +366,15 @@
 }
 
 @keyframes popup-in {
-  from { opacity: 0; transform: translateY(8px) scale(0.95); }
-  to   { opacity: 1; transform: translateY(0)   scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.95);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 /* ============================================================
@@ -372,7 +384,7 @@
 .leaflet-control-layers {
   border-radius: 12px !important;
   border: 1px solid rgba(226, 232, 240, 0.6) !important;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
   backdrop-filter: blur(12px);
   background: rgba(255, 255, 255, 0.9) !important;
 }
@@ -387,7 +399,7 @@
   border: none !important;
   border-radius: 12px !important;
   overflow: hidden;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
 }
 
 .leaflet-control-zoom a {
@@ -408,4 +420,12 @@
 
 .dark .leaflet-control-zoom a:hover {
   background: rgba(23, 37, 84, 0.95) !important;
+}
+
+/* Responsive positioning for Leaflet zoom control */
+@media (max-width: 767px) {
+  .leaflet-top.leaflet-left {
+    margin-top: 12px !important;
+    margin-left: 12px !important;
+  }
 }

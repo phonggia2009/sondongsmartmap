@@ -1,12 +1,13 @@
 import { memo, useEffect } from 'react';
 import {
   MapContainer, TileLayer, GeoJSON, LayersControl,
-  useMapEvents, useMap,
+  useMapEvents, useMap, ZoomControl,
 } from 'react-leaflet';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Village } from '@/types';
 import { useAppContext } from '@/context/AppContext';
 import { useGeoJSONLayers } from '@/hooks/useGeoJSONLayers';
+import { useIsMobile } from '@/hooks/useIsMobile';
 import { MapOverlayStats } from './MapOverlayStats';
 import { SchoolsLayer } from './SchoolsLayer';
 import { HealthStationsLayer } from './HealthStationsLayer';
@@ -174,6 +175,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
     activeSidebarTab,
     isDark,
   } = useAppContext();
+  const isMobile = useIsMobile();
 
   const isSchoolMode        = activeSidebarTab === 'schools';
   const isHealthStationMode = activeSidebarTab === 'healthStations';
@@ -263,8 +265,9 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
         maxZoom={20}
         minZoom={10}
         className={`w-full h-full z-0 ${isDark ? 'bg-gov-950' : 'bg-gray-100'}`}
-        zoomControl={true}
+        zoomControl={false}
       >
+        <ZoomControl position={isMobile ? 'topleft' : 'bottomleft'} />
         <LayersControl position="topright">
           <LayersControl.BaseLayer name="Bản đồ mặc định (OSM)">
             <TileLayer
