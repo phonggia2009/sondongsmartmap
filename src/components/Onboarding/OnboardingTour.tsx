@@ -165,11 +165,23 @@ export const OnboardingTour = memo(function OnboardingTour() {
     }
     const el = document.querySelector(currentStep.targetSelector);
     if (el) {
-      setTargetRect(el.getBoundingClientRect());
+      let rect = el.getBoundingClientRect();
+      if (currentStep.id === 'sidebar-search') {
+        const toggleEl = document.querySelector('[data-tour="sidebar-toggle"]');
+        const toggleRect = toggleEl?.getBoundingClientRect();
+        const top = toggleRect ? Math.min(toggleRect.top, rect.top) : 0;
+        rect = new DOMRect(
+          rect.left,
+          top,
+          Math.max(rect.width, toggleRect ? toggleRect.right - rect.left : rect.width),
+          rect.bottom - top
+        );
+      }
+      setTargetRect(rect);
     } else {
       setTargetRect(null);
     }
-  }, [currentStep.targetSelector, isMobile]);
+  }, [currentStep.targetSelector, currentStep.id, isMobile]);
 
   useEffect(() => {
     if (!isTourOpen) return;

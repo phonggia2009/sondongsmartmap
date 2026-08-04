@@ -260,7 +260,9 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
       <MapContainer
         center={[21.037, 105.703]}
         zoom={14}
-        className="w-full h-full z-0"
+        maxZoom={20}
+        minZoom={10}
+        className={`w-full h-full z-0 ${isDark ? 'bg-gov-950' : 'bg-gray-100'}`}
         zoomControl={true}
       >
         <LayersControl position="topright">
@@ -268,6 +270,8 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              maxNativeZoom={18}
+              maxZoom={20}
             />
           </LayersControl.BaseLayer>
 
@@ -275,21 +279,28 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
             <TileLayer
               attribution='&copy; <a href="https://server.arcgisonline.com">Esri</a>'
               url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-              maxZoom={19}
+              maxNativeZoom={18}
+              maxZoom={20}
             />
           </LayersControl.BaseLayer>
 
-          <LayersControl.BaseLayer name="Bản đồ sáng (CartoDB)" checked>
+          <LayersControl.BaseLayer name="Bản đồ sáng (CartoDB)" checked={!isDark}>
             <TileLayer
+              key={`tile-light-${!isDark}`}
               attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
               url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+              maxNativeZoom={18}
+              maxZoom={20}
             />
           </LayersControl.BaseLayer>
 
-          <LayersControl.BaseLayer name="Bản đồ tối (CartoDB)">
+          <LayersControl.BaseLayer name="Bản đồ tối (CartoDB)" checked={isDark}>
             <TileLayer
+              key={`tile-dark-${isDark}`}
               attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
               url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+              maxNativeZoom={18}
+              maxZoom={20}
             />
           </LayersControl.BaseLayer>
         </LayersControl>

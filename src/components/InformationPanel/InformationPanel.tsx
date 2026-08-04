@@ -5,10 +5,11 @@ import {
   Users,
   Home,
   BarChart3,
-  FileText,
   X,
   Map,
   Compass,
+  Building2,
+  Navigation,
 } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { BoundaryRow } from './BoundaryRow';
@@ -43,10 +44,10 @@ function StatCard({
   color?: 'blue' | 'emerald' | 'amber' | 'purple';
 }) {
   const colorMap = {
-    blue:    isDark ? 'from-blue-500/10 to-blue-600/5 border-blue-500/20' : 'from-blue-50 to-blue-100/50 border-blue-200/60',
-    emerald: isDark ? 'from-emerald-500/10 to-emerald-600/5 border-emerald-500/20' : 'from-emerald-50 to-emerald-100/50 border-emerald-200/60',
-    amber:   isDark ? 'from-amber-500/10 to-amber-600/5 border-amber-500/20' : 'from-amber-50 to-amber-100/50 border-amber-200/60',
-    purple:  isDark ? 'from-purple-500/10 to-purple-600/5 border-purple-500/20' : 'from-purple-50 to-purple-100/50 border-purple-200/60',
+    blue:    isDark ? 'from-blue-950/70 to-gov-900/80 border-blue-800/50 text-blue-300' : 'from-blue-50 to-blue-100/50 border-blue-200/60',
+    emerald: isDark ? 'from-emerald-950/70 to-gov-900/80 border-emerald-800/50 text-emerald-300' : 'from-emerald-50 to-emerald-100/50 border-emerald-200/60',
+    amber:   isDark ? 'from-amber-950/70 to-gov-900/80 border-amber-800/50 text-amber-300' : 'from-amber-50 to-amber-100/50 border-amber-200/60',
+    purple:  isDark ? 'from-purple-950/70 to-gov-900/80 border-purple-800/50 text-purple-300' : 'from-purple-50 to-purple-100/50 border-purple-200/60',
   };
 
   const iconColorMap = {
@@ -71,13 +72,13 @@ function StatCard({
       <div className={`flex items-center gap-2 ${iconColorMap[color]}`}>
         <div className={`
           w-7 h-7 rounded-lg flex items-center justify-center
-          ${isDark ? 'bg-white/5' : 'bg-white/60'}
+          ${isDark ? 'bg-gov-900/90 border border-gov-700/50' : 'bg-white/60'}
         `}>
           {icon}
         </div>
       </div>
       <div>
-        <p className={`text-[10px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+        <p className={`text-[10px] font-semibold uppercase tracking-wider mb-0.5 ${isDark ? 'text-gov-400' : 'text-gray-500'}`}>
           {label}
         </p>
         <p className={`text-lg font-bold font-display tracking-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>
@@ -105,8 +106,8 @@ export const InformationPanel = memo(function InformationPanel({
         }
         glass-panel-strong
         ${isDark
-          ? 'bg-gov-950/88 border-gov-800/40'
-          : 'bg-white/90 border-gray-200/60'
+          ? 'bg-gov-950/95 border-gov-800/60 shadow-2xl'
+          : 'bg-white/95 border-gray-200/60 shadow-xl'
         }
         ${!isMobile ? (isDark ? 'border-r' : 'border-r') : (isDark ? 'border-t border-gov-700/40' : 'border-t border-gray-200')}
       `}
@@ -233,6 +234,71 @@ export const InformationPanel = memo(function InformationPanel({
               {/* Divider */}
               <div className="section-divider" />
 
+              {/* Community Center */}
+              {(village.communityCenter || village.communityCenterAddress) && (
+                <>
+                  <div>
+                    <div className="flex items-center gap-2 mb-2">
+                      <Building2 className={`w-3.5 h-3.5 ${isDark ? 'text-accent-400' : 'text-gov-600'}`} />
+                      <p className={`text-[11px] font-semibold uppercase tracking-wider ${isDark ? 'text-gov-400' : 'text-gray-500'}`}>
+                        Điểm Sinh Hoạt Cộng Đồng
+                      </p>
+                    </div>
+                    <div className={`
+                      p-3.5 rounded-2xl border text-xs space-y-2.5
+                      ${isDark
+                        ? 'bg-gov-900/60 border-gov-800/60 text-gov-200'
+                        : 'bg-gov-50/60 border-gov-100 text-gray-700'
+                      }
+                    `}>
+                      {village.communityCenter && (
+                        <p className="font-bold text-sm text-gov-600 dark:text-accent-300">
+                          {village.communityCenter}
+                        </p>
+                      )}
+                      {village.communityCenterAddress && (
+                        <div className="flex items-start gap-1.5 text-xs text-gray-600 dark:text-gov-300">
+                          <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-accent-500" />
+                          <span>{village.communityCenterAddress}</span>
+                        </div>
+                      )}
+
+                      {/* Directions button for Community Center */}
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          let dest = '';
+                          if (village.communityCenterCoords) {
+                            dest = `${village.communityCenterCoords.lat},${village.communityCenterCoords.lng}`;
+                          } else if (village.communityCenterAddress) {
+                            dest = encodeURIComponent(village.communityCenterAddress);
+                          } else if (village.communityCenter) {
+                            dest = encodeURIComponent(`${village.communityCenter}, Sơn Đồng, Hoài Đức, Hà Nội`);
+                          }
+                          if (dest) {
+                            window.open(`https://www.google.com/maps/dir/?api=1&destination=${dest}`, '_blank');
+                          }
+                        }}
+                        className={`
+                          w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl font-semibold text-xs transition-all duration-200 shadow-sm cursor-pointer mt-1
+                          ${isDark
+                            ? 'bg-accent-600 hover:bg-accent-500 text-white shadow-accent-600/20 active:scale-[0.98]'
+                            : 'bg-gov-600 hover:bg-gov-700 text-white shadow-gov-600/20 active:scale-[0.98]'
+                          }
+                        `}
+                        title="Chỉ đường tới điểm sinh hoạt cộng đồng trên Google Maps"
+                      >
+                        <Navigation className="w-3.5 h-3.5" />
+                        <span>Chỉ đường tới Nhà văn hóa</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Divider */}
+                  <div className="section-divider" />
+                </>
+              )}
+
               {/* Boundaries */}
               <div>
                 <p className={`text-[11px] font-semibold uppercase tracking-wider mb-2.5 ${isDark ? 'text-gov-400' : 'text-gray-500'}`}>
@@ -251,24 +317,6 @@ export const InformationPanel = memo(function InformationPanel({
 
               {/* Landmarks */}
               <LandmarkList landmarks={village.landmarks} />
-
-              {/* Description */}
-              {village.description && (
-                <>
-                  <div className="section-divider" />
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      <FileText className={`w-3.5 h-3.5 ${isDark ? 'text-gov-400' : 'text-gray-400'}`} />
-                      <p className={`text-[11px] font-semibold uppercase tracking-wider ${isDark ? 'text-gov-400' : 'text-gray-500'}`}>
-                        Mô tả
-                      </p>
-                    </div>
-                    <p className={`text-sm leading-relaxed ${isDark ? 'text-gov-300' : 'text-gray-600'}`}>
-                      {village.description}
-                    </p>
-                  </div>
-                </>
-              )}
 
               {/* Bottom padding */}
               <div className="h-6" />

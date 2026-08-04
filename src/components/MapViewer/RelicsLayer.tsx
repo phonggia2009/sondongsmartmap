@@ -15,7 +15,7 @@ import { Award, MapPin, Calendar, Landmark, Navigation } from 'lucide-react';
 
 export function RelicsLayer() {
   const map = useMap();
-  const { relicFilters, relicSearchQuery, selectedRelic, selectRelic } = useAppContext();
+  const { relicFilters, relicSearchQuery, selectedRelic, selectRelic, isDark } = useAppContext();
   const { relics } = useRelics();
 
   const [bounds, setBounds] = useState<[number, number, number, number] | null>(null);
@@ -42,7 +42,7 @@ export function RelicsLayer() {
     if (!selectedRelic) return;
 
     // Fly to relic coordinates
-    map.flyTo([selectedRelic.lat, selectedRelic.lng], 17.5, { duration: 0.8 });
+    map.flyTo([selectedRelic.lat, selectedRelic.lng], 17, { duration: 0.8 });
 
     // Open popup after flyTo animation completes
     const timer = setTimeout(() => {
@@ -221,23 +221,23 @@ export function RelicsLayer() {
                   <div className="flex items-center gap-2 mb-1.5">
                     <span className="text-2xl">{emoji}</span>
                     <div className="min-w-0 flex-1">
-                      <h4 className="font-bold text-sm text-gray-900 leading-tight">
+                      <h4 className={`font-bold text-sm leading-tight ${isDark ? 'text-white' : 'text-gray-900'}`}>
                         {relic.name}
                       </h4>
-                      <span className="text-xs text-gray-500">{relic.type}</span>
+                      <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{relic.type}</span>
                     </div>
                   </div>
 
-                  <div className="space-y-1.5 pt-2 border-t border-gray-100 text-xs">
+                  <div className={`space-y-1.5 pt-2 border-t text-xs ${isDark ? 'border-gov-800' : 'border-gray-100'}`}>
                     {/* Rank badge */}
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-500">Cấp xếp hạng:</span>
+                      <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>Cấp xếp hạng:</span>
                       <span
                         className={`
                           px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider
                           ${isNational
-                            ? 'bg-amber-100 text-amber-800 border border-amber-300'
-                            : 'bg-blue-100 text-blue-800 border border-blue-300'
+                            ? isDark ? 'bg-amber-900/50 text-amber-300 border border-amber-700/60' : 'bg-amber-100 text-amber-800 border border-amber-300'
+                            : isDark ? 'bg-blue-900/50 text-blue-300 border border-blue-700/60' : 'bg-blue-100 text-blue-800 border border-blue-300'
                           }
                         `}
                       >
@@ -247,14 +247,16 @@ export function RelicsLayer() {
 
                     {/* Village */}
                     <div className="flex items-center justify-between">
-                      <span className="text-gray-500">Địa bàn thôn/xã:</span>
-                      <span className="font-semibold text-gray-800">{relic.village}</span>
+                      <span className={isDark ? 'text-gray-400' : 'text-gray-500'}>Địa bàn thôn/xã:</span>
+                      <span className={`font-semibold ${isDark ? 'text-gray-200' : 'text-gray-800'}`}>{relic.village}</span>
                     </div>
 
                     {/* Decision number */}
                     {relic.decisionNo && (
-                      <div className="mt-1 p-2 bg-purple-50/60 rounded-lg border border-purple-100 text-[11px] text-purple-900 leading-normal">
-                        <div className="font-bold text-purple-700 mb-0.5">Số quyết định xếp hạng:</div>
+                      <div className={`mt-1 p-2 rounded-lg border text-[11px] leading-normal ${
+                        isDark ? 'bg-purple-950/60 border-purple-800/40 text-purple-200' : 'bg-purple-50/60 border-purple-100 text-purple-900'
+                      }`}>
+                        <div className={`font-bold mb-0.5 ${isDark ? 'text-purple-300' : 'text-purple-700'}`}>Số quyết định xếp hạng:</div>
                         <div>{relic.decisionNo}</div>
                       </div>
                     )}

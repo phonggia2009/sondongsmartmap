@@ -16,6 +16,7 @@ export function HealthStationsLayer() {
     healthStationSearchQuery,
     selectedHealthStation,
     selectHealthStation,
+    isDark,
   } = useAppContext();
   const { healthStations } = useHealthStations();
 
@@ -25,7 +26,7 @@ export function HealthStationsLayer() {
   // ── FlyTo and auto open popup when selectedHealthStation changes ──────
   useEffect(() => {
     if (!selectedHealthStation) return;
-    map.flyTo([selectedHealthStation.lat, selectedHealthStation.lng], 17.5, { duration: 0.8 });
+    map.flyTo([selectedHealthStation.lat, selectedHealthStation.lng], 17, { duration: 0.8 });
 
     const timer = setTimeout(() => {
       const marker = markerRefs.current.get(selectedHealthStation.id);
@@ -131,8 +132,8 @@ export function HealthStationsLayer() {
                       display: 'inline-flex',
                       alignItems: 'center',
                       gap: '5px',
-                      background: '#fee2e2',
-                      color: '#dc2626',
+                      background: isDark ? '#451a1a' : '#fee2e2',
+                      color: isDark ? '#fca5a5' : '#dc2626',
                       borderRadius: '6px',
                       padding: '3px 8px',
                       fontSize: '11px',
@@ -149,7 +150,7 @@ export function HealthStationsLayer() {
                     style={{
                       fontSize: '14px',
                       fontWeight: 700,
-                      color: '#111827',
+                      color: isDark ? '#f8fafc' : '#111827',
                       lineHeight: 1.4,
                       marginBottom: '8px',
                     }}
@@ -165,10 +166,10 @@ export function HealthStationsLayer() {
                         alignItems: 'center',
                         gap: '6px',
                         fontSize: '12px',
-                        color: '#374151',
+                        color: isDark ? '#cbd5e1' : '#374151',
                         fontWeight: 600,
                         marginBottom: '6px',
-                        background: '#f9fafb',
+                        background: isDark ? '#1e293b' : '#f9fafb',
                         padding: '6px 8px',
                         borderRadius: '6px',
                       }}
@@ -188,15 +189,15 @@ export function HealthStationsLayer() {
                           alignItems: 'center',
                           gap: '6px',
                           fontSize: '12px',
-                          color: '#dc2626',
+                          color: isDark ? '#fca5a5' : '#dc2626',
                           fontWeight: 700,
                           textDecoration: 'none',
-                          background: '#fef2f2',
+                          background: isDark ? '#451a1a' : '#fef2f2',
                           padding: '6px 10px',
                           borderRadius: '6px',
                           width: '100%',
                           justifyContent: 'center',
-                          border: '1px solid #fecaca',
+                          border: isDark ? '1px solid #7f1d1d' : '1px solid #fecaca',
                         }}
                       >
                         <span>📞</span>

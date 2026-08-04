@@ -298,9 +298,14 @@
   @apply outline-2 outline-offset-2 outline-accent-500 rounded-sm;
 }
 
-/* ============================================================
-   LEAFLET FIXES
-   ============================================================ */
+.leaflet-container {
+  background: #f1f5f9 !important;
+}
+
+.dark .leaflet-container {
+  background: #020617 !important;
+}
+
 .leaflet-container *:focus {
   outline: none !important;
 }
@@ -309,14 +314,36 @@
    LEAFLET POPUP OVERRIDES
    ============================================================ */
 
-/* School popup — clean card style */
-.school-popup .leaflet-popup-content-wrapper {
+.school-popup .leaflet-popup-content-wrapper,
+.relic-popup .leaflet-popup-content-wrapper {
   border-radius: 16px !important;
   padding: 0 !important;
   box-shadow: 0 12px 40px -6px rgba(0, 0, 0, 0.16), 0 4px 12px rgba(0,0,0,0.06) !important;
   border: 1px solid rgba(0,0,0,0.05) !important;
   overflow: hidden;
   backdrop-filter: blur(8px);
+}
+
+/* Dark mode Leaflet popups */
+.dark .leaflet-popup-content-wrapper,
+.dark .school-popup .leaflet-popup-content-wrapper,
+.dark .relic-popup .leaflet-popup-content-wrapper {
+  background: rgba(15, 23, 42, 0.95) !important;
+  color: #f1f5f9 !important;
+  border: 1px solid rgba(30, 58, 138, 0.5) !important;
+  box-shadow: 0 16px 32px -4px rgba(0, 0, 0, 0.6) !important;
+}
+
+.dark .leaflet-popup-tip {
+  background: rgba(15, 23, 42, 0.95) !important;
+}
+
+.dark .leaflet-container a.leaflet-popup-close-button {
+  color: #94a3b8 !important;
+}
+
+.dark .leaflet-container a.leaflet-popup-close-button:hover {
+  color: #f8fafc !important;
 }
 
 .school-popup .leaflet-popup-content {

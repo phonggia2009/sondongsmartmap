@@ -1,0 +1,215 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "commune_name": "Nhà Văn hóa Thôn Ngoại",
+        "name": "Nhà Văn hóa Thôn Ngoại",
+        "village": "Thôn Ngoại",
+        "address": "Thôn Ngoại, xã Sơn Đồng, huyện Hoài Đức, TP. Hà Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.702918, 21.044513]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "commune_name": "Nhà văn hóa thôn Đình",
+        "name": "Nhà văn hóa thôn Đình",
+        "village": "Thôn Đình",
+        "address": "Thôn Đình, xã Sơn Đồng, huyện Hoài Đức, TP. Hà Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.698178, 21.04452]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "commune_name": "Nhà văn hóa thôn Gạch",
+        "name": "Nhà văn hóa thôn Gạch",
+        "village": "Thôn Nội",
+        "address": "Thôn Nội, xã Sơn Đồng, huyện Hoài Đức, TP. Hà Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.701007, 21.039633]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "commune_name": "Nhà văn hóa Thôn Lại Yên 1",
+        "name": "Nhà văn hóa Thôn Lại Yên 1",
+        "village": "Thôn Lại Yên 1",
+        "address": "Thôn 1, xã Lại Yên, huyện Hoài Đức, TP. Hà Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.711542, 21.022447]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "commune_name": "Nhà văn hóa Thôn Lại Yên 2",
+        "name": "Nhà văn hóa Thôn Lại Yên 2",
+        "village": "Thôn Lại Yên 2",
+        "address": "Thôn 2, xã Lại Yên, huyện Hoài Đức, TP. Hà Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.701823, 21.024646]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "commune_name": "Nhà văn hóa Thôn Quyết Tiến",
+        "name": "Nhà văn hóa Thôn Quyết Tiến",
+        "village": "Thôn Quyết Tiến",
+        "address": "Thôn Quyết Tiến, xã Vân Côn, huyện Hoài Đức, TP. Hà Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.670082, 21.005806]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "commune_name": "Nhà văn hóa thôn Tiền Lệ",
+        "name": "Nhà văn hóa thôn Tiền Lệ",
+        "village": "Thôn Tiền Lệ",
+        "address": "Thôn Tiền Lệ, xã Tiền Yên, huyện Hoài Đức, TP. Hà Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.683798, 21.017688]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "commune_name": "Nhà văn hóa Thôn Yên Thái",
+        "name": "Nhà văn hóa Thôn Yên Thái",
+        "village": "Thôn Yên Thái",
+        "address": "Thôn Yên Thái, xã Tiền Yên, huyện Hoài Đức, TP. Hà Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.686979, 21.028518]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "commune_name": "Nhà Văn Hóa Thôn An Trai",
+        "label": "Nhà Văn Hóa Thôn An Trai",
+        "name": "Nhà Văn Hóa Thôn An Trai",
+        "village": "Thôn An Trai",
+        "address": "Thôn An Trai, xã Vân Canh, huyện Hoài Đức, TP. Hà Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.734105, 21.030569]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "commune_name": "Nhà Văn Hoá Thôn Kim Hoàng",
+        "label": "Nhà Văn Hoá Thôn Kim Hoàng",
+        "name": "Nhà Văn Hoá Thôn Kim Hoàng",
+        "village": "Thôn Kim Hoàng",
+        "address": "Thôn Kim Hoàng, xã Vân Canh, huyện Hoài Đức, TP. Hà Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.73006, 21.033911]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "commune_name": "Nhà văn hóa thôn Hậu Ái",
+        "name": "Nhà văn hóa thôn Hậu Ái",
+        "village": "Thôn Hậu Ái",
+        "address": "Thôn Hậu Ái, xã Vân Canh, huyện Hoài Đức, TP. Hà Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.729061, 21.038199]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "commune_name": "Nhà sinh hoạt công đồng chung cư AZ",
+        "name": "Nhà sinh hoạt cộng đồng chung cư AZ",
+        "village": "Tổ dân phố số 2",
+        "address": "Chung cư AZ Vân Canh, KĐT mới Vân Canh, xã Vân Canh, huyện Hoài Đức, TP. Hà Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.725789, 21.041482]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "commune_name": "Phòng họp tổ dân phố 1- tầng 2 nhà sinh hoạt cộng đồng Khu BT1",
+        "name": "Phòng họp tổ dân phố 1- tầng 2 nhà sinh hoạt cộng đồng Khu BT1",
+        "village": "Tổ dân phố số 1",
+        "address": "Tầng 2 Nhà SHCĐ Khu BT1, KĐT mới Nam An Khánh, huyện Hoài Đức, TP. Hà Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.724105, 21.013986]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "commune_name": "Nhà văn hóa Thôn Phương Bảng",
+        "name": "Nhà văn hóa Thôn Phương Bảng",
+        "village": "Thôn Phương Bảng",
+        "address": "Thôn Phương Bảng, xã Song Phương, huyện Hoài Đức, TP. Hà Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.695758, 21.020789]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "commune_name": "Nhà văn hóa Thôn Phương Viên 1",
+        "name": "Nhà văn hóa Thôn Phương Viên 1",
+        "village": "Thôn Phương Viên 1",
+        "address": "Thôn Phương Viên 1, xã Song Phương, huyện Hoài Đức, TP. Hà Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.697904, 21.015537]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "commune_name": "Nhà văn hóa Thôn Phương Viên 2",
+        "name": "Nhà văn hóa Thôn Phương Viên 2",
+        "village": "Thôn Phương Viên 2",
+        "address": "Thôn Phương Viên 2, xã Song Phương, huyện Hoài Đức, TP. Hà Nội"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [105.699883, 21.009854]
+      }
+    }
+  ]
+}

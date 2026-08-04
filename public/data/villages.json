@@ -7,7 +7,12 @@
     "partyMembers": 121,
     "households": 1175,
     "population": 4106,
-    "communityCenter": "Nhà văn hóa thôn Hàn",
+    "communityCenter": "Nhà văn hóa thôn Ngoại",
+    "communityCenterAddress": "Thôn Ngoại, xã Sơn Đồng, TP. Hà Nội",
+    "communityCenterCoords": {
+      "lat": 21.044513,
+      "lng": 105.702918
+    },
     "east": "Phần lớn giáp xã Hoài Đức và một phần phía Đông - Nam giáp thôn Lại Yên 1",
     "west": "Một phần giáp thôn Nội, một phần giáp thôn Đình",
     "south": "Giáp thôn Nội",
@@ -34,6 +39,11 @@
     "households": 1178,
     "population": 4065,
     "communityCenter": "Nhà văn hóa thôn Đình",
+    "communityCenterAddress": "Thôn Đình, xã Sơn Đồng, TP. Hà Nội",
+    "communityCenterCoords": {
+      "lat": 21.04452,
+      "lng": 105.698178
+    },
     "east": "Giáp thôn Nội và thôn Ngoại",
     "west": "Giáp xã Dương Hòa",
     "south": "Giáp xã Dương Hòa",
@@ -57,6 +67,11 @@
     "households": 993,
     "population": 3325,
     "communityCenter": "Nhà văn hóa thôn Gạch",
+    "communityCenterAddress": "Thôn Gạch, xã Sơn Đồng, TP. Hà Nội",
+    "communityCenterCoords": {
+      "lat": 21.039633,
+      "lng": 105.701007
+    },
     "east": "Giáp thôn Lại Yên 1",
     "west": "Giáp thôn Đình và một phần nhỏ giáp xã Dương Hòa",
     "south": "Giáp thôn Lại Yên 2 và thôn Phương Bảng",
@@ -80,6 +95,11 @@
     "households": 1339,
     "population": 4938,
     "communityCenter": "Nhà văn hóa thôn 1",
+    "communityCenterAddress": "Thôn 1, xã Sơn Đồng, TP. Hà Nội",
+    "communityCenterCoords": {
+      "lat": 21.022447,
+      "lng": 105.711542
+    },
     "east": "Giáp Tổ dân phố số 1",
     "west": "Giáp thôn Ngoại, thôn Nội, thôn Lại Yên 2 và thôn Phương Viên 2",
     "south": "Giáp thôn Phương Viên 2 và Tổ dân phố số 1",
@@ -98,7 +118,12 @@
     "partyMembers": 72,
     "households": 1175,
     "population": 4257,
-    "communityCenter": "Nhà văn hóa thôn 4",
+    "communityCenter": "Nhà văn hóa thôn Lại Yên 2",
+    "communityCenterAddress": "Thôn Lại Yên 2, xã Sơn Đồng, TP. Hà Nội",
+    "communityCenterCoords": {
+      "lat": 21.024646,
+      "lng": 105.701823
+    },
     "east": "Giáp thôn Lại Yên 1",
     "west": "Giáp thôn Phương Bảng và thôn Phương Viên 1",
     "south": "Giáp thôn Phương Viên 1 và thôn Phương Viên 2",
@@ -118,6 +143,11 @@
     "households": 1363,
     "population": 4751,
     "communityCenter": "Nhà văn hóa thôn Phương Bảng 2",
+    "communityCenterAddress": "Thôn Phương Bảng, xã Sơn Đồng, TP. Hà Nội",
+    "communityCenterCoords": {
+      "lat": 21.020789,
+      "lng": 105.695758
+    },
     "east": "Giáp thôn Lại Yên 2, Phương Viên 1 và Phương Viên 2",
     "west": "Giáp thôn Yên Thái, Tiền Lệ, Quyết Tiến và một phần Sông Đáy",
     "south": "Giáp Đại lộ Thăng Long",
@@ -138,7 +168,12 @@
     "partyMembers": 42,
     "households": 1208,
     "population": 4216,
-    "communityCenter": "Thôn Phương Viên 1",
+    "communityCenter": "Nhà văn hóa thôn Phương Viên 1",
+    "communityCenterAddress": "Thôn Phương Viên 1, xã Sơn Đồng, TP. Hà Nội",
+    "communityCenterCoords": {
+      "lat": 21.015537,
+      "lng": 105.697904
+    },
     "east": "Giáp Lại Yên 2",
     "west": "Giáp Phương Bảng",
     "south": "Giáp Phương Viên 2",
@@ -157,7 +192,12 @@
     "partyMembers": 52,
     "households": 1179,
     "population": 4566,
-    "communityCenter": "Thôn Phương Viên 4",
+    "communityCenter": "Nhà văn hóa thôn Phương Viên 2",
+    "communityCenterAddress": "Thôn Phương Viên 2, xã Sơn Đồng, TP. Hà Nội",
+    "communityCenterCoords": {
+      "lat": 21.009854,
+      "lng": 105.699883
+    },
     "east": "Giáp Lại Yên 1 và TDP 1",
     "west": "Giáp Phương Bảng",
     "south": "Giáp Đại lộ Thăng Long",
@@ -179,6 +219,11 @@
     "households": 514,
     "population": 1826,
     "communityCenter": "Nhà văn hóa thôn Quyết Tiến",
+    "communityCenterAddress": "Thôn Quyết Tiến, xã Sơn Đồng, TP. Hà Nội",
+    "communityCenterCoords": {
+      "lat": 21.005806,
+      "lng": 105.670082
+    },
     "east": "Giáp Phương Bảng",
     "west": "Giáp Sông Đáy",
     "south": "Giáp Đại lộ Thăng Long",
@@ -200,6 +245,11 @@
     "households": 1084,
     "population": 4450,
     "communityCenter": "Nhà văn hóa thôn Tiền Lệ",
+    "communityCenterAddress": "Thôn Tiền Lệ, xã Sơn Đồng, TP. Hà Nội",
+    "communityCenterCoords": {
+      "lat": 21.017688,
+      "lng": 105.683798
+    },
     "east": "Giáp Phương Bảng",
     "west": "Giáp Yên Thái và Sông Đáy",
     "south": "Giáp Phương Bảng",
@@ -219,6 +269,11 @@
     "households": 869,
     "population": 3600,
     "communityCenter": "Nhà văn hóa thôn Yên Thái",
+    "communityCenterAddress": "Thôn Yên Thái, xã Sơn Đồng, TP. Hà Nội",
+    "communityCenterCoords": {
+      "lat": 21.028518,
+      "lng": 105.686979
+    },
     "east": "Giáp Phương Bảng",
     "west": "Giáp xã Dương Hòa và Sông Đáy",
     "south": "Giáp Tiền Lệ",
@@ -238,6 +293,11 @@
     "households": 990,
     "population": 3256,
     "communityCenter": "Nhà văn hóa thôn An Trai",
+    "communityCenterAddress": "Thôn An Trai, xã Sơn Đồng, TP. Hà Nội",
+    "communityCenterCoords": {
+      "lat": 21.030569,
+      "lng": 105.734105
+    },
     "east": "Giáp đường 70 và phường Xuân Phương",
     "west": "Giáp Kim Hoàng",
     "south": "Giáp TDP 1 và một phần phường Xuân Phương",
@@ -259,6 +319,11 @@
     "households": 1898,
     "population": 6004,
     "communityCenter": "Nhà văn hóa thôn Kim Hoàng",
+    "communityCenterAddress": "Thôn Kim Hoàng, xã Sơn Đồng, TP. Hà Nội",
+    "communityCenterCoords": {
+      "lat": 21.033911,
+      "lng": 105.73006
+    },
     "east": "Giáp An Trai",
     "west": "Giáp TDP 1",
     "south": "Giáp TDP 1",
@@ -278,6 +343,11 @@
     "households": 1659,
     "population": 5876,
     "communityCenter": "Nhà văn hóa thôn Hậu Ái",
+    "communityCenterAddress": "Thôn Hậu Ái, xã Sơn Đồng, TP. Hà Nội",
+    "communityCenterCoords": {
+      "lat": 21.038199,
+      "lng": 105.729061
+    },
     "east": "Giáp TDP 2",
     "west": "Giáp xã Hoài Đức",
     "south": "Giáp Kim Hoàng",
@@ -297,6 +367,11 @@
     "households": 1406,
     "population": 4144,
     "communityCenter": "Nhà sinh hoạt cộng đồng chung cư AZ",
+    "communityCenterAddress": "Chung cư AZ Vân Canh, KĐT mới Vân Canh, xã Sơn Đồng, TP. Hà Nội",
+    "communityCenterCoords": {
+      "lat": 21.041482,
+      "lng": 105.725789
+    },
     "east": "Giáp phường Xuân Phương",
     "west": "Giáp xã Hoài Đức",
     "south": "Giáp Hậu Ái và một phần Kim Hoàng",
@@ -316,6 +391,11 @@
     "households": 837,
     "population": 2940,
     "communityCenter": "Phòng họp tổ dân phố 1 - tầng 2 nhà sinh hoạt cộng đồng khu BT1",
+    "communityCenterAddress": "Tầng 2 Nhà SHCĐ Khu BT1, KĐT Splendora, xã Sơn Đồng, TP. Hà Nội",
+    "communityCenterCoords": {
+      "lat": 21.013986,
+      "lng": 105.724105
+    },
     "east": "Giáp phường Xuân Phương",
     "west": "Giáp thôn Lại Yên 1 và thôn Phương Viên 2",
     "south": "Giáp Đại lộ Thăng Long",

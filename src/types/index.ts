@@ -10,6 +10,12 @@ export interface Village {
   partyMembers: number;
   households?: number;
   population?: number;
+  communityCenter?: string;
+  communityCenterAddress?: string;
+  communityCenterCoords?: {
+    lat: number;
+    lng: number;
+  };
   east: string;
   west: string;
   south: string;

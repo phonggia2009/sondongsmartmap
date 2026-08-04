@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Search, MapPin, Loader2 } from 'lucide-react';
+import { useAppContext } from '@/context/AppContext';
 import type { POILayerConfig, POIItem } from '@/types/poi';
 
 interface POILayerPanelProps<T extends POIItem> {
@@ -26,6 +27,7 @@ export function POILayerPanel<T extends POIItem>({
   onSearchQueryChange,
   renderItemSubtitle,
 }: POILayerPanelProps<T>) {
+  const { isDark } = useAppContext();
   const [internalSearchQuery, setInternalSearchQuery] = useState('');
   const searchQuery = externalSearchQuery ?? internalSearchQuery;
 
@@ -88,13 +90,17 @@ export function POILayerPanel<T extends POIItem>({
                   key={cat.id}
                   onClick={() => onToggleCategory(cat.id)}
                   className={`
-                    flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium transition-all duration-200 border
+                    flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium transition-all duration-200 border
                     ${isActive 
-                      ? 'border-transparent shadow-sm' 
-                      : 'bg-white dark:bg-gov-900 border-gray-200 dark:border-gov-700 text-gray-400 dark:text-gray-500 opacity-60 hover:opacity-100'
+                      ? 'shadow-sm' 
+                      : 'bg-white dark:bg-gov-900 border-gray-200 dark:border-gov-800 text-gray-400 dark:text-gov-500 opacity-60 hover:opacity-100'
                     }
                   `}
-                  style={isActive ? { backgroundColor: cat.bgColor, color: cat.color } : {}}
+                  style={isActive ? {
+                    backgroundColor: isDark ? `${cat.color}22` : cat.bgColor,
+                    color: cat.color,
+                    borderColor: isDark ? `${cat.color}66` : 'transparent',
+                  } : {}}
                 >
                   <span>{cat.icon}</span>
                   <span>{cat.name}</span>
@@ -151,20 +157,23 @@ export function POILayerPanel<T extends POIItem>({
                       w-full text-left p-3 rounded-xl transition-all duration-200 border cursor-pointer
                       flex items-start gap-3 group select-none
                       ${isSelected
-                        ? 'shadow-sm dark:bg-gov-900'
-                        : 'bg-white dark:bg-transparent border-transparent hover:bg-gray-50 dark:hover:bg-gov-900 hover:border-gray-200 dark:hover:border-gov-800'
+                        ? 'shadow-md font-semibold'
+                        : 'bg-white dark:bg-transparent border-transparent hover:bg-gray-50 dark:hover:bg-gov-900/60 hover:border-gray-200 dark:hover:border-gov-800'
                       }
                     `}
-                    style={isSelected && category ? { borderColor: category.color, backgroundColor: category.bgColor } : {}}
+                    style={isSelected && category ? {
+                      borderColor: category.color,
+                      backgroundColor: isDark ? `${category.color}25` : category.bgColor,
+                    } : {}}
                   >
                     <div className="flex-shrink-0 text-xl leading-none mt-0.5 transition-transform group-hover:scale-110">
                       {category?.icon || <MapPin className="w-5 h-5" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className={`text-sm font-medium truncate ${isSelected ? 'text-gray-900 dark:text-white' : 'text-gray-700 dark:text-gray-300'}`}>
+                      <div className={`text-sm font-bold truncate ${isSelected ? (isDark ? 'text-white' : 'text-gray-900') : (isDark ? 'text-gov-200' : 'text-gray-700')}`}>
                         {item.name}
                       </div>
-                      <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 truncate">
+                      <div className={`text-xs mt-0.5 truncate ${isSelected ? (isDark ? 'text-gov-200 font-medium' : 'text-gray-700') : (isDark ? 'text-gov-400' : 'text-gray-500')}`}>
                         {renderItemSubtitle ? renderItemSubtitle(item) : (category?.name || 'Chưa phân loại')}
                       </div>
                     </div>

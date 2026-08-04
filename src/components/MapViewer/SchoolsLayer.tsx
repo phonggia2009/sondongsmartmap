@@ -14,7 +14,7 @@ import type { SchoolLevel } from '@/types';
 
 export function SchoolsLayer() {
   const map = useMap();
-  const { schoolFilters, schoolSearchQuery, selectedSchool, selectSchool } = useAppContext();
+  const { schoolFilters, schoolSearchQuery, selectedSchool, selectSchool, isDark } = useAppContext();
   const { schools } = useSchools();
 
   const [bounds, setBounds] = useState<[number, number, number, number] | null>(null);
@@ -40,7 +40,7 @@ export function SchoolsLayer() {
   // ── FlyTo and auto open popup when selectedSchool changes ──
   useEffect(() => {
     if (!selectedSchool) return;
-    map.flyTo([selectedSchool.lat, selectedSchool.lng], 17.5, { duration: 0.8 });
+    map.flyTo([selectedSchool.lat, selectedSchool.lng], 17, { duration: 0.8 });
 
     const timer = setTimeout(() => {
       const marker = markerRefs.current.get(selectedSchool.id);
@@ -231,7 +231,7 @@ export function SchoolsLayer() {
                   {/* School name */}
                   <div style={{
                     fontSize: '13px', fontWeight: 700,
-                    color: '#111827', lineHeight: 1.4, marginBottom: '10px',
+                    color: isDark ? '#f8fafc' : '#111827', lineHeight: 1.4, marginBottom: '10px',
                   }}>
                     {name}
                   </div>
