@@ -190,7 +190,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
         {isSchoolMode && (
           <motion.div
             key="school-mode-badge"
-            className="absolute top-4 right-14 z-[400] pointer-events-none"
+            className="absolute top-4 left-1/2 -translate-x-1/2 z-[400] pointer-events-none"
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
@@ -213,7 +213,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
         {isHealthStationMode && (
           <motion.div
             key="health-mode-badge"
-            className="absolute top-4 right-14 z-[400] pointer-events-none"
+            className="absolute top-4 left-1/2 -translate-x-1/2 z-[400] pointer-events-none"
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
@@ -236,7 +236,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
         {isRelicMode && (
           <motion.div
             key="relic-mode-badge"
-            className="absolute top-4 right-14 z-[400] pointer-events-none"
+            className="absolute top-4 left-1/2 -translate-x-1/2 z-[400] pointer-events-none"
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
@@ -259,7 +259,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
         {isGovUnitMode && (
           <motion.div
             key="gov-unit-mode-badge"
-            className="absolute top-4 right-14 z-[400] pointer-events-none"
+            className="absolute top-4 left-1/2 -translate-x-1/2 z-[400] pointer-events-none"
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -8 }}
@@ -290,7 +290,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
         zoomControl={false}
       >
         <ZoomControl position={isMobile ? 'topleft' : 'bottomleft'} />
-        <LayersControl position="topright">
+        <LayersControl position="bottomright">
           <LayersControl.BaseLayer name="Bản đồ mặc định (OSM)">
             <TileLayer
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'

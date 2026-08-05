@@ -1,14 +1,13 @@
 import { memo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Map,
   Moon,
   Sun,
   Maximize,
   Minimize,
   ChevronRight,
-  PanelLeftClose,
-  PanelLeftOpen,
+  Menu,
+  X,
   HelpCircle,
 } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
@@ -63,7 +62,7 @@ export const Header = memo(function Header() {
                 exit={{ rotate: 90, opacity: 0 }}
                 transition={{ duration: 0.15 }}
               >
-                <PanelLeftClose className="w-[18px] h-[18px]" />
+                <X className="w-[18px] h-[18px]" />
               </motion.div>
             ) : (
               <motion.div
@@ -73,7 +72,7 @@ export const Header = memo(function Header() {
                 exit={{ rotate: -90, opacity: 0 }}
                 transition={{ duration: 0.15 }}
               >
-                <PanelLeftOpen className="w-[18px] h-[18px]" />
+                <Menu className="w-[18px] h-[18px]" />
               </motion.div>
             )}
           </AnimatePresence>
@@ -81,23 +80,12 @@ export const Header = memo(function Header() {
 
         {/* Logo */}
         <div className="flex items-center gap-2.5">
-          <div className={`
-            p-1.5 rounded-xl
-            ${isDark
-              ? 'bg-gradient-to-br from-gov-800 to-gov-900 shadow-inner-glow'
-              : 'bg-gradient-to-br from-gov-50 to-blue-50'
-            }
-          `}>
-            <Map className="w-5 h-5 text-accent-500" />
-          </div>
+          <img src="/lgtc3.png" alt="Logo" className="w-8 h-8 object-contain rounded-lg" />
 
           <div className="hidden sm:block">
             <h1 className={`text-sm font-display font-bold leading-tight ${isDark ? 'text-white' : 'text-gov-900'}`}>
               {APP_CONFIG.title}
             </h1>
-            <p className={`text-[11px] leading-none ${isDark ? 'text-gov-400' : 'text-gray-500'}`}>
-              {APP_CONFIG.organization}
-            </p>
           </div>
         </div>
       </div>
