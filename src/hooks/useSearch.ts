@@ -26,20 +26,22 @@ export function useSearch(villages: Village[]) {
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
+  // Pre-index normalized strings for all villages to make searching instant
+  const indexedVillages = useMemo(() => {
+    return villages.map(v => ({
+      village: v,
+      normalizedSearch: `${normalizeVietnamese(v.name)} ${normalizeVietnamese(v.description)} ${v.landmarks.map(normalizeVietnamese).join(' ')}`,
+    }));
+  }, [villages]);
+
   const results = useMemo(() => {
-    if (!query.trim()) return villages;
-    const normalized = normalizeVietnamese(query);
-    return villages.filter((v) => {
-      const name = normalizeVietnamese(v.name);
-      const desc = normalizeVietnamese(v.description);
-      const landmarks = v.landmarks.map(normalizeVietnamese).join(' ');
-      return (
-        name.includes(normalized) ||
-        desc.includes(normalized) ||
-        landmarks.includes(normalized)
-      );
-    });
-  }, [query, villages]);
+    const trimmed = query.trim();
+    if (!trimmed) return villages;
+    const normalized = normalizeVietnamese(trimmed);
+    return indexedVillages
+      .filter(item => item.normalizedSearch.includes(normalized))
+      .map(item => item.village);
+  }, [query, villages, indexedVillages]);
 
   const handleQueryChange = useCallback((value: string) => {
     setQuery(value);

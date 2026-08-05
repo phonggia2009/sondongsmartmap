@@ -105,42 +105,38 @@ function VillageFlyToHandler({
   return null;
 }
 
-// Handler: automatically invalidate Leaflet map size.
+// Handler: automatically invalidate Leaflet map size when container dimensions actually change.
 function MapResizeHandler() {
   const map = useMap();
   const { sidebarOpen } = useAppContext();
 
   useEffect(() => {
-    const t1 = setTimeout(() => map.invalidateSize(), 150);
-    const t2 = setTimeout(() => map.invalidateSize(), 400);
-    return () => {
-      clearTimeout(t1);
-      clearTimeout(t2);
-    };
+    const t = setTimeout(() => map.invalidateSize(), 300);
+    return () => clearTimeout(t);
   }, [sidebarOpen, map]);
-
-  useEffect(() => {
-    let rafId: number;
-    const handleWindowResize = () => {
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => map.invalidateSize());
-    };
-    window.addEventListener('resize', handleWindowResize, { passive: true });
-    return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener('resize', handleWindowResize);
-    };
-  }, [map]);
 
   useEffect(() => {
     const container = map.getContainer();
     if (!container || typeof ResizeObserver === 'undefined') return;
 
+    let lastWidth = container.clientWidth;
+    let lastHeight = container.clientHeight;
     let rafId: number;
-    const ro = new ResizeObserver(() => {
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(() => map.invalidateSize());
+
+    const ro = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) return;
+      const width = entry.contentRect.width;
+      const height = entry.contentRect.height;
+
+      if (Math.abs(width - lastWidth) > 2 || Math.abs(height - lastHeight) > 2) {
+        lastWidth = width;
+        lastHeight = height;
+        cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(() => map.invalidateSize());
+      }
     });
+
     ro.observe(container);
     return () => {
       cancelAnimationFrame(rafId);
@@ -187,7 +183,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
   const { ranhGioiXaData, ranhGioiThonData, thonNhanTenData } = useGeoJSONLayers();
 
   return (
-    <div className={`relative flex-1 flex flex-col overflow-hidden ${isDark ? 'bg-gov-950' : 'bg-gray-100'}`}>
+    <div className={`relative flex-1 flex flex-col overflow-hidden gpu-layer ${isDark ? 'bg-gov-950' : 'bg-gray-100'}`}>
 
       {/* Mode overlay indicator */}
       <AnimatePresence>
@@ -289,6 +285,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
         zoom={14}
         maxZoom={20}
         minZoom={10}
+        preferCanvas={true}
         className={`w-full h-full z-0 ${isDark ? 'bg-gov-950' : 'bg-gray-100'}`}
         zoomControl={false}
       >
@@ -300,6 +297,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               maxNativeZoom={18}
               maxZoom={20}
+              keepBuffer={4}
             />
           </LayersControl.BaseLayer>
 
@@ -309,6 +307,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
               url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
               maxNativeZoom={18}
               maxZoom={20}
+              keepBuffer={4}
             />
           </LayersControl.BaseLayer>
 
@@ -319,6 +318,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
               url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
               maxNativeZoom={18}
               maxZoom={20}
+              keepBuffer={4}
             />
           </LayersControl.BaseLayer>
 
@@ -329,6 +329,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
               url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
               maxNativeZoom={18}
               maxZoom={20}
+              keepBuffer={4}
             />
           </LayersControl.BaseLayer>
         </LayersControl>

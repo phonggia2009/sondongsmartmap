@@ -1,5 +1,6 @@
-import { memo } from 'react';
+import { memo, useRef, useEffect, useCallback } from 'react';
 import { GeoJSON } from 'react-leaflet';
+import L from 'leaflet';
 import { useAppContext } from '@/context/AppContext';
 import { useVillages } from '@/hooks/useVillages';
 import type { Village } from '@/types';
@@ -23,8 +24,9 @@ export const VillageBoundariesLayer = memo(function VillageBoundariesLayer({
 }: Props) {
   const { selectVillage } = useAppContext();
   const { villages } = useVillages();
+  const geoJsonRef = useRef<L.GeoJSON | null>(null);
 
-  const isFeatureSelected = (feature: any) => {
+  const isFeatureSelected = useCallback((feature: any) => {
     if (!selectedVillage) return false;
     if (selectedVillage.id === feature.properties?.village_id) return true;
     if (selectedVillage.geojson_boundary_index === feature.properties?.village_id) return true;
@@ -32,9 +34,9 @@ export const VillageBoundariesLayer = memo(function VillageBoundariesLayer({
     if (feature.properties?.village_name && feature.properties.village_name.toLowerCase().includes(cleanName)) return true;
     if (feature.properties?.ten_thon && feature.properties.ten_thon.toLowerCase().includes(cleanName)) return true;
     return false;
-  };
+  }, [selectedVillage]);
 
-  const styleFeature = (feature: any) => {
+  const styleFeature = useCallback((feature: any) => {
     const isSelected  = isFeatureSelected(feature);
     const hasSelection = !!selectedVillage;
 
@@ -75,13 +77,24 @@ export const VillageBoundariesLayer = memo(function VillageBoundariesLayer({
         ? 'animate-pulse-glow transition-all duration-300'
         : 'transition-all duration-300',
     };
-  };
+  }, [isFeatureSelected, selectedVillage, isSchoolMode]);
 
-  const onEachFeature = (feature: any, layer: any) => {
+  // Dynamic style update without destroying/recreating Leaflet GeoJSON layer
+  useEffect(() => {
+    if (!geoJsonRef.current) return;
+    geoJsonRef.current.eachLayer((layer: any) => {
+      if (layer.feature) {
+        layer.setStyle(styleFeature(layer.feature));
+        if (isFeatureSelected(layer.feature)) {
+          layer.bringToFront();
+        }
+      }
+    });
+  }, [selectedVillage, isSchoolMode, styleFeature, isFeatureSelected]);
+
+  const onEachFeature = useCallback((feature: any, layer: any) => {
     if (isSchoolMode) return;
 
-    const isSelected  = isFeatureSelected(feature);
-    const hasSelection = !!selectedVillage;
     const matchedVillage = villages.find((v: Village) =>
       v.id === feature.properties?.village_id ||
       v.geojson_boundary_index === feature.properties?.village_id ||
@@ -99,6 +112,7 @@ export const VillageBoundariesLayer = memo(function VillageBoundariesLayer({
 
     layer.on({
       mouseover: (e: any) => {
+        const isSelected = isFeatureSelected(feature);
         e.target.setStyle({
           fillColor: isSelected ? '#eab308' : '#ef4444',
           fillOpacity: isSelected ? 0.8 : 0.5,
@@ -107,19 +121,7 @@ export const VillageBoundariesLayer = memo(function VillageBoundariesLayer({
         e.target.bringToFront();
       },
       mouseout: (e: any) => {
-        const target = e.target;
-        if (hasSelection && !isSelected) {
-          target.setStyle({ color: '#ef4444', weight: 2, opacity: 0.6, fillColor: '#fecaca', fillOpacity: 0.2, dashArray: '4, 4' });
-        } else {
-          target.setStyle({
-            color: isSelected ? '#facc15' : 'white',
-            weight: isSelected ? 4 : 2,
-            opacity: 1,
-            fillColor: isSelected ? '#eab308' : '#dc2626',
-            fillOpacity: isSelected ? 0.7 : 0.4,
-            dashArray: '',
-          });
-        }
+        e.target.setStyle(styleFeature(feature));
       },
       click: (e: any) => {
         if (isSchoolMode) return;
@@ -129,11 +131,12 @@ export const VillageBoundariesLayer = memo(function VillageBoundariesLayer({
         }
       },
     });
-  };
+  }, [isSchoolMode, villages, isFeatureSelected, styleFeature, selectVillage]);
 
   return (
     <GeoJSON
-      key={`boundaries-${selectedVillage?.id ?? 'none'}-${isSchoolMode}`}
+      key={`boundaries-layer-static`}
+      ref={geoJsonRef}
       data={data}
       interactive={!isSchoolMode}
       style={styleFeature}
@@ -141,3 +144,4 @@ export const VillageBoundariesLayer = memo(function VillageBoundariesLayer({
     />
   );
 });
+

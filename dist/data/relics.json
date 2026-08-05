@@ -26,8 +26,8 @@
     "rank": "Quốc Gia",
     "decisionNo": "423QĐ/VH (20/02/1997)",
     "village": "Song Phương",
-    "lat": 21.030028,
-    "lng": 105.695863
+    "lat": 21.0240259,
+    "lng": 105.6977942
   },
   {
     "id": "relic-dinh-4",
@@ -246,8 +246,8 @@
     "rank": "Quốc Gia",
     "decisionNo": "423QĐ/VH (20/02/1997)",
     "village": "Song Phương",
-    "lat": 21.02401,
-    "lng": 105.697832
+    "lat": 21.0242187,
+    "lng": 105.6983169
   },
   {
     "id": "relic-den-3",
@@ -338,15 +338,5 @@
     "village": "Sơn Đồng",
     "lat": 21.04524,
     "lng": 105.700476
-  },
-  {
-    "id": "relic-lang-6",
-    "name": "Nhà thờ Từ Vũ",
-    "type": "Lăng - Miếu - Nhà thờ",
-    "rank": "Quốc Gia",
-    "decisionNo": "25-VH/QĐ (03/02/1986)",
-    "village": "Sơn Đồng",
-    "lat": 21.0441,
-    "lng": 105.6998
   }
 ]
