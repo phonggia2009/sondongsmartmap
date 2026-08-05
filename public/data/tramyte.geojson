@@ -4,47 +4,77 @@
     {
       "type": "Feature",
       "properties": {
-        "commune_name": "Trạm y tế Lại Yên",
+        "commune_name": "Điểm Trạm y tế Lại Yên",
         "doctor": "BS Vũ Tiến Hải",
         "phone": "0936109235"
       },
-      "geometry": { "type": "Point", "coordinates": [105.710265, 21.024375] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.710265,
+          21.024375
+        ]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "commune_name": "Trạm y tế Sơn Đồng 1",
+        "commune_name": "Điểm Trạm y tế Sơn Đồng 1",
         "doctor": "BS Nguyễn Thị Hòa",
         "phone": "0989384858"
       },
-      "geometry": { "type": "Point", "coordinates": [105.702298, 21.047132] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.702298,
+          21.047132
+        ]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "commune_name": "Trạm y tế Tiền Yên",
+        "commune_name": "Điểm Trạm y tế Tiền Yên",
         "doctor": "BS Nguyễn Thị Vân",
         "phone": "0356316354"
       },
-      "geometry": { "type": "Point", "coordinates": [105.686102, 21.02596] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.686102,
+          21.02596
+        ]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "commune_name": "Trạm y tế Vân Canh",
+        "commune_name": "Điểm Trạm y tế Vân Canh",
         "doctor": "BS Bùi Thị Bình",
         "phone": "0986069232"
       },
-      "geometry": { "type": "Point", "coordinates": [105.731876, 21.035733] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.731876,
+          21.035733
+        ]
+      }
     },
     {
       "type": "Feature",
       "properties": {
-        "commune_name": "Trạm y tế Song Phương",
+        "commune_name": "Điểm Trạm y tế Song Phương",
         "doctor": "BS Nguyễn Văn Chung",
         "phone": "0906035999"
       },
-      "geometry": { "type": "Point", "coordinates": [105.696837, 21.016801] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.696837,
+          21.016801
+        ]
+      }
     },
     {
       "type": "Feature",
@@ -53,7 +83,13 @@
         "doctor": "BS Hoàng Minh Tường",
         "phone": ""
       },
-      "geometry": { "type": "Point", "coordinates": [105.702515, 21.047688] }
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          105.702515,
+          21.047688
+        ]
+      }
     }
   ]
 }
