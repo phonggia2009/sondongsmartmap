@@ -1,12 +1,14 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AnimatePresence } from 'framer-motion';
+import { Analytics } from '@vercel/analytics/react';
 import { AppProvider } from '@/context/AppContext';
 import { Header } from '@/components/Header/Header';
 import { Footer } from '@/components/Footer/Footer';
 import { LoadingScreen } from '@/components/Loading/LoadingScreen';
 import { OnboardingTour } from '@/components/Onboarding/OnboardingTour';
+import { trackWebsiteVisit } from '@/utils/analytics';
 
 // ============================================================
 //  React Query Client
@@ -32,6 +34,10 @@ const HomePage = lazy(() => import('@/pages/Home/HomePage'));
 // ============================================================
 
 function AppShell() {
+  useEffect(() => {
+    trackWebsiteVisit();
+  }, []);
+
   return (
     <div className="flex flex-col h-screen overflow-hidden font-sans">
       <Header />
@@ -63,8 +69,10 @@ export default function App() {
       <BrowserRouter>
         <AppProvider>
           <AppShell />
+          <Analytics />
         </AppProvider>
       </BrowserRouter>
     </QueryClientProvider>
   );
 }
+

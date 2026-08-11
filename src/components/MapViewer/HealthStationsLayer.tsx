@@ -4,6 +4,7 @@ import L from 'leaflet';
 import { useAppContext } from '@/context/AppContext';
 import { useHealthStations } from '@/hooks/useHealthStations';
 import type { HealthStation } from '@/types';
+import { trackGetDirections } from '@/utils/analytics';
 
 // ============================================================
 //  HealthStationMarkerItem — Memoized marker component
@@ -189,6 +190,7 @@ const HealthStationMarkerItem = memo(function HealthStationMarkerItem({
               }}
               onClick={e => {
                 e.stopPropagation();
+                trackGetDirections(station.name, 'Trạm Y tế');
                 window.open(
                   `https://www.google.com/maps/dir/?api=1&destination=${station.lat},${station.lng}`,
                   '_blank'

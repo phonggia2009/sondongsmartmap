@@ -7,6 +7,7 @@ import { useRelics } from '@/hooks/useRelics';
 import { getRelicColor, getRelicEmoji } from '@/utils/relicUtils';
 import type { Relic } from '@/types';
 import { Navigation } from 'lucide-react';
+import { trackGetDirections } from '@/utils/analytics';
 
 // ============================================================
 //  RelicMarkerItem — Memoized marker component
@@ -146,6 +147,7 @@ const RelicMarkerItem = memo(function RelicMarkerItem({
                 className="mt-2.5 flex items-center justify-center gap-1.5 w-full py-1.5 px-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white font-semibold text-xs rounded-lg shadow-sm transition-all duration-150 cursor-pointer"
                 onClick={e => {
                   e.stopPropagation();
+                  trackGetDirections(relic.name, 'Di tích lịch sử');
                   window.open(
                     `https://www.google.com/maps/dir/?api=1&destination=${relic.lat},${relic.lng}`,
                     '_blank'

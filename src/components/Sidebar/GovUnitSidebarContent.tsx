@@ -4,6 +4,7 @@ import { POILayerPanel } from './POILayerPanel';
 import { govUnitConfig, GOV_UNIT_CATEGORIES } from '@/utils/govUnitUtils';
 import type { GovUnit, GovUnitCategory } from '@/types';
 import { Building2, MapPin, Navigation } from 'lucide-react';
+import { trackGetDirections } from '@/utils/analytics';
 
 // ============================================================
 //  GovUnitSidebarContent
@@ -80,6 +81,7 @@ export const GovUnitSidebarContent = memo(function GovUnitSidebarContent({
           <button
             onClick={(e) => {
               e.stopPropagation();
+              trackGetDirections(item.name, 'Cơ quan hành chính');
               window.open(
                 `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.lng}`,
                 '_blank'

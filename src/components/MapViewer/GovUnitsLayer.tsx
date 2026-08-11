@@ -6,6 +6,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useGovUnits } from '@/hooks/useGovUnits';
 import { getGovUnitCategoryColor, getGovUnitCategoryEmoji } from '@/utils/govUnitUtils';
 import type { GovUnit } from '@/types';
+import { trackGetDirections } from '@/utils/analytics';
 
 // ============================================================
 //  GovUnitMarkerItem — Memoized marker component
@@ -166,6 +167,7 @@ const GovUnitMarkerItem = memo(function GovUnitMarkerItem({
               }}
               onClick={(e) => {
                 e.stopPropagation();
+                trackGetDirections(unit.name, 'Cơ quan hành chính');
                 window.open(
                   `https://www.google.com/maps/dir/?api=1&destination=${unit.lat},${unit.lng}`,
                   '_blank'

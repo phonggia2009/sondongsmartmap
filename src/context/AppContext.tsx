@@ -13,6 +13,8 @@ import { DEFAULT_SCHOOL_FILTERS } from '@/utils/schoolUtils';
 import { DEFAULT_HEALTH_STATION_FILTERS } from '@/utils/healthStationUtils';
 import { DEFAULT_RELIC_FILTERS } from '@/utils/relicUtils';
 import { DEFAULT_GOV_UNIT_FILTERS } from '@/utils/govUnitUtils';
+import { trackViewLocation, trackOpenStoryMap } from '@/utils/analytics';
+import { useAnalyticsSearch } from '@/hooks/useAnalyticsSearch';
 
 // ============================================================
 //  APP CONTEXT
@@ -136,6 +138,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     setGovUnitSearchQuery(query);
   }, []);
 
+  // Track search queries for POI layers
+  useAnalyticsSearch(schoolSearchQuery, 'Trường học');
+  useAnalyticsSearch(healthStationSearchQuery, 'Trạm Y tế');
+  useAnalyticsSearch(relicSearchQuery, 'Di tích lịch sử');
+  useAnalyticsSearch(govUnitSearchQuery, 'Cơ quan hành chính');
+
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSidebarTabState, setActiveSidebarTabState] = useState<SidebarTab>('villages');
   const [infoPanelOpen, setInfoPanelOpen]                = useState(true);
@@ -151,6 +159,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     if (!hasSeenTour) {
       const timer = setTimeout(() => {
         setIsTourOpen(true);
+        trackOpenStoryMap();
       }, 1000);
       return () => clearTimeout(timer);
     }
@@ -158,6 +167,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   const startTour = useCallback(() => {
     setIsTourOpen(true);
+    trackOpenStoryMap();
   }, []);
 
   const closeTour = useCallback(() => {
@@ -192,6 +202,9 @@ export function AppProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const selectVillage = useCallback((village: Village | null) => {
+    if (village && village.id !== selectedVillage?.id) {
+      trackViewLocation(village.name, 'Thôn / Xã');
+    }
     setSelectedVillage(village);
     if (village) {
       setSelectedSchool(null);
@@ -203,9 +216,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       if (village === null) return false;
       return prev ? prev : true;
     });
-  }, []);
+  }, [selectedVillage]);
 
   const selectSchool = useCallback((school: School | null) => {
+    if (school && school.id !== selectedSchool?.id) {
+      trackViewLocation(school.name, 'Trường học');
+    }
     setSelectedSchool(school);
     if (school) {
       setSelectedVillage(null);
@@ -213,9 +229,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSelectedRelic(null);
       setSelectedGovUnit(null);
     }
-  }, []);
+  }, [selectedSchool]);
 
   const selectHealthStation = useCallback((station: HealthStation | null) => {
+    if (station && station.id !== selectedHealthStation?.id) {
+      trackViewLocation(station.name, 'Trạm Y tế');
+    }
     setSelectedHealthStation(station);
     if (station) {
       setSelectedVillage(null);
@@ -223,9 +242,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSelectedRelic(null);
       setSelectedGovUnit(null);
     }
-  }, []);
+  }, [selectedHealthStation]);
 
   const selectRelic = useCallback((relic: Relic | null) => {
+    if (relic && relic.id !== selectedRelic?.id) {
+      trackViewLocation(relic.name, 'Di tích lịch sử');
+    }
     setSelectedRelic(relic);
     if (relic) {
       setSelectedVillage(null);
@@ -233,9 +255,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSelectedHealthStation(null);
       setSelectedGovUnit(null);
     }
-  }, []);
+  }, [selectedRelic]);
 
   const selectGovUnit = useCallback((unit: GovUnit | null) => {
+    if (unit && unit.id !== selectedGovUnit?.id) {
+      trackViewLocation(unit.name, 'Cơ quan hành chính');
+    }
     setSelectedGovUnit(unit);
     if (unit) {
       setSelectedVillage(null);
@@ -243,7 +268,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSelectedHealthStation(null);
       setSelectedRelic(null);
     }
-  }, []);
+  }, [selectedGovUnit]);
 
   const toggleSchoolFilter = useCallback((level: SchoolLevel) => {
     setSchoolFilters(prev => ({ ...prev, [level]: !prev[level] }));

@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, useRef } from 'react';
 import type { Village } from '@/types';
+import { useAnalyticsSearch } from '@/hooks/useAnalyticsSearch';
 
 // ============================================================
 //  useSearch Hook
@@ -25,6 +26,10 @@ export function useSearch(villages: Village[]) {
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Track village search query
+  useAnalyticsSearch(query, 'Thôn / Xã');
+
 
   // Pre-index normalized strings for all villages to make searching instant
   const indexedVillages = useMemo(() => {

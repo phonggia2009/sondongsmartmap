@@ -4,6 +4,7 @@ import { POILayerPanel } from './POILayerPanel';
 import { relicConfig, RELIC_CATEGORIES } from '@/utils/relicUtils';
 import type { Relic, RelicType } from '@/types';
 import { Landmark, Award, MapPin, Navigation } from 'lucide-react';
+import { trackGetDirections } from '@/utils/analytics';
 
 // ============================================================
 //  RelicSidebarContent
@@ -94,6 +95,7 @@ export const RelicSidebarContent = memo(function RelicSidebarContent({
           <button
             onClick={(e) => {
               e.stopPropagation();
+              trackGetDirections(item.name, 'Di tích lịch sử');
               window.open(
                 `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.lng}`,
                 '_blank'

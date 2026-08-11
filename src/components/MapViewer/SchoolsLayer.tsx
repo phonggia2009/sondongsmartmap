@@ -6,6 +6,7 @@ import { useAppContext } from '@/context/AppContext';
 import { useSchools } from '@/hooks/useSchools';
 import { getLevelColor, getLevelBgColor, getLevelEmoji } from '@/utils/schoolUtils';
 import type { SchoolLevel } from '@/types';
+import { trackGetDirections } from '@/utils/analytics';
 
 // ============================================================
 //  SchoolMarkerItem — Memoized marker component
@@ -138,6 +139,7 @@ const SchoolMarkerItem = memo(function SchoolMarkerItem({
               }}
               onClick={(e) => {
                 e.stopPropagation();
+                trackGetDirections(name, 'Trường học');
                 window.open(
                   `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`,
                   '_blank',

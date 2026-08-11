@@ -18,6 +18,7 @@ import { LandmarkList } from './LandmarkList';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
 import type { Village } from '@/types';
+import { trackGetDirections } from '@/utils/analytics';
 
 // ============================================================
 //  InformationPanel Component
@@ -267,6 +268,7 @@ export const InformationPanel = memo(function InformationPanel({
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
+                          trackGetDirections(village.communityCenter || village.name, 'Thôn / Xã');
                           let dest = '';
                           if (village.communityCenterCoords) {
                             dest = `${village.communityCenterCoords.lat},${village.communityCenterCoords.lng}`;
