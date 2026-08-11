@@ -44,9 +44,12 @@ export function POILayerPanel<T extends POIItem>({
   // Determine if all are active
   const allActive = config.categories.every(cat => activeCategories[cat.id]);
 
-  // Filter items based on active categories AND search query
+  // Filter items based on active categories AND search query, then sort by level order
   const filteredItems = useMemo(() => {
-    return items.filter(item => {
+    // Build a lookup for category sort order
+    const categoryOrder = new Map(config.categories.map((cat, idx) => [cat.id, idx]));
+
+    const filtered = items.filter(item => {
       // 1. Must be in active category
       if (!activeCategories[item.categoryId]) return false;
       // 2. Must match search query
@@ -56,7 +59,17 @@ export function POILayerPanel<T extends POIItem>({
       }
       return true;
     });
-  }, [items, activeCategories, searchQuery]);
+
+    // Sort by category order (Mầm non → Tiểu học → THCS → THPT → Khác)
+    return filtered.sort((a, b) => {
+      const orderA = categoryOrder.get(a.categoryId) ?? 99;
+      const orderB = categoryOrder.get(b.categoryId) ?? 99;
+      if (orderA !== orderB) return orderA - orderB;
+      // Within same level, sort alphabetically by name
+      return a.name.localeCompare(b.name, 'vi');
+    });
+  }, [items, activeCategories, searchQuery, config.categories]);
+
 
   return (
     <div className="relative flex-1 min-h-0 flex flex-col bg-white dark:bg-gov-950">
