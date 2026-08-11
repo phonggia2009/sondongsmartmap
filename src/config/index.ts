@@ -53,7 +53,7 @@ export const getDataUrl = (): string =>
 
 /** Returns the full URL for schools GeoJSON file */
 export const getSchoolsGeoJsonUrl = (): string =>
-  `${APP_CONFIG.paths.data}/danhsach21truong.geojson`;
+  `${APP_CONFIG.paths.data}/danhsachtruongsausapxep.geojson`;
 
 /** Returns the full URL for commune boundary GeoJSON file */
 export const getCommuneBoundaryGeoJsonUrl = (): string =>

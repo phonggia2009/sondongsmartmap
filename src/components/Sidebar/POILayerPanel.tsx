@@ -112,6 +112,23 @@ export function POILayerPanel<T extends POIItem>({
         )}
       </div>
 
+      {/* ── Result count summary ─────────────────────────────── */}
+      {!isLoading && !isError && (
+        <div className="flex-shrink-0 px-4 py-1.5 border-b border-gray-100 dark:border-gov-800 flex items-center justify-between">
+          <span className="text-[11px] text-gray-400 dark:text-gov-500">
+            Hiển thị <span className="font-semibold text-gray-600 dark:text-gov-300">{filteredItems.length}</span> / {items.length} trường
+          </span>
+          {!allActive && (
+            <button
+              onClick={() => onToggleAll(true)}
+              className="text-[11px] text-blue-500 hover:text-blue-600 dark:text-blue-400 font-medium transition-colors"
+            >
+              Hiện tất cả
+            </button>
+          )}
+        </div>
+      )}
+
       {/* ── Scrollable List ──────────────────────────────────── */}
       <div className="relative flex-1 min-h-0">
         <div className="absolute inset-0 overflow-y-auto overflow-x-hidden p-2 space-y-1 scrollbar-thin">
@@ -166,14 +183,15 @@ export function POILayerPanel<T extends POIItem>({
                       backgroundColor: isDark ? `${category.color}25` : category.bgColor,
                     } : {}}
                   >
-                    <div className="flex-shrink-0 text-xl leading-none mt-0.5 transition-transform group-hover:scale-110">
-                      {category?.icon || <MapPin className="w-5 h-5" />}
+                    <div className="flex-shrink-0 text-xl leading-none mt-1 transition-transform group-hover:scale-110">
+                       {category?.icon || <MapPin className="w-5 h-5" />}
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className={`text-sm font-bold truncate ${isSelected ? (isDark ? 'text-white' : 'text-gray-900') : (isDark ? 'text-gov-200' : 'text-gray-700')}`}>
-                        {item.name}
+                      <div className={`text-sm font-semibold leading-snug ${isSelected ? (isDark ? 'text-white' : 'text-gray-900') : (isDark ? 'text-gov-200' : 'text-gray-700')}`}>
+                        {/* Strip parenthetical suffix from name for cleaner display */}
+                        {item.name.replace(/\s*\([^)]+\)\s*$/, '').trim() || item.name}
                       </div>
-                      <div className={`text-xs mt-0.5 truncate ${isSelected ? (isDark ? 'text-gov-200 font-medium' : 'text-gray-700') : (isDark ? 'text-gov-400' : 'text-gray-500')}`}>
+                      <div className={`text-xs mt-1 ${isSelected ? (isDark ? 'text-gov-200 font-medium' : 'text-gray-700') : (isDark ? 'text-gov-400' : 'text-gray-500')}`}>
                         {renderItemSubtitle ? renderItemSubtitle(item) : (category?.name || 'Chưa phân loại')}
                       </div>
                     </div>

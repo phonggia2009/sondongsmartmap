@@ -1,0 +1,280 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.706309,
+                    21.026151
+                ]
+            },
+            "properties": {
+                "": "",
+                "marker-color": "rgba(62, 59, 147, 1)",
+                "commune_name": "Trường TH Sơn Đồng (TH Lại Yên)"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.70901,
+                    21.026044
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường mầm non Sơn Đồng 3 (MN Lại Yên)"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.697247,
+                    21.019404
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường THPT Hoài Đức C"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.696888,
+                    21.041491
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường mầm non Sơn Đồng 2 (MN Sơn Đồng)"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.696589,
+                    21.044215
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường TH & THCS Nguyễn Viết Thứ (TH Sơn Đồng)"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.703498,
+                    21.049018
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường TH & THCS Nguyễn Viết Thứ (THCS Sơn Đồng )"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.700653,
+                    21.037115
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường THCS Nguyễn Văn Huyên"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.711667,
+                    21.01901
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường TH&THCS Edison An Khánh"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.707249,
+                    21.026012
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường THCS Sơn Đồng (THCS Lại Yên)"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.73274,
+                    21.027826
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường mầm non Sơn Đồng 1 (MN Vân Canh B )"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.733958,
+                    21.036044
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường TH & THCS Vân Canh"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.734069,
+                    21.035464
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường TH & THCS Vân Canh"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.686598,
+                    21.02414
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường THCS Sơn Đồng ( THCS Tiền Yên)"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.731148,
+                    21.035716
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường mầm non Sơn Đồng 1 (MN Vân Canh A)"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.695179,
+                    21.018413
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường THCS Sơn Đồng (THCS Song Phương)"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.695872,
+                    21.017907
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường TH Sơn Đồng  (TH Song Phương)"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.685952,
+                    21.025286
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường TH Sơn Đồng  (TH Tiền Yên)"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.695467,
+                    21.019537
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường mầm non Sơn Đồng 3 (MN Song Phương A)"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.701668,
+                    21.011312
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường mầm non Sơn Đồng 3 (MN Song Phương B)"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.687531,
+                    21.028226
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường mầm non Sơn Đồng 2 (MN Tiền Yên A)"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    105.686268,
+                    21.021662
+                ]
+            },
+            "properties": {
+                "commune_name": "Trường mầm non Sơn Đồng 2 (MN Tiền Yên B)"
+            }
+        }
+    ]
+}

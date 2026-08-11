@@ -9,6 +9,16 @@ import type { SchoolLevel } from '@/types';
 import { trackGetDirections } from '@/utils/analytics';
 
 // ============================================================
+//  Helper: parse "Tên mới (Tên cũ)" → { newName, oldName }
+// ============================================================
+
+function parseSchoolName(fullName: string): { newName: string; oldName: string | null } {
+  const match = fullName.match(/^(.+?)\s*\((.+)\)\s*$/);
+  if (match) return { newName: match[1].trim(), oldName: match[2].trim() };
+  return { newName: fullName, oldName: null };
+}
+
+// ============================================================
 //  SchoolMarkerItem — Memoized marker component
 // ============================================================
 
@@ -67,7 +77,7 @@ const SchoolMarkerItem = memo(function SchoolMarkerItem({
       z-index: ${elevated ? 1000 : 1};
     ">
       <span style="font-size:${showLabel ? '13px' : '15px'}; line-height:1;">${emoji}</span>
-      ${showLabel ? `<span>${name}</span>` : ''}
+      ${showLabel ? `<span>${parseSchoolName(name).newName}</span>` : ''}
     </div>`;
 
     return L.divIcon({
@@ -119,12 +129,27 @@ const SchoolMarkerItem = memo(function SchoolMarkerItem({
             </div>
 
             {/* School name */}
-            <div style={{
-              fontSize: '13px', fontWeight: 700,
-              color: isDark ? '#f8fafc' : '#111827', lineHeight: 1.4, marginBottom: '10px',
-            }}>
-              {name}
-            </div>
+            {(() => {
+              const { newName, oldName } = parseSchoolName(name);
+              return (
+                <div style={{ marginBottom: '10px' }}>
+                  <div style={{
+                    fontSize: '14px', fontWeight: 700,
+                    color: isDark ? '#f8fafc' : '#111827', lineHeight: 1.35,
+                  }}>
+                    {newName}
+                  </div>
+                  {oldName && (
+                    <div style={{
+                      fontSize: '11px', color: isDark ? '#94a3b8' : '#6b7280',
+                      fontStyle: 'italic', marginTop: '4px', lineHeight: 1.4,
+                    }}>
+                      Tiền thân: {oldName}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* Directions button */}
             <button
@@ -139,7 +164,7 @@ const SchoolMarkerItem = memo(function SchoolMarkerItem({
               }}
               onClick={(e) => {
                 e.stopPropagation();
-                trackGetDirections(name, 'Trường học');
+                trackGetDirections(parseSchoolName(name).newName, 'Trường học');
                 window.open(
                   `https://www.google.com/maps/dir/?api=1&destination=${latitude},${longitude}`,
                   '_blank',
