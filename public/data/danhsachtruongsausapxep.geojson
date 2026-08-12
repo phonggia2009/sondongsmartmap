@@ -11,9 +11,10 @@
                 ]
             },
             "properties": {
-                "": "",
                 "marker-color": "rgba(62, 59, 147, 1)",
-                "commune_name": "Trường TH Sơn Đồng (TH Lại Yên)"
+                "commune_name": "Trường TH Sơn Đồng (TH Lại Yên)",
+                "principal": "Nguyễn Mạnh Hạnh",
+                "phone": "0982622656"
             }
         },
         {
@@ -26,7 +27,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường mầm non Sơn Đồng 3 (MN Lại Yên)"
+                "commune_name": "Trường mầm non Sơn Đồng 3 (MN Lại Yên)",
+                "principal": "Nguyễn Thị Ngọc",
+                "phone": "0983361593"
             }
         },
         {
@@ -52,7 +55,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường mầm non Sơn Đồng 2 (MN Sơn Đồng)"
+                "commune_name": "Trường mầm non Sơn Đồng 2 (MN Sơn Đồng)",
+                "principal": "Nguyễn Thị Hà",
+                "phone": "0974129395"
             }
         },
         {
@@ -65,7 +70,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường TH & THCS Nguyễn Viết Thứ (TH Sơn Đồng)"
+                "commune_name": "Trường TH & THCS Nguyễn Viết Thứ (TH Sơn Đồng)",
+                "principal": "Tuấn Thị Kim Thư",
+                "phone": "0936292646"
             }
         },
         {
@@ -78,7 +85,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường TH & THCS Nguyễn Viết Thứ (THCS Sơn Đồng )"
+                "commune_name": "Trường TH & THCS Nguyễn Viết Thứ (THCS Sơn Đồng )",
+                "principal": "Tuấn Thị Kim Thư",
+                "phone": "0936292646"
             }
         },
         {
@@ -91,7 +100,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường THCS Nguyễn Văn Huyên"
+                "commune_name": "Trường THCS Nguyễn Văn Huyên",
+                "principal": "Trần Thị Mai Hương",
+                "phone": "0906223613"
             }
         },
         {
@@ -117,7 +128,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường THCS Sơn Đồng (THCS Lại Yên)"
+                "commune_name": "Trường THCS Sơn Đồng (THCS Lại Yên)",
+                "principal": "Trần Quang Dũng",
+                "phone": "0904995452"
             }
         },
         {
@@ -130,7 +143,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường mầm non Sơn Đồng 1 (MN Vân Canh B )"
+                "commune_name": "Trường mầm non Sơn Đồng 1 (MN Vân Canh B )",
+                "principal": "Đặng Thị Tuyết",
+                "phone": "0904483311"
             }
         },
         {
@@ -143,7 +158,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường TH & THCS Vân Canh (TH Vân Canh) "
+                "commune_name": "Trường TH & THCS Vân Canh (TH Vân Canh) ",
+                "principal": "Lê Đức Thuận",
+                "phone": "0915574636"
             }
         },
         {
@@ -156,7 +173,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường TH & THCS Vân Canh (THCS Vân Canh)"
+                "commune_name": "Trường TH & THCS Vân Canh (THCS Vân Canh)",
+                "principal": "Lê Đức Thuận",
+                "phone": "0915574636"
             }
         },
         {
@@ -169,7 +188,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường THCS Sơn Đồng ( THCS Tiền Yên)"
+                "commune_name": "Trường THCS Sơn Đồng ( THCS Tiền Yên)",
+                "principal": "Trần Quang Dũng",
+                "phone": "0904995452"
             }
         },
         {
@@ -182,7 +203,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường mầm non Sơn Đồng 1 (MN Vân Canh A)"
+                "commune_name": "Trường mầm non Sơn Đồng 1 (MN Vân Canh A)",
+                "principal": "Đặng Thị Tuyết",
+                "phone": "0904483311"
             }
         },
         {
@@ -195,7 +218,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường THCS Sơn Đồng (THCS Song Phương)"
+                "commune_name": "Trường THCS Sơn Đồng (THCS Song Phương)",
+                "principal": "Trần Quang Dũng",
+                "phone": "0904995452"
             }
         },
         {
@@ -208,7 +233,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường TH Sơn Đồng  (TH Song Phương)"
+                "commune_name": "Trường TH Sơn Đồng  (TH Song Phương)",
+                "principal": "Nguyễn Mạnh Hạnh",
+                "phone": "0982622656"
             }
         },
         {
@@ -221,7 +248,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường TH Sơn Đồng  (TH Tiền Yên)"
+                "commune_name": "Trường TH Sơn Đồng  (TH Tiền Yên)",
+                "principal": "Nguyễn Mạnh Hạnh",
+                "phone": "0982622656"
             }
         },
         {
@@ -234,7 +263,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường mầm non Sơn Đồng 3 (MN Song Phương A)"
+                "commune_name": "Trường mầm non Sơn Đồng 3 (MN Song Phương A)",
+                "principal": "Nguyễn Thị Ngọc",
+                "phone": "0983361593"
             }
         },
         {
@@ -247,7 +278,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường mầm non Sơn Đồng 3 (MN Song Phương B)"
+                "commune_name": "Trường mầm non Sơn Đồng 3 (MN Song Phương B)",
+                "principal": "Nguyễn Thị Ngọc",
+                "phone": "0983361593"
             }
         },
         {
@@ -260,7 +293,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường mầm non Sơn Đồng 2 (MN Tiền Yên A)"
+                "commune_name": "Trường mầm non Sơn Đồng 2 (MN Tiền Yên A)",
+                "principal": "Nguyễn Thị Hà",
+                "phone": "0974129395"
             }
         },
         {
@@ -273,7 +308,9 @@
                 ]
             },
             "properties": {
-                "commune_name": "Trường mầm non Sơn Đồng 2 (MN Tiền Yên B)"
+                "commune_name": "Trường mầm non Sơn Đồng 2 (MN Tiền Yên B)",
+                "principal": "Nguyễn Thị Hà",
+                "phone": "0974129395"
             }
         }
     ]

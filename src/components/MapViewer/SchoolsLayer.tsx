@@ -34,6 +34,8 @@ interface SchoolMarkerItemProps {
   isDark: boolean;
   color: string;
   emoji: string;
+  principal?: string;
+  phone?: string;
   onSelect: (schoolId: string) => void;
   onHover: (schoolId: string | null) => void;
   registerRef: (id: string, ref: L.Marker | null) => void;
@@ -51,6 +53,8 @@ const SchoolMarkerItem = memo(function SchoolMarkerItem({
   isDark,
   color,
   emoji,
+  principal,
+  phone,
   onSelect,
   onHover,
   registerRef,
@@ -150,6 +154,56 @@ const SchoolMarkerItem = memo(function SchoolMarkerItem({
                 </div>
               );
             })()}
+
+            {/* Hiệu trưởng & Số điện thoại */}
+            {(principal || phone) && (
+              <div style={{
+                background: isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)',
+                border: `1px solid ${color}22`,
+                borderRadius: '8px',
+                padding: '8px 10px',
+                marginBottom: '10px',
+                display: 'flex', flexDirection: 'column', gap: '6px',
+              }}>
+                {principal && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ fontSize: '13px' }}>👩‍💼</span>
+                    <div>
+                      <div style={{
+                        fontSize: '10px', fontWeight: 600,
+                        color: isDark ? '#94a3b8' : '#6b7280',
+                        textTransform: 'uppercase', letterSpacing: '0.05em',
+                      }}>Hiệu trưởng</div>
+                      <div style={{
+                        fontSize: '12px', fontWeight: 700,
+                        color: isDark ? '#f1f5f9' : '#1e293b',
+                      }}>{principal}</div>
+                    </div>
+                  </div>
+                )}
+                {phone && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <span style={{ fontSize: '13px' }}>📞</span>
+                    <div>
+                      <div style={{
+                        fontSize: '10px', fontWeight: 600,
+                        color: isDark ? '#94a3b8' : '#6b7280',
+                        textTransform: 'uppercase', letterSpacing: '0.05em',
+                      }}>Số điện thoại</div>
+                      <a
+                        href={`tel:${phone}`}
+                        style={{
+                          fontSize: '12px', fontWeight: 700,
+                          color,
+                          textDecoration: 'none',
+                        }}
+                        onClick={(e) => e.stopPropagation()}
+                      >{phone}</a>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
 
             {/* Directions button */}
             <button
@@ -263,10 +317,12 @@ export function SchoolsLayer() {
     filteredSchools.map(school => ({
       type: 'Feature' as const,
       properties: {
-        cluster: false,
-        schoolId: school.id,
-        name:     school.name,
-        level:    school.level,
+        cluster:   false,
+        schoolId:  school.id,
+        name:      school.name,
+        level:     school.level,
+        principal: school.principal,
+        phone:     school.phone,
       },
       geometry: {
         type: 'Point' as const,
@@ -291,7 +347,7 @@ export function SchoolsLayer() {
         const {
           cluster: isCluster,
           point_count: pointCount,
-          schoolId, name, level,
+          schoolId, name, level, principal, phone,
         } = cluster.properties;
 
         // ── Cluster marker ─────────────────────────────────
@@ -356,6 +412,8 @@ export function SchoolsLayer() {
             isDark={isDark}
             color={color}
             emoji={emoji}
+            principal={principal}
+            phone={phone}
             onSelect={handleSelectSchool}
             onHover={handleHoverSchool}
             registerRef={registerRef}

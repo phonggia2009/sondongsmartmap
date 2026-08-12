@@ -43,6 +43,10 @@ export interface School {
   level: SchoolLevel;
   lat: number;
   lng: number;
+  principal?: string;   // Hiệu trưởng
+  phone?: string;       // Số điện thoại
+}
+
 // ============================================================
 //  HEALTH STATION DATA TYPES
 // ============================================================

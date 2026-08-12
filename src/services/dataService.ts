@@ -118,6 +118,8 @@ export async function fetchSchools(): Promise<School[]> {
           level: parseSchoolLevel(name),
           lng: feature.geometry.coordinates[0],
           lat: feature.geometry.coordinates[1],
+          principal: feature.properties?.principal ?? undefined,
+          phone:     feature.properties?.phone     ?? undefined,
         });
       }
     });
