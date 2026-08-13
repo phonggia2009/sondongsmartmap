@@ -98,7 +98,7 @@ const SchoolMarkerItem = memo(function SchoolMarkerItem({
       setTimeout(() => {
         try {
           markerInstance.openPopup();
-        } catch {}
+        } catch { }
       }, 50);
     }
   }, [schoolId, isSelected, registerRef]);
@@ -148,7 +148,7 @@ const SchoolMarkerItem = memo(function SchoolMarkerItem({
                       fontSize: '11px', color: isDark ? '#94a3b8' : '#6b7280',
                       fontStyle: 'italic', marginTop: '4px', lineHeight: 1.4,
                     }}>
-                      Tiền thân: {oldName}
+                      Phân hiệu: {oldName}
                     </div>
                   )}
                 </div>
@@ -246,7 +246,7 @@ export function SchoolsLayer() {
   const { schools } = useSchools();
 
   const [bounds, setBounds] = useState<[number, number, number, number] | null>(null);
-  const [zoom, setZoom]     = useState(map.getZoom());
+  const [zoom, setZoom] = useState(map.getZoom());
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
   // Ref map: schoolId → Leaflet marker instance, used to auto-open popup after flyTo
@@ -292,7 +292,7 @@ export function SchoolsLayer() {
       if (marker) {
         try {
           marker.openPopup();
-        } catch {}
+        } catch { }
       }
     }, 850);
 
@@ -317,12 +317,12 @@ export function SchoolsLayer() {
     filteredSchools.map(school => ({
       type: 'Feature' as const,
       properties: {
-        cluster:   false,
-        schoolId:  school.id,
-        name:      school.name,
-        level:     school.level,
+        cluster: false,
+        schoolId: school.id,
+        name: school.name,
+        level: school.level,
         principal: school.principal,
-        phone:     school.phone,
+        phone: school.phone,
       },
       geometry: {
         type: 'Point' as const,
@@ -376,7 +376,7 @@ export function SchoolsLayer() {
                   <span>${pointCount}</span>
                 </div>`,
                 className: 'bg-transparent border-0 shadow-none',
-                iconSize:   [0, 0],
+                iconSize: [0, 0],
                 iconAnchor: [0, 0],
               })}
               eventHandlers={{
@@ -393,10 +393,10 @@ export function SchoolsLayer() {
 
         // ── Individual school marker ───────────────────────
         const isSelected = selectedSchool?.id === schoolId;
-        const isHovered  = hoveredId === schoolId;
-        const showLabel  = zoom >= 15 || isHovered || isSelected;
-        const color      = getLevelColor(level as SchoolLevel);
-        const emoji      = getLevelEmoji(level as SchoolLevel);
+        const isHovered = hoveredId === schoolId;
+        const showLabel = zoom >= 15 || isHovered || isSelected;
+        const color = getLevelColor(level as SchoolLevel);
+        const emoji = getLevelEmoji(level as SchoolLevel);
 
         return (
           <SchoolMarkerItem

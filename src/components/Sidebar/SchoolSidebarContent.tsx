@@ -43,7 +43,7 @@ function SchoolSubtitle({ item }: { item: School }) {
       {/* Old name */}
       {oldName && (
         <span className="text-[11px] text-gray-400 dark:text-gov-500 italic leading-tight">
-          Tiền thân: {oldName}
+          Phân hiệu: {oldName}
         </span>
       )}
     </div>
