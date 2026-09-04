@@ -182,10 +182,8 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
   const isVillageMode       = activeSidebarTab === 'villages';
 
   const { ranhGioiXaData, ranhGioiThonData, thonNhanTenData } = useGeoJSONLayers();
-
   const CARTO_API_KEY = (import.meta.env.VITE_CARTO_API_KEY || '').trim();
   const cartoKeyParam = CARTO_API_KEY ? `?key=${CARTO_API_KEY}` : '';
-  const hasCartoKey   = Boolean(CARTO_API_KEY);
 
   return (
     <div
@@ -299,27 +297,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
       >
         <ZoomControl position={isMobile ? 'topleft' : 'bottomleft'} />
         <LayersControl position="bottomright">
-          <LayersControl.BaseLayer name="Bản đồ mặc định (OSM)" checked={!isDark && !hasCartoKey}>
-            <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              maxNativeZoom={18}
-              maxZoom={20}
-              keepBuffer={4}
-            />
-          </LayersControl.BaseLayer>
-
-          <LayersControl.BaseLayer name="Bản đồ vệ tinh (Esri)">
-            <TileLayer
-              attribution='&copy; <a href="https://server.arcgisonline.com">Esri</a>'
-              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-              maxNativeZoom={18}
-              maxZoom={20}
-              keepBuffer={4}
-            />
-          </LayersControl.BaseLayer>
-
-          <LayersControl.BaseLayer name="Bản đồ sáng (CartoDB)" checked={!isDark && hasCartoKey}>
+          <LayersControl.BaseLayer name="Bản đồ sáng (CartoDB)" checked={!isDark}>
             <TileLayer
               key={`tile-light-${!isDark}-${CARTO_API_KEY}`}
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -341,11 +319,30 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
             />
           </LayersControl.BaseLayer>
 
-          <LayersControl.BaseLayer name="Bản đồ chỉ dẫn (CartoDB Voyager)">
+          <LayersControl.BaseLayer name="Bản đồ vệ tinh (Esri)">
             <TileLayer
-              key={`tile-voyager-${CARTO_API_KEY}`}
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-              url={`https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png${cartoKeyParam}`}
+              attribution='&copy; <a href="https://server.arcgisonline.com">Esri</a>'
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+              maxNativeZoom={18}
+              maxZoom={20}
+              keepBuffer={4}
+            />
+          </LayersControl.BaseLayer>
+
+          <LayersControl.BaseLayer name="Bản đồ đường phố (Esri Street)">
+            <TileLayer
+              attribution='&copy; <a href="https://server.arcgisonline.com">Esri</a>'
+              url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
+              maxNativeZoom={18}
+              maxZoom={20}
+              keepBuffer={4}
+            />
+          </LayersControl.BaseLayer>
+
+          <LayersControl.BaseLayer name="Bản đồ OpenStreetMap">
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               maxNativeZoom={18}
               maxZoom={20}
               keepBuffer={4}
