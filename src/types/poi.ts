@@ -31,6 +31,7 @@ export interface POILayerHookResult<T extends POIItem = POIItem> {
 export interface POILayerConfig<T extends POIItem = POIItem> {
   id: string;                 // e.g. 'schools'
   title: string;              // e.g. 'Trường học'
+  unitLabel?: string;         // e.g. 'trường', 'trạm', 'di tích', 'đơn vị'
   icon: ReactNode | string;   // e.g. '🏫' or a Lucide icon
   categories: POICategory[];
   useItems: () => POILayerHookResult<T>;

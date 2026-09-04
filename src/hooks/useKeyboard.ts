@@ -55,7 +55,6 @@ export function useKeyboard(
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled]); // Only re-register if enabled changes — NOT on shortcuts change
 }
 

@@ -169,6 +169,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
     selectSchool,
     selectHealthStation,
     selectRelic,
+    selectGovUnit,
     activeSidebarTab,
     isDark,
   } = useAppContext();
@@ -182,8 +183,15 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
 
   const { ranhGioiXaData, ranhGioiThonData, thonNhanTenData } = useGeoJSONLayers();
 
+  const CARTO_API_KEY = (import.meta.env.VITE_CARTO_API_KEY || '').trim();
+  const cartoKeyParam = CARTO_API_KEY ? `?key=${CARTO_API_KEY}` : '';
+  const hasCartoKey   = Boolean(CARTO_API_KEY);
+
   return (
-    <div className={`relative flex-1 flex flex-col overflow-hidden gpu-layer ${isDark ? 'bg-gov-950' : 'bg-gray-100'}`}>
+    <div
+      data-tour="map-viewport"
+      className={`relative flex-1 flex flex-col overflow-hidden gpu-layer ${isDark ? 'bg-gov-950' : 'bg-gray-100'}`}
+    >
 
       {/* Mode overlay indicator */}
       <AnimatePresence>
@@ -291,9 +299,9 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
       >
         <ZoomControl position={isMobile ? 'topleft' : 'bottomleft'} />
         <LayersControl position="bottomright">
-          <LayersControl.BaseLayer name="Bản đồ mặc định (OSM)">
+          <LayersControl.BaseLayer name="Bản đồ mặc định (OSM)" checked={!isDark && !hasCartoKey}>
             <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               maxNativeZoom={18}
               maxZoom={20}
@@ -311,11 +319,11 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
             />
           </LayersControl.BaseLayer>
 
-          <LayersControl.BaseLayer name="Bản đồ sáng (CartoDB)" checked={!isDark}>
+          <LayersControl.BaseLayer name="Bản đồ sáng (CartoDB)" checked={!isDark && hasCartoKey}>
             <TileLayer
-              key={`tile-light-${!isDark}`}
-              attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
-              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+              key={`tile-light-${!isDark}-${CARTO_API_KEY}`}
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              url={`https://{s}.basemaps.cartocdn.com/rastertiles/light_all/{z}/{x}/{y}{r}.png${cartoKeyParam}`}
               maxNativeZoom={18}
               maxZoom={20}
               keepBuffer={4}
@@ -324,9 +332,20 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
 
           <LayersControl.BaseLayer name="Bản đồ tối (CartoDB)" checked={isDark}>
             <TileLayer
-              key={`tile-dark-${isDark}`}
-              attribution='&copy; <a href="https://carto.com/attributions">CARTO</a>'
-              url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+              key={`tile-dark-${isDark}-${CARTO_API_KEY}`}
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              url={`https://{s}.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}{r}.png${cartoKeyParam}`}
+              maxNativeZoom={18}
+              maxZoom={20}
+              keepBuffer={4}
+            />
+          </LayersControl.BaseLayer>
+
+          <LayersControl.BaseLayer name="Bản đồ chỉ dẫn (CartoDB Voyager)">
+            <TileLayer
+              key={`tile-voyager-${CARTO_API_KEY}`}
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+              url={`https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png${cartoKeyParam}`}
               maxNativeZoom={18}
               maxZoom={20}
               keepBuffer={4}
@@ -393,6 +412,7 @@ export const MapViewer = memo(function MapViewer({ selectedVillage }: MapViewerP
             selectSchool(null);
             selectHealthStation(null);
             selectRelic(null);
+            selectGovUnit(null);
           }}
         />
       </MapContainer>

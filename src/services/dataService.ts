@@ -107,7 +107,7 @@ export async function fetchSchools(): Promise<School[]> {
   const parsed: School[] = [];
   if (Array.isArray(data.features)) {
     data.features.forEach((feature: any, index: number) => {
-      if (feature.geometry?.type === 'Point') {
+      if (feature.geometry?.type === 'Point' && Array.isArray(feature.geometry?.coordinates) && feature.geometry.coordinates.length >= 2) {
         const name =
           feature.properties?.commune_name ||
           feature.properties?.name ||
@@ -141,7 +141,7 @@ export async function fetchHealthStations(): Promise<HealthStation[]> {
   const parsed: HealthStation[] = [];
   if (Array.isArray(data.features)) {
     data.features.forEach((feature: any, index: number) => {
-      if (feature.geometry?.type === 'Point') {
+      if (feature.geometry?.type === 'Point' && Array.isArray(feature.geometry?.coordinates) && feature.geometry.coordinates.length >= 2) {
         const name =
           feature.properties?.commune_name ||
           feature.properties?.name ||
@@ -190,7 +190,7 @@ export async function fetchGovUnits(): Promise<GovUnit[]> {
   const parsed: GovUnit[] = [];
   if (Array.isArray(data.features)) {
     data.features.forEach((feature: any, index: number) => {
-      if (feature.geometry?.type === 'Point') {
+      if (feature.geometry?.type === 'Point' && Array.isArray(feature.geometry?.coordinates) && feature.geometry.coordinates.length >= 2) {
         const name =
           feature.properties?.commune_name ||
           feature.properties?.name ||

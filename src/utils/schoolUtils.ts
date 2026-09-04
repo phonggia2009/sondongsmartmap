@@ -32,6 +32,7 @@ const CATEGORY_MAP = new Map<string, POICategory>(
 export const schoolConfig: POILayerConfig<any> = {
   id: 'schools',
   title: 'Danh Sách Trường',
+  unitLabel: 'trường',
   icon: '🏫',
   categories: SCHOOL_CATEGORIES,
   // We wrap useSchools to adapt to POILayerHookResult format

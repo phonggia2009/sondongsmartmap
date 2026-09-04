@@ -68,7 +68,7 @@ const TOUR_STEPS: TourStep[] = [
     title: 'Thao tác & Marker trên Bản đồ',
     description:
       'Bạn có thể di chuyển (pan), phóng to/thu nhỏ (zoom) hoặc nhấp vào vùng thôn, trường học và marker trạm y tế để xem thông tin chi tiết.',
-    targetSelector: '[data-tour="map-toolbar"]',
+    targetSelector: '[data-tour="map-viewport"]',
     icon: Compass,
     badge: 'Bước 2 / 4',
     placement: 'top',

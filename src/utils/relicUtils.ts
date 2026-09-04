@@ -24,6 +24,7 @@ export const DEFAULT_RELIC_FILTERS: Record<RelicType, boolean> = {
 export const relicConfig: POILayerConfig<any> = {
   id: 'relics',
   title: 'Danh Sách Di Tích',
+  unitLabel: 'di tích',
   icon: '🏛️',
   categories: RELIC_CATEGORIES,
   useItems: () => {

@@ -1,11 +1,12 @@
 import { memo, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Users, Home, GraduationCap, Cross, Landmark, Award } from 'lucide-react';
+import { MapPin, Users, Home, GraduationCap, Cross, Landmark, Award, Building2 } from 'lucide-react';
 import { useAppContext } from '@/context/AppContext';
 import { useVillages } from '@/hooks/useVillages';
 import { useSchools } from '@/hooks/useSchools';
 import { useHealthStations } from '@/hooks/useHealthStations';
 import { useRelics } from '@/hooks/useRelics';
+import { useGovUnits } from '@/hooks/useGovUnits';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 // ============================================================
@@ -13,16 +14,18 @@ import { useIsMobile } from '@/hooks/useIsMobile';
 // ============================================================
 
 export const MapOverlayStats = memo(function MapOverlayStats() {
-  const { selectedVillage, isDark, activeSidebarTab, schoolFilters, relicFilters } = useAppContext();
+  const { selectedVillage, isDark, activeSidebarTab, schoolFilters, relicFilters, govUnitFilters } = useAppContext();
   const { villages }       = useVillages();
   const { schools }        = useSchools();
   const { healthStations } = useHealthStations();
   const { relics }         = useRelics();
+  const { govUnits }       = useGovUnits();
   const isMobile           = useIsMobile();
 
   const isSchoolMode        = activeSidebarTab === 'schools';
   const isHealthStationMode = activeSidebarTab === 'healthStations';
   const isRelicMode         = activeSidebarTab === 'relics';
+  const isGovUnitMode       = activeSidebarTab === 'govUnits';
 
   const villageStats = useMemo(() => ({
     count:       villages.length,
@@ -45,6 +48,14 @@ export const MapOverlayStats = memo(function MapOverlayStats() {
     const city = relics.filter(r => r.rank === 'Thành phố').length;
     return { total: relics.length, visible: visible.length, national, city };
   }, [relics, relicFilters]);
+
+  const govUnitStats = useMemo(() => {
+    const visible = govUnits.filter(u => govUnitFilters[u.category]);
+    const admin = govUnits.filter(u => u.category === 'Hành chính').length;
+    const party = govUnits.filter(u => u.category === 'Đảng - Đoàn thể').length;
+    const armed = govUnits.filter(u => u.category === 'Lực lượng vũ trang').length;
+    return { total: govUnits.length, visible: visible.length, admin, party, armed };
+  }, [govUnits, govUnitFilters]);
 
   const containerClass = `
     absolute z-[400] pointer-events-auto
@@ -127,6 +138,40 @@ export const MapOverlayStats = memo(function MapOverlayStats() {
             value={relicStats.city}
             isDark={isDark}
             color="blue"
+          />
+        </motion.div>
+      ) : isGovUnitMode ? (
+        /* Gov unit mode stats */
+        <motion.div
+          key="govunit-stats"
+          className={containerClass}
+          initial={{ opacity: 0, y: 20, scale: 0.95 }}
+          animate={{ opacity: 1, y: 0, scale: 1 }}
+          exit={{ opacity: 0, y: 20, scale: 0.95 }}
+          transition={{ duration: 0.3 }}
+        >
+          <StatChip
+            icon={<Building2 className="w-3.5 h-3.5" />}
+            label="Tổng đơn vị"
+            value={govUnitStats.total}
+            isDark={isDark}
+            color="blue"
+          />
+          <Divider isDark={isDark} />
+          <StatChip
+            icon={<Building2 className="w-3.5 h-3.5" />}
+            label="Hành chính"
+            value={govUnitStats.admin}
+            isDark={isDark}
+            color="emerald"
+          />
+          <Divider isDark={isDark} />
+          <StatChip
+            icon={<Building2 className="w-3.5 h-3.5" />}
+            label="Đảng / LLVT"
+            value={govUnitStats.party + govUnitStats.armed}
+            isDark={isDark}
+            color="amber"
           />
         </motion.div>
       ) : (

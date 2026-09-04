@@ -245,7 +245,7 @@ export function SchoolsLayer() {
   const { schoolFilters, schoolSearchQuery, selectedSchool, selectSchool, isDark } = useAppContext();
   const { schools } = useSchools();
 
-  const [bounds, setBounds] = useState<[number, number, number, number] | null>(null);
+  const [bounds, setBounds] = useState<[number, number, number, number] | undefined>(undefined);
   const [zoom, setZoom] = useState(map.getZoom());
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
@@ -344,11 +344,12 @@ export function SchoolsLayer() {
     <>
       {clusters.map((cluster) => {
         const [longitude, latitude] = cluster.geometry.coordinates;
+        const properties = cluster.properties as any;
+        const isCluster = Boolean(properties.cluster);
+        const pointCount = properties.point_count;
         const {
-          cluster: isCluster,
-          point_count: pointCount,
           schoolId, name, level, principal, phone,
-        } = cluster.properties;
+        } = properties;
 
         // ── Cluster marker ─────────────────────────────────
         if (isCluster) {
@@ -381,10 +382,12 @@ export function SchoolsLayer() {
               })}
               eventHandlers={{
                 click: () => {
-                  const expansionZoom = Math.min(
-                    supercluster.getClusterExpansionZoom(cluster.id as number), 18,
-                  );
-                  map.setView([latitude, longitude], expansionZoom, { animate: true });
+                  if (supercluster) {
+                    const expansionZoom = Math.min(
+                      supercluster.getClusterExpansionZoom(cluster.id as number), 18,
+                    );
+                    map.setView([latitude, longitude], expansionZoom, { animate: true });
+                  }
                 },
               }}
             />

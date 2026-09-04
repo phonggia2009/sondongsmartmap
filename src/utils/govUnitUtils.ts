@@ -45,6 +45,7 @@ export const getGovUnitCategoryEmoji = (category: GovUnitCategory): string => {
 export const govUnitConfig: POILayerConfig<GovUnit> = {
   id: 'govUnits',
   title: 'Đơn vị HCSN',
+  unitLabel: 'đơn vị',
   icon: '🏢',
   categories: GOV_UNIT_CATEGORIES,
   useItems: useGovUnits,

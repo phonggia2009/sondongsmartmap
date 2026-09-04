@@ -17,6 +17,7 @@ export const DEFAULT_HEALTH_STATION_FILTERS: Record<string, boolean> = {
 export const healthStationConfig: POILayerConfig<any> = {
   id: 'healthStations',
   title: 'Danh Sách Trạm Y Tế',
+  unitLabel: 'trạm',
   icon: '🏥',
   categories: HEALTH_STATION_CATEGORIES,
   useItems: () => {

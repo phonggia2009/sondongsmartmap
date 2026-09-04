@@ -129,7 +129,7 @@ export function POILayerPanel<T extends POIItem>({
       {!isLoading && !isError && (
         <div className="flex-shrink-0 px-4 py-1.5 border-b border-gray-100 dark:border-gov-800 flex items-center justify-between">
           <span className="text-[11px] text-gray-400 dark:text-gov-500">
-            Hiển thị <span className="font-semibold text-gray-600 dark:text-gov-300">{filteredItems.length}</span> / {items.length} trường
+            Hiển thị <span className="font-semibold text-gray-600 dark:text-gov-300">{filteredItems.length}</span> / {items.length} {config.unitLabel || 'địa điểm'}
           </span>
           {!allActive && (
             <button

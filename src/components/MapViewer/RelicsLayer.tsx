@@ -175,7 +175,7 @@ export function RelicsLayer() {
   const { relicFilters, relicSearchQuery, selectedRelic, selectRelic, isDark } = useAppContext();
   const { relics } = useRelics();
 
-  const [bounds, setBounds] = useState<[number, number, number, number] | null>(null);
+  const [bounds, setBounds] = useState<[number, number, number, number] | undefined>(undefined);
   const [zoom, setZoom]     = useState(map.getZoom());
   const [hoveredId, setHoveredId] = useState<string | null>(null);
 
@@ -279,7 +279,9 @@ export function RelicsLayer() {
     <>
       {clusters.map(cluster => {
         const [longitude, latitude] = cluster.geometry.coordinates;
-        const { cluster: isCluster, point_count: pointCount } = cluster.properties;
+        const properties = cluster.properties as any;
+        const isCluster = Boolean(properties.cluster);
+        const pointCount = properties.point_count;
 
         // Render cluster marker
         if (isCluster) {
@@ -304,11 +306,13 @@ export function RelicsLayer() {
               })}
               eventHandlers={{
                 click: () => {
-                  const expansionZoom = Math.min(
-                    supercluster.getClusterExpansionZoom(cluster.id as number),
-                    18
-                  );
-                  map.flyTo([latitude, longitude], expansionZoom, { duration: 0.6 });
+                  if (supercluster) {
+                    const expansionZoom = Math.min(
+                      supercluster.getClusterExpansionZoom(cluster.id as number),
+                      18
+                    );
+                    map.flyTo([latitude, longitude], expansionZoom, { duration: 0.6 });
+                  }
                 },
               }}
             />
@@ -316,7 +320,7 @@ export function RelicsLayer() {
         }
 
         // Render individual relic marker
-        const relic = filteredRelics.find(r => r.id === cluster.properties.relicId);
+        const relic = filteredRelics.find(r => r.id === properties.relicId);
         if (!relic) return null;
 
         return (

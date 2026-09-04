@@ -20,11 +20,11 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ["react", "react-dom"],
+          vendor: ["react", "react-dom", "react-dom/client", "react/jsx-runtime"],
           router: ["react-router"],
           motion: ["framer-motion"],
           query: ["@tanstack/react-query"],
-          viewer: ["react-zoom-pan-pinch"],
+          gis: ["leaflet", "react-leaflet", "supercluster", "use-supercluster"],
         },
       },
     },
