@@ -1,7 +1,7 @@
 import { memo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Info } from 'lucide-react';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 import { useVillages } from '@/hooks/useVillages';
 import { useKeyboard } from '@/hooks/useKeyboard';
 import { useIsMobile } from '@/hooks/useIsMobile';
@@ -10,6 +10,7 @@ import { InformationPanel } from '@/components/InformationPanel/InformationPanel
 import { Sidebar } from '@/components/Sidebar/Sidebar';
 import { LoadingScreen } from '@/components/Loading/LoadingScreen';
 import { EmptyState } from '@/components/EmptyState/EmptyState';
+import { GlobalSearchModal } from '@/components/GlobalSearch/GlobalSearchModal';
 import type { Village, School, HealthStation, Relic, GovUnit } from '@/types';
 
 // ============================================================
@@ -92,28 +93,6 @@ const MobileSidebarDrawer = memo(function MobileSidebarDrawer({
 
 
 // ============================================================
-//  DesktopSidebarColumn — inline flex column, only shown on desktop
-// ============================================================
-const DesktopSidebarColumn = memo(function DesktopSidebarColumn({
-  villages,
-  sidebarOpen,
-  onVillageSelect,
-}: {
-  villages: Village[];
-  sidebarOpen: boolean;
-  onVillageSelect: (village: Village) => void;
-}) {
-  return (
-    <div
-      className="flex-shrink-0 flex flex-col overflow-hidden self-stretch transition-[width] duration-300 ease-in-out"
-      style={{ width: sidebarOpen ? 320 : 56 }}
-    >
-      <Sidebar villages={villages} onVillageSelect={onVillageSelect} />
-    </div>
-  );
-});
-
-// ============================================================
 //  HomePage
 //  Map-first layout: Sidebar + MapViewer + InformationPanel
 //  On mobile (< 768px): sidebar is an overlay drawer
@@ -123,6 +102,10 @@ const DesktopSidebarColumn = memo(function DesktopSidebarColumn({
 export default function HomePage() {
   const {
     selectedVillage,
+    selectedSchool,
+    selectedHealthStation,
+    selectedRelic,
+    selectedGovUnit,
     selectVillage,
     selectSchool,
     selectHealthStation,
@@ -134,15 +117,23 @@ export default function HomePage() {
     isDark,
     sidebarOpen,
     setSidebarOpen,
+    openGlobalSearch,
+    clearAllSelections,
   } = useAppContext();
 
   const { villages, isLoading, isError, error, refetch } = useVillages();
   const isMobile = useIsMobile();
 
-  // Stable keyboard shortcuts — useRef prevents array recreation on every render
-  // which was causing useKeyboard's useEffect to re-register on each re-render
-  const handleEscape = useCallback(() => selectVillage(null), [selectVillage]);
-  useKeyboard([{ key: 'Escape', handler: handleEscape, description: 'Quay về tổng quan' }]);
+  const hasActiveItem = Boolean(
+    selectedVillage || selectedSchool || selectedHealthStation || selectedRelic || selectedGovUnit
+  );
+
+  // Stable keyboard shortcuts
+  const handleEscape = useCallback(() => clearAllSelections(), [clearAllSelections]);
+  useKeyboard([
+    { key: 'Escape', handler: handleEscape, description: 'Quay về tổng quan' },
+    { key: 'k', ctrlKey: true, handler: openGlobalSearch, description: 'Tìm kiếm toàn cảnh' },
+  ]);
 
   // Stable callbacks — never recreated unless their deps change
   const handleVillageSelectMobile = useCallback((village: Village) => {
@@ -261,7 +252,7 @@ export default function HomePage() {
 
         {/* LEFT OVERLAY — Information Panel */}
         <AnimatePresence>
-          {infoPanelOpen && selectedVillage && (
+          {infoPanelOpen && hasActiveItem && (
             <InformationPanel
               village={selectedVillage}
               onClose={() => setInfoPanelOpen(false)}
@@ -271,7 +262,7 @@ export default function HomePage() {
 
         {/* Re-open panel button */}
         <AnimatePresence>
-          {selectedVillage && !infoPanelOpen && (
+          {hasActiveItem && !infoPanelOpen && (
             <motion.button
               key="open-panel-btn"
               onClick={toggleInfoPanel}
@@ -298,6 +289,9 @@ export default function HomePage() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Global Command Palette / Search Modal (Ctrl + K) */}
+      <GlobalSearchModal />
     </motion.div>
   );
 }

@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 
 // ============================================================
 //  BoundaryRow Component — Compass direction boundary

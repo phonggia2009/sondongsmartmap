@@ -1,9 +1,9 @@
-import { memo, useEffect, useRef, useState, useMemo, useCallback } from 'react';
-import { Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
-import useSupercluster from 'use-supercluster';
+import { memo, useMemo, useCallback } from 'react';
+import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 import { useRelics } from '@/hooks/useRelics';
+import { useClusterLayer } from '@/hooks/useClusterLayer';
 import { getRelicColor, getRelicEmoji } from '@/utils/relicUtils';
 import type { Relic } from '@/types';
 import { Navigation } from 'lucide-react';
@@ -171,64 +171,10 @@ const RelicMarkerItem = memo(function RelicMarkerItem({
 // ============================================================
 
 export function RelicsLayer() {
-  const map = useMap();
   const { relicFilters, relicSearchQuery, selectedRelic, selectRelic, isDark } = useAppContext();
   const { relics } = useRelics();
 
-  const [bounds, setBounds] = useState<[number, number, number, number] | undefined>(undefined);
-  const [zoom, setZoom]     = useState(map.getZoom());
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-
-  const markerRefs = useRef<Map<string, L.Marker>>(new Map());
-
-  const registerRef = useCallback((id: string, instance: L.Marker | null) => {
-    if (instance) {
-      markerRefs.current.set(id, instance);
-    } else {
-      markerRefs.current.delete(id);
-    }
-  }, []);
-
-  const handleHover = useCallback((id: string | null) => {
-    setHoveredId(id);
-  }, []);
-
-  // ── Map state sync ─────────────────────────────────────────
-  const updateMapState = useCallback(() => {
-    const b = map.getBounds();
-    setBounds([
-      b.getSouthWest().lng, b.getSouthWest().lat,
-      b.getNorthEast().lng, b.getNorthEast().lat,
-    ]);
-    setZoom(map.getZoom());
-  }, [map]);
-
-  useMapEvents({ moveend: updateMapState, zoomend: updateMapState });
-  useEffect(() => { updateMapState(); }, [updateMapState]);
-
-  // ── FlyTo and auto open popup when selectedRelic changes ──────
-  useEffect(() => {
-    if (!selectedRelic) return;
-
-    // Fly to relic coordinates
-    map.flyTo([selectedRelic.lat, selectedRelic.lng], 17, { duration: 0.8 });
-
-    // Open popup after flyTo animation completes
-    const timer = setTimeout(() => {
-      const marker = markerRefs.current.get(selectedRelic.id);
-      if (marker) {
-        try {
-          marker.openPopup();
-        } catch {
-          // ignore if map unmounted
-        }
-      }
-    }, 850);
-
-    return () => clearTimeout(timer);
-  }, [selectedRelic, map]);
-
-  // ── Filter by active filters & search query ────────────────
+  // Filter by active filters & search query
   const filteredRelics = useMemo(
     () =>
       relics.filter(r => {
@@ -248,31 +194,18 @@ export function RelicsLayer() {
     [relics, relicFilters, relicSearchQuery, selectedRelic]
   );
 
-  // ── Convert to GeoJSON points for supercluster ─────────────
-  const points = useMemo(
-    () =>
-      filteredRelics.map(relic => ({
-        type: 'Feature' as const,
-        properties: {
-          cluster: false,
-          relicId: relic.id,
-          name: relic.name,
-          type: relic.type,
-          rank: relic.rank,
-        },
-        geometry: {
-          type: 'Point' as const,
-          coordinates: [relic.lng, relic.lat],
-        },
-      })),
-    [filteredRelics]
-  );
-
-  const { clusters, supercluster } = useSupercluster({
-    points,
-    bounds,
-    zoom,
-    options: { radius: 45, maxZoom: 16 },
+  const {
+    clusters,
+    hoveredId,
+    handleHover,
+    registerRef,
+    handleClusterClick,
+    itemsMap,
+  } = useClusterLayer<Relic>({
+    items: filteredRelics,
+    selectedItem: selectedRelic,
+    clusterRadius: 45,
+    clusterMaxZoom: 16,
   });
 
   return (
@@ -305,22 +238,14 @@ export function RelicsLayer() {
                 iconAnchor: [18, 18],
               })}
               eventHandlers={{
-                click: () => {
-                  if (supercluster) {
-                    const expansionZoom = Math.min(
-                      supercluster.getClusterExpansionZoom(cluster.id as number),
-                      18
-                    );
-                    map.flyTo([latitude, longitude], expansionZoom, { duration: 0.6 });
-                  }
-                },
+                click: () => handleClusterClick(cluster.id as number, [longitude, latitude]),
               }}
             />
           );
         }
 
         // Render individual relic marker
-        const relic = filteredRelics.find(r => r.id === properties.relicId);
+        const relic = itemsMap.get(properties.itemId);
         if (!relic) return null;
 
         return (

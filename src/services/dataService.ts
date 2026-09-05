@@ -71,7 +71,6 @@ export async function fetchVillages(): Promise<Village[]> {
     return {
       id: raw.id as number,
       name: (raw.name as string) || `Thôn ${index + 1}`,
-      image: typeof raw.image === 'string' ? raw.image : '',
       area: typeof raw.area === 'string' ? raw.area : 'N/A',
       partyMembers: typeof raw.partyMembers === 'number' ? raw.partyMembers : 0,
       households: typeof raw.households === 'number' ? raw.households : undefined,
@@ -241,17 +240,4 @@ export async function fetchGeoJSONLayers(): Promise<GeoJSONLayersData> {
     ranhGioiThon: thon,
     thonNhanTen: ten,
   };
-}
-
-/**
- * Preloads a village image and returns success/failure.
- * Used to warm up the image cache before presentation transitions.
- */
-export async function preloadImage(url: string): Promise<boolean> {
-  return new Promise((resolve) => {
-    const img = new Image();
-    img.onload = () => resolve(true);
-    img.onerror = () => resolve(false);
-    img.src = url;
-  });
 }

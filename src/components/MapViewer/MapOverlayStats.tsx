@@ -1,7 +1,7 @@
 import { memo, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MapPin, Users, Home, GraduationCap, Cross, Landmark, Award, Building2 } from 'lucide-react';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 import { useVillages } from '@/hooks/useVillages';
 import { useSchools } from '@/hooks/useSchools';
 import { useHealthStations } from '@/hooks/useHealthStations';

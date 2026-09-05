@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   MapPin,
@@ -6,28 +6,36 @@ import {
   Home,
   BarChart3,
   X,
-  Map,
   Compass,
   Building2,
   Navigation,
+  GraduationCap,
+  Landmark,
+  Cross,
+  Phone,
+  Award,
+  UserCheck,
+  FileText,
 } from 'lucide-react';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 import { BoundaryRow } from './BoundaryRow';
 import { LandmarkList } from './LandmarkList';
-
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { AnimatedNumber } from '@/components/ui/AnimatedNumber';
-import type { Village } from '@/types';
 import { trackGetDirections } from '@/utils/analytics';
+import { getLevelColor, getLevelBgColor, getLevelEmoji } from '@/utils/schoolUtils';
+import { getRelicColor, getRelicEmoji } from '@/utils/relicUtils';
+import { getGovUnitCategoryColor, getGovUnitCategoryEmoji } from '@/utils/govUnitUtils';
+import type { SchoolLevel, Village } from '@/types';
 
 // ============================================================
-//  InformationPanel Component
-//  Left overlay panel displaying all village details.
-//  Glassmorphism slide-over design.
+//  InformationPanel Component — Unified Detail Panel
+//  Displays full details for Villages, Schools, Relics,
+//  Health Stations, and Administrative Units.
 // ============================================================
 
 interface InformationPanelProps {
-  village: Village | null;
+  village?: Village | null;
   onClose?: () => void;
 }
 
@@ -62,7 +70,7 @@ function StatCard({
     <motion.div
       variants={{
         hidden: { opacity: 0, y: 10, scale: 0.95 },
-        visible: { opacity: 1, y: 0, scale: 1 }
+        visible: { opacity: 1, y: 0, scale: 1 },
       }}
       className={`
         flex flex-col gap-1.5 p-3.5 rounded-2xl border
@@ -91,11 +99,43 @@ function StatCard({
 }
 
 export const InformationPanel = memo(function InformationPanel({
-  village,
+  village: propVillage,
   onClose,
 }: InformationPanelProps) {
-  const { isDark } = useAppContext();
+  const {
+    isDark,
+    selectedVillage: ctxVillage,
+    selectedSchool,
+    selectedHealthStation,
+    selectedRelic,
+    selectedGovUnit,
+    clearAllSelections,
+  } = useAppContext();
   const isMobile = useIsMobile();
+
+  const handleClose = onClose ?? clearAllSelections;
+
+  // Active item resolution
+  const activeVillage = propVillage ?? ctxVillage;
+  const activeSchool = selectedSchool;
+  const activeHealthStation = selectedHealthStation;
+  const activeRelic = selectedRelic;
+  const activeGovUnit = selectedGovUnit;
+
+  const hasContent = Boolean(
+    activeVillage || activeSchool || activeHealthStation || activeRelic || activeGovUnit
+  );
+
+  const activeKey = useMemo(() => {
+    if (activeVillage) return `village-${activeVillage.id}`;
+    if (activeSchool) return `school-${activeSchool.id}`;
+    if (activeRelic) return `relic-${activeRelic.id}`;
+    if (activeHealthStation) return `health-${activeHealthStation.id}`;
+    if (activeGovUnit) return `gov-${activeGovUnit.id}`;
+    return 'none';
+  }, [activeVillage, activeSchool, activeRelic, activeHealthStation, activeGovUnit]);
+
+  if (!hasContent) return null;
 
   return (
     <motion.aside
@@ -110,7 +150,7 @@ export const InformationPanel = memo(function InformationPanel({
           ? 'bg-gov-950/95 border-gov-800/60 shadow-2xl'
           : 'bg-white/95 border-gray-200/60 shadow-xl'
         }
-        ${!isMobile ? (isDark ? 'border-r' : 'border-r') : (isDark ? 'border-t border-gov-700/40' : 'border-t border-gray-200')}
+        ${!isMobile ? 'border-r' : (isDark ? 'border-t border-gov-700/40' : 'border-t border-gray-200')}
       `}
       style={!isMobile ? {
         backdropFilter: 'blur(24px) saturate(1.8)',
@@ -129,18 +169,17 @@ export const InformationPanel = memo(function InformationPanel({
       )}
 
       <AnimatePresence mode="wait">
-        {!village ? (
-          <OverviewPlaceholder key="overview" isDark={isDark} />
-        ) : (
+        {/* ── 1. VILLAGE DETAILS ── */}
+        {activeVillage && (
           <motion.div
-            key={village.id}
+            key={activeKey}
             className="flex flex-col h-full overflow-hidden"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.3, ease: 'easeOut' }}
           >
-            {/* Village name header */}
+            {/* Header */}
             <div className={`
               flex-shrink-0 flex items-center justify-between px-5 py-4
               ${isDark ? 'border-b border-gov-800/40' : 'border-b border-gray-100'}
@@ -157,86 +196,39 @@ export const InformationPanel = memo(function InformationPanel({
                 </div>
                 <div className="min-w-0">
                   <h2 className={`text-base font-display font-bold leading-tight truncate ${isDark ? 'text-white' : 'text-gray-800'}`}>
-                    {village.name}
+                    {activeVillage.name}
                   </h2>
                   <p className={`text-[11px] ${isDark ? 'text-gov-500' : 'text-gray-400'}`}>
-                    Thông tin chi tiết
+                    Thông tin thôn / xã
                   </p>
                 </div>
               </div>
-              {onClose && (
-                <motion.button
-                  onClick={onClose}
-                  className={`
-                    p-2 rounded-xl transition-colors flex-shrink-0
-                    ${isDark
-                      ? 'text-gov-400 hover:bg-gov-800 hover:text-white'
-                      : 'text-gray-400 hover:bg-gray-100 hover:text-gray-700'
-                    }
-                  `}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.9 }}
-                >
-                  <X className="w-4 h-4" />
-                </motion.button>
-              )}
+              <button
+                onClick={handleClose}
+                className={`p-2 rounded-xl transition-colors flex-shrink-0 ${isDark ? 'text-gov-400 hover:bg-gov-800 hover:text-white' : 'text-gray-400 hover:bg-gray-100 hover:text-gray-700'}`}
+                title="Đóng thông tin"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Scrollable content with stagger */}
-            <motion.div
-              className="flex-1 overflow-y-auto px-5 py-4 space-y-5 scrollbar-thin"
-              variants={{
-                hidden: { opacity: 0 },
-                visible: {
-                  opacity: 1,
-                  transition: { staggerChildren: 0.06, delayChildren: 0.08 }
-                }
-              }}
-              initial="hidden"
-              animate="visible"
-            >
-
-              {/* Stats grid */}
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-5 scrollbar-thin">
               <div className="grid grid-cols-2 gap-2.5">
-                <StatCard
-                  isDark={isDark}
-                  icon={<MapPin className="w-4 h-4" />}
-                  label="Diện tích"
-                  value={village.area}
-                  color="blue"
-                />
-                <StatCard
-                  isDark={isDark}
-                  icon={<Users className="w-4 h-4" />}
-                  label="Đảng viên"
-                  value={village.partyMembers}
-                  color="purple"
-                />
-                {village.households !== undefined && (
-                  <StatCard
-                    isDark={isDark}
-                    icon={<Home className="w-4 h-4" />}
-                    label="Hộ dân"
-                    value={village.households}
-                    color="amber"
-                  />
+                <StatCard isDark={isDark} icon={<MapPin className="w-4 h-4" />} label="Diện tích" value={activeVillage.area} color="blue" />
+                <StatCard isDark={isDark} icon={<Users className="w-4 h-4" />} label="Đảng viên" value={activeVillage.partyMembers} color="purple" />
+                {activeVillage.households !== undefined && (
+                  <StatCard isDark={isDark} icon={<Home className="w-4 h-4" />} label="Hộ dân" value={activeVillage.households} color="amber" />
                 )}
-                {village.population !== undefined && (
-                  <StatCard
-                    isDark={isDark}
-                    icon={<BarChart3 className="w-4 h-4" />}
-                    label="Dân số"
-                    value={village.population}
-                    color="emerald"
-                  />
+                {activeVillage.population !== undefined && (
+                  <StatCard isDark={isDark} icon={<BarChart3 className="w-4 h-4" />} label="Dân số" value={activeVillage.population} color="emerald" />
                 )}
               </div>
 
-              {/* Divider */}
               <div className="section-divider" />
 
-              {/* Community Center */}
-              {(village.communityCenter || village.communityCenterAddress) && (
+              {/* Community center */}
+              {(activeVillage.communityCenter || activeVillage.communityCenterAddress) && (
                 <>
                   <div>
                     <div className="flex items-center gap-2 mb-2">
@@ -245,58 +237,38 @@ export const InformationPanel = memo(function InformationPanel({
                         Điểm Sinh Hoạt Cộng Đồng
                       </p>
                     </div>
-                    <div className={`
-                      p-3.5 rounded-2xl border text-xs space-y-2.5
-                      ${isDark
-                        ? 'bg-gov-900/60 border-gov-800/60 text-gov-200'
-                        : 'bg-gov-50/60 border-gov-100 text-gray-700'
-                      }
-                    `}>
-                      {village.communityCenter && (
+                    <div className={`p-3.5 rounded-2xl border text-xs space-y-2.5 ${isDark ? 'bg-gov-900/60 border-gov-800/60 text-gov-200' : 'bg-gov-50/60 border-gov-100 text-gray-700'}`}>
+                      {activeVillage.communityCenter && (
                         <p className="font-bold text-sm text-gov-600 dark:text-accent-300">
-                          {village.communityCenter}
+                          {activeVillage.communityCenter}
                         </p>
                       )}
-                      {village.communityCenterAddress && (
+                      {activeVillage.communityCenterAddress && (
                         <div className="flex items-start gap-1.5 text-xs text-gray-600 dark:text-gov-300">
                           <MapPin className="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-accent-500" />
-                          <span>{village.communityCenterAddress}</span>
+                          <span>{activeVillage.communityCenterAddress}</span>
                         </div>
                       )}
-
-                      {/* Directions button for Community Center */}
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          trackGetDirections(village.communityCenter || village.name, 'Thôn / Xã');
+                        onClick={() => {
+                          trackGetDirections(activeVillage.communityCenter || activeVillage.name, 'Thôn / Xã');
                           let dest = '';
-                          if (village.communityCenterCoords) {
-                            dest = `${village.communityCenterCoords.lat},${village.communityCenterCoords.lng}`;
-                          } else if (village.communityCenterAddress) {
-                            dest = encodeURIComponent(village.communityCenterAddress);
-                          } else if (village.communityCenter) {
-                            dest = encodeURIComponent(`${village.communityCenter}, Sơn Đồng, Hoài Đức, Hà Nội`);
+                          if (activeVillage.communityCenterCoords) {
+                            dest = `${activeVillage.communityCenterCoords.lat},${activeVillage.communityCenterCoords.lng}`;
+                          } else if (activeVillage.communityCenterAddress) {
+                            dest = encodeURIComponent(activeVillage.communityCenterAddress);
                           }
                           if (dest) {
                             window.open(`https://www.google.com/maps/dir/?api=1&destination=${dest}`, '_blank');
                           }
                         }}
-                        className={`
-                          w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl font-semibold text-xs transition-all duration-200 shadow-sm cursor-pointer mt-1
-                          ${isDark
-                            ? 'bg-accent-600 hover:bg-accent-500 text-white shadow-accent-600/20 active:scale-[0.98]'
-                            : 'bg-gov-600 hover:bg-gov-700 text-white shadow-gov-600/20 active:scale-[0.98]'
-                          }
-                        `}
-                        title="Chỉ đường tới điểm sinh hoạt cộng đồng trên Google Maps"
+                        className={`w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl font-semibold text-xs transition-all duration-200 shadow-sm cursor-pointer mt-1 ${isDark ? 'bg-accent-600 hover:bg-accent-500 text-white' : 'bg-gov-600 hover:bg-gov-700 text-white'}`}
                       >
                         <Navigation className="w-3.5 h-3.5" />
                         <span>Chỉ đường tới Nhà văn hóa</span>
                       </button>
                     </div>
                   </div>
-
-                  {/* Divider */}
                   <div className="section-divider" />
                 </>
               )}
@@ -307,63 +279,362 @@ export const InformationPanel = memo(function InformationPanel({
                   Ranh Giới Hành Chính
                 </p>
                 <div className="space-y-1.5">
-                  <BoundaryRow direction="north" value={village.north} />
-                  <BoundaryRow direction="south" value={village.south} />
-                  <BoundaryRow direction="east" value={village.east} />
-                  <BoundaryRow direction="west" value={village.west} />
+                  <BoundaryRow direction="north" value={activeVillage.north} />
+                  <BoundaryRow direction="south" value={activeVillage.south} />
+                  <BoundaryRow direction="east" value={activeVillage.east} />
+                  <BoundaryRow direction="west" value={activeVillage.west} />
                 </div>
               </div>
 
-              {/* Divider */}
               <div className="section-divider" />
-
-              {/* Landmarks */}
-              <LandmarkList landmarks={village.landmarks} />
-
-              {/* Bottom padding */}
+              <LandmarkList landmarks={activeVillage.landmarks} />
               <div className="h-6" />
-            </motion.div>
+            </div>
+          </motion.div>
+        )}
 
-            {/* Bottom gradient scroll indicator */}
-            <div className={`
-              absolute bottom-0 left-0 right-0 h-8 pointer-events-none
-              ${isDark
-                ? 'bg-gradient-to-t from-gov-950/60 to-transparent'
-                : 'bg-gradient-to-t from-white/60 to-transparent'
-              }
-            `} />
+        {/* ── 2. SCHOOL DETAILS ── */}
+        {activeSchool && (
+          <motion.div
+            key={activeKey}
+            className="flex flex-col h-full overflow-hidden"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+          >
+            <div className={`flex-shrink-0 flex items-center justify-between px-5 py-4 ${isDark ? 'border-b border-gov-800/40' : 'border-b border-gray-100'}`}>
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-green-500/20 text-green-500">
+                  <GraduationCap className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <h2 className={`text-base font-display font-bold leading-tight truncate ${isDark ? 'text-white' : 'text-gray-800'}`}>
+                    {activeSchool.name}
+                  </h2>
+                  <p className={`text-[11px] ${isDark ? 'text-gov-500' : 'text-gray-400'}`}>
+                    Cơ sở giáo dục
+                  </p>
+                </div>
+              </div>
+              <button onClick={handleClose} className={`p-2 rounded-xl transition-colors flex-shrink-0 ${isDark ? 'text-gov-400 hover:bg-gov-800 hover:text-white' : 'text-gray-400 hover:bg-gray-100'}`} title="Đóng">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 scrollbar-thin">
+              {/* Level Badge */}
+              <div className="flex items-center gap-2">
+                <span
+                  className="px-3 py-1 rounded-xl text-xs font-bold"
+                  style={{
+                    background: getLevelBgColor(activeSchool.level as SchoolLevel),
+                    color: getLevelColor(activeSchool.level as SchoolLevel),
+                  }}
+                >
+                  {getLevelEmoji(activeSchool.level as SchoolLevel)} {activeSchool.level}
+                </span>
+              </div>
+
+              {/* Principal */}
+              {activeSchool.principal && (
+                <div className={`p-3.5 rounded-2xl border text-xs ${isDark ? 'bg-gov-900/60 border-gov-800/60 text-gov-200' : 'bg-gray-50 border-gray-100 text-gray-700'}`}>
+                  <div className="flex items-center gap-2 mb-1 text-[11px] font-semibold uppercase tracking-wider opacity-75">
+                    <UserCheck className="w-3.5 h-3.5 text-green-500" />
+                    <span>Hiệu trưởng</span>
+                  </div>
+                  <p className="text-sm font-bold">{activeSchool.principal}</p>
+                </div>
+              )}
+
+              {/* Phone call button */}
+              {activeSchool.phone && (
+                <div className={`p-3.5 rounded-2xl border text-xs ${isDark ? 'bg-gov-900/60 border-gov-800/60 text-gov-200' : 'bg-gray-50 border-gray-100 text-gray-700'}`}>
+                  <div className="flex items-center gap-2 mb-1 text-[11px] font-semibold uppercase tracking-wider opacity-75">
+                    <Phone className="w-3.5 h-3.5 text-blue-500" />
+                    <span>Điện thoại liên hệ</span>
+                  </div>
+                  <a
+                    href={`tel:${activeSchool.phone.replace(/[^0-9+]/g, '')}`}
+                    className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 dark:text-blue-400 hover:underline"
+                  >
+                    <span>{activeSchool.phone}</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-blue-500/10 font-normal">Bấm để gọi</span>
+                  </a>
+                </div>
+              )}
+
+              {/* Coordinates & Location */}
+              <div className={`p-3.5 rounded-2xl border text-xs space-y-1.5 ${isDark ? 'bg-gov-900/60 border-gov-800/60 text-gov-300' : 'bg-gray-50 border-gray-100 text-gray-600'}`}>
+                <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider opacity-75">
+                  <MapPin className="w-3.5 h-3.5 text-accent-500" />
+                  <span>Vị trí địa lý</span>
+                </div>
+                <p>Xã Sơn Đồng, Thành phố Hà Nội</p>
+                <p className="font-mono text-[11px] opacity-75">
+                  Tọa độ: {activeSchool.lat.toFixed(6)}, {activeSchool.lng.toFixed(6)}
+                </p>
+              </div>
+
+              {/* Directions Button */}
+              <button
+                onClick={() => {
+                  trackGetDirections(activeSchool.name, 'Trường học');
+                  window.open(`https://www.google.com/maps/dir/?api=1&destination=${activeSchool.lat},${activeSchool.lng}`, '_blank');
+                }}
+                className={`w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-semibold text-xs transition-all shadow-sm ${isDark ? 'bg-green-600 hover:bg-green-500 text-white' : 'bg-green-600 hover:bg-green-700 text-white'}`}
+              >
+                <Navigation className="w-4 h-4" />
+                <span>Chỉ đường trên Google Maps</span>
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ── 3. RELIC DETAILS ── */}
+        {activeRelic && (
+          <motion.div
+            key={activeKey}
+            className="flex flex-col h-full overflow-hidden"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+          >
+            <div className={`flex-shrink-0 flex items-center justify-between px-5 py-4 ${isDark ? 'border-b border-gov-800/40' : 'border-b border-gray-100'}`}>
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-purple-500/20 text-purple-500">
+                  <Landmark className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <h2 className={`text-base font-display font-bold leading-tight truncate ${isDark ? 'text-white' : 'text-gray-800'}`}>
+                    {activeRelic.name}
+                  </h2>
+                  <p className={`text-[11px] ${isDark ? 'text-gov-500' : 'text-gray-400'}`}>
+                    Di tích lịch sử văn hóa
+                  </p>
+                </div>
+              </div>
+              <button onClick={handleClose} className={`p-2 rounded-xl transition-colors flex-shrink-0 ${isDark ? 'text-gov-400 hover:bg-gov-800 hover:text-white' : 'text-gray-400 hover:bg-gray-100'}`} title="Đóng">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 scrollbar-thin">
+              {/* Badges: Rank + Type */}
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className={`px-2.5 py-1 rounded-xl text-xs font-bold uppercase border ${
+                  activeRelic.rank === 'Quốc Gia'
+                    ? (isDark ? 'bg-amber-900/50 text-amber-300 border-amber-700/60' : 'bg-amber-100 text-amber-800 border-amber-300')
+                    : (isDark ? 'bg-blue-900/50 text-blue-300 border-blue-700/60' : 'bg-blue-100 text-blue-800 border-blue-300')
+                }`}>
+                  <Award className="w-3.5 h-3.5 inline mr-1" />
+                  Xếp hạng: {activeRelic.rank}
+                </span>
+
+                <span
+                  className="px-2.5 py-1 rounded-xl text-xs font-bold border"
+                  style={{
+                    background: `${getRelicColor(activeRelic.type)}15`,
+                    color: getRelicColor(activeRelic.type),
+                    borderColor: `${getRelicColor(activeRelic.type)}30`,
+                  }}
+                >
+                  {getRelicEmoji(activeRelic.type)} {activeRelic.type}
+                </span>
+              </div>
+
+              {/* Village */}
+              <div className={`p-3.5 rounded-2xl border text-xs ${isDark ? 'bg-gov-900/60 border-gov-800/60 text-gov-200' : 'bg-gray-50 border-gray-100 text-gray-700'}`}>
+                <div className="flex items-center gap-2 mb-1 text-[11px] font-semibold uppercase tracking-wider opacity-75">
+                  <MapPin className="w-3.5 h-3.5 text-accent-500" />
+                  <span>Địa bàn thôn / xã</span>
+                </div>
+                <p className="text-sm font-bold">{activeRelic.village}, Xã Sơn Đồng</p>
+              </div>
+
+              {/* Decision Document Number */}
+              {activeRelic.decisionNo && (
+                <div className={`p-3.5 rounded-2xl border text-xs space-y-1 ${isDark ? 'bg-purple-950/50 border-purple-800/40 text-purple-200' : 'bg-purple-50/70 border-purple-200 text-purple-900'}`}>
+                  <div className="flex items-center gap-1.5 font-bold">
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>Quyết định công nhận di tích:</span>
+                  </div>
+                  <p className="text-xs font-mono font-medium leading-relaxed">{activeRelic.decisionNo}</p>
+                </div>
+              )}
+
+              {/* Directions Button */}
+              <button
+                onClick={() => {
+                  trackGetDirections(activeRelic.name, 'Di tích lịch sử');
+                  window.open(`https://www.google.com/maps/dir/?api=1&destination=${activeRelic.lat},${activeRelic.lng}`, '_blank');
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-semibold text-xs transition-all shadow-sm bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white"
+              >
+                <Navigation className="w-4 h-4" />
+                <span>Chỉ đường trên Google Maps</span>
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ── 4. HEALTH STATION DETAILS ── */}
+        {activeHealthStation && (
+          <motion.div
+            key={activeKey}
+            className="flex flex-col h-full overflow-hidden"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+          >
+            <div className={`flex-shrink-0 flex items-center justify-between px-5 py-4 ${isDark ? 'border-b border-gov-800/40' : 'border-b border-gray-100'}`}>
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-red-500/20 text-red-500">
+                  <Cross className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <h2 className={`text-base font-display font-bold leading-tight truncate ${isDark ? 'text-white' : 'text-gray-800'}`}>
+                    {activeHealthStation.name}
+                  </h2>
+                  <p className={`text-[11px] ${isDark ? 'text-gov-500' : 'text-gray-400'}`}>
+                    Y tế cơ sở địa phương
+                  </p>
+                </div>
+              </div>
+              <button onClick={handleClose} className={`p-2 rounded-xl transition-colors flex-shrink-0 ${isDark ? 'text-gov-400 hover:bg-gov-800 hover:text-white' : 'text-gray-400 hover:bg-gray-100'}`} title="Đóng">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 scrollbar-thin">
+              {/* Doctor */}
+              {activeHealthStation.doctor && (
+                <div className={`p-3.5 rounded-2xl border text-xs ${isDark ? 'bg-gov-900/60 border-gov-800/60 text-gov-200' : 'bg-gray-50 border-gray-100 text-gray-700'}`}>
+                  <div className="flex items-center gap-2 mb-1 text-[11px] font-semibold uppercase tracking-wider opacity-75">
+                    <UserCheck className="w-3.5 h-3.5 text-red-500" />
+                    <span>Bác sĩ phụ trách</span>
+                  </div>
+                  <p className="text-sm font-bold">{activeHealthStation.doctor}</p>
+                </div>
+              )}
+
+              {/* Hotline Call Button */}
+              {activeHealthStation.phone && (
+                <div className={`p-3.5 rounded-2xl border text-xs ${isDark ? 'bg-red-950/50 border-red-800/40 text-red-200' : 'bg-red-50 border-red-100 text-red-900'}`}>
+                  <div className="flex items-center gap-2 mb-1 text-[11px] font-semibold uppercase tracking-wider opacity-75">
+                    <Phone className="w-3.5 h-3.5 text-red-500" />
+                    <span>Đường dây nóng y tế</span>
+                  </div>
+                  <a
+                    href={`tel:${activeHealthStation.phone.replace(/[^0-9+]/g, '')}`}
+                    className="inline-flex items-center gap-2 text-sm font-bold text-red-600 dark:text-red-400 hover:underline"
+                  >
+                    <span>{activeHealthStation.phone}</span>
+                    <span className="text-[10px] px-2 py-0.5 rounded-md bg-red-500/15 font-normal">Bấm gọi ngay</span>
+                  </a>
+                </div>
+              )}
+
+              {/* Directions Button */}
+              <button
+                onClick={() => {
+                  trackGetDirections(activeHealthStation.name, 'Trạm Y tế');
+                  window.open(`https://www.google.com/maps/dir/?api=1&destination=${activeHealthStation.lat},${activeHealthStation.lng}`, '_blank');
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-semibold text-xs transition-all shadow-sm bg-red-600 hover:bg-red-700 text-white"
+              >
+                <Navigation className="w-4 h-4" />
+                <span>Chỉ đường trên Google Maps</span>
+              </button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* ── 5. GOV UNIT DETAILS ── */}
+        {activeGovUnit && (
+          <motion.div
+            key={activeKey}
+            className="flex flex-col h-full overflow-hidden"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+          >
+            <div className={`flex-shrink-0 flex items-center justify-between px-5 py-4 ${isDark ? 'border-b border-gov-800/40' : 'border-b border-gray-100'}`}>
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 bg-indigo-500/20 text-indigo-500">
+                  <Building2 className="w-5 h-5" />
+                </div>
+                <div className="min-w-0">
+                  <h2 className={`text-base font-display font-bold leading-tight truncate ${isDark ? 'text-white' : 'text-gray-800'}`}>
+                    {activeGovUnit.name}
+                  </h2>
+                  <p className={`text-[11px] ${isDark ? 'text-gov-500' : 'text-gray-400'}`}>
+                    Cơ quan hành chính sự nghiệp
+                  </p>
+                </div>
+              </div>
+              <button onClick={handleClose} className={`p-2 rounded-xl transition-colors flex-shrink-0 ${isDark ? 'text-gov-400 hover:bg-gov-800 hover:text-white' : 'text-gray-400 hover:bg-gray-100'}`} title="Đóng">
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto px-5 py-4 space-y-4 scrollbar-thin">
+              {/* Category Badge */}
+              <div>
+                <span
+                  className="px-3 py-1 rounded-xl text-xs font-bold border"
+                  style={{
+                    background: `${getGovUnitCategoryColor(activeGovUnit.category)}15`,
+                    color: getGovUnitCategoryColor(activeGovUnit.category),
+                    borderColor: `${getGovUnitCategoryColor(activeGovUnit.category)}30`,
+                  }}
+                >
+                  {getGovUnitCategoryEmoji(activeGovUnit.category)} {activeGovUnit.category}
+                </span>
+              </div>
+
+              {/* Address */}
+              {activeGovUnit.address && (
+                <div className={`p-3.5 rounded-2xl border text-xs ${isDark ? 'bg-gov-900/60 border-gov-800/60 text-gov-200' : 'bg-gray-50 border-gray-100 text-gray-700'}`}>
+                  <div className="flex items-center gap-2 mb-1 text-[11px] font-semibold uppercase tracking-wider opacity-75">
+                    <MapPin className="w-3.5 h-3.5 text-accent-500" />
+                    <span>Địa chỉ trụ sở</span>
+                  </div>
+                  <p className="text-sm font-semibold">{activeGovUnit.address}</p>
+                </div>
+              )}
+
+              {/* Phone */}
+              {activeGovUnit.phone && (
+                <div className={`p-3.5 rounded-2xl border text-xs ${isDark ? 'bg-gov-900/60 border-gov-800/60 text-gov-200' : 'bg-gray-50 border-gray-100 text-gray-700'}`}>
+                  <div className="flex items-center gap-2 mb-1 text-[11px] font-semibold uppercase tracking-wider opacity-75">
+                    <Phone className="w-3.5 h-3.5 text-indigo-500" />
+                    <span>Điện thoại cơ quan</span>
+                  </div>
+                  <a href={`tel:${activeGovUnit.phone.replace(/[^0-9+]/g, '')}`} className="text-sm font-bold text-indigo-600 dark:text-indigo-400 hover:underline">
+                    {activeGovUnit.phone}
+                  </a>
+                </div>
+              )}
+
+              {/* Directions Button */}
+              <button
+                onClick={() => {
+                  trackGetDirections(activeGovUnit.name, 'Cơ quan hành chính');
+                  window.open(`https://www.google.com/maps/dir/?api=1&destination=${activeGovUnit.lat},${activeGovUnit.lng}`, '_blank');
+                }}
+                className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl font-semibold text-xs transition-all shadow-sm bg-indigo-600 hover:bg-indigo-700 text-white"
+              >
+                <Navigation className="w-4 h-4" />
+                <span>Chỉ đường trên Google Maps</span>
+              </button>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
     </motion.aside>
   );
 });
-
-function OverviewPlaceholder({ isDark }: { isDark: boolean }) {
-  return (
-    <motion.div
-      className="flex flex-col items-center justify-center h-full gap-4 px-6 text-center"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-    >
-      <div className={`
-        w-16 h-16 rounded-2xl flex items-center justify-center
-        ${isDark
-          ? 'bg-gradient-to-br from-gov-800 to-gov-900'
-          : 'bg-gradient-to-br from-gov-50 to-blue-50'
-        }
-      `}>
-        <Map className={`w-8 h-8 ${isDark ? 'text-gov-500' : 'text-gov-400'}`} />
-      </div>
-      <div>
-        <h3 className={`text-sm font-semibold mb-1 ${isDark ? 'text-gov-300' : 'text-gray-600'}`}>
-          Chọn một thôn để xem thông tin
-        </h3>
-        <p className={`text-xs ${isDark ? 'text-gov-500' : 'text-gray-400'}`}>
-          Nhấn vào ranh giới hoặc tên thôn trên bản đồ
-        </p>
-      </div>
-    </motion.div>
-  );
-}

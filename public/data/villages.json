@@ -2,7 +2,6 @@
   {
     "id": 1,
     "name": "Thôn Ngoại",
-    "image": "ngoai.jpg",
     "area": "95 ha",
     "partyMembers": 121,
     "households": 1175,
@@ -33,7 +32,6 @@
   {
     "id": 2,
     "name": "Thôn Đình",
-    "image": "dinh.jpg",
     "area": "128.3 ha",
     "partyMembers": 68,
     "households": 1178,
@@ -61,7 +59,6 @@
   {
     "id": 3,
     "name": "Thôn Nội",
-    "image": "noi.jpg",
     "area": "108.8 ha",
     "partyMembers": 52,
     "households": 993,
@@ -89,7 +86,6 @@
   {
     "id": 4,
     "name": "Thôn Lại Yên 1",
-    "image": "lai-yen-1.jpg",
     "area": "228.9 ha",
     "partyMembers": 77,
     "households": 1339,
@@ -113,7 +109,6 @@
   {
     "id": 5,
     "name": "Thôn Lại Yên 2",
-    "image": "lai-yen-2.jpg",
     "area": "100.4 ha",
     "partyMembers": 72,
     "households": 1175,
@@ -137,7 +132,6 @@
   {
     "id": 6,
     "name": "Thôn Phương Bảng",
-    "image": "phuong-bang.jpg",
     "area": "264 ha",
     "partyMembers": 64,
     "households": 1363,
@@ -163,7 +157,6 @@
   {
     "id": 7,
     "name": "Thôn Phương Viên 1",
-    "image": "phuong-vien-1.jpg",
     "area": "63.9 ha",
     "partyMembers": 42,
     "households": 1208,
@@ -187,7 +180,6 @@
   {
     "id": 8,
     "name": "Thôn Phương Viên 2",
-    "image": "phuong-vien-2.jpg",
     "area": "175.1 ha",
     "partyMembers": 52,
     "households": 1179,
@@ -213,7 +205,6 @@
   {
     "id": 9,
     "name": "Thôn Quyết Tiến",
-    "image": "quyet-tien.jpg",
     "area": "64.2 ha",
     "partyMembers": null,
     "households": 514,
@@ -239,7 +230,6 @@
   {
     "id": 10,
     "name": "Thôn Tiền Lệ",
-    "image": "tien-le.jpg",
     "area": "179.3 ha",
     "partyMembers": null,
     "households": 1084,
@@ -263,7 +253,6 @@
   {
     "id": 11,
     "name": "Thôn Yên Thái",
-    "image": "yen-thai.jpg",
     "area": "127.9 ha",
     "partyMembers": null,
     "households": 869,
@@ -287,7 +276,6 @@
   {
     "id": 12,
     "name": "Thôn An Trai",
-    "image": "an-trai.jpg",
     "area": "57.9 ha",
     "partyMembers": null,
     "households": 990,
@@ -313,7 +301,6 @@
   {
     "id": 13,
     "name": "Thôn Kim Hoàng",
-    "image": "kim-hoang.jpg",
     "area": "79.4 ha",
     "partyMembers": null,
     "households": 1898,
@@ -337,7 +324,6 @@
   {
     "id": 14,
     "name": "Thôn Hậu Ái",
-    "image": "hau-ai.jpg",
     "area": "71.3 ha",
     "partyMembers": null,
     "households": 1659,
@@ -361,7 +347,6 @@
   {
     "id": 15,
     "name": "Tổ dân phố số 2",
-    "image": "tdp-2.jpg",
     "area": "56.5 ha",
     "partyMembers": 78,
     "households": 1406,
@@ -385,7 +370,6 @@
   {
     "id": 16,
     "name": "Tổ dân phố số 1",
-    "image": "tdp-1.jpg",
     "area": "355.5 ha",
     "partyMembers": null,
     "households": 837,

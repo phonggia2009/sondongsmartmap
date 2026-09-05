@@ -1,9 +1,10 @@
-import { memo, useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { Marker, Popup, useMap } from 'react-leaflet';
+import { memo, useMemo, useCallback } from 'react';
+import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import { Navigation, MapPin } from 'lucide-react';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 import { useGovUnits } from '@/hooks/useGovUnits';
+import { useMapMarkerSync } from '@/hooks/useClusterLayer';
 import { getGovUnitCategoryColor, getGovUnitCategoryEmoji } from '@/utils/govUnitUtils';
 import type { GovUnit } from '@/types';
 import { trackGetDirections } from '@/utils/analytics';
@@ -190,7 +191,6 @@ const GovUnitMarkerItem = memo(function GovUnitMarkerItem({
 // ============================================================
 
 export function GovUnitsLayer() {
-  const map = useMap();
   const {
     govUnitFilters,
     govUnitSearchQuery,
@@ -200,37 +200,7 @@ export function GovUnitsLayer() {
   } = useAppContext();
   const { govUnits } = useGovUnits();
 
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const markerRefs = useRef<Map<string, L.Marker>>(new Map());
-
-  const registerRef = useCallback((id: string, instance: L.Marker | null) => {
-    if (instance) {
-      markerRefs.current.set(id, instance);
-    } else {
-      markerRefs.current.delete(id);
-    }
-  }, []);
-
-  const handleHover = useCallback((id: string | null) => {
-    setHoveredId(id);
-  }, []);
-
-  // FlyTo and auto open popup when selectedGovUnit changes
-  useEffect(() => {
-    if (!selectedGovUnit) return;
-    map.flyTo([selectedGovUnit.lat, selectedGovUnit.lng], 17, { duration: 0.8 });
-
-    const timer = setTimeout(() => {
-      const marker = markerRefs.current.get(selectedGovUnit.id);
-      if (marker) {
-        try {
-          marker.openPopup();
-        } catch {}
-      }
-    }, 850);
-
-    return () => clearTimeout(timer);
-  }, [selectedGovUnit, map]);
+  const { hoveredId, handleHover, registerRef } = useMapMarkerSync(selectedGovUnit);
 
   // Filter units
   const filteredUnits = useMemo(

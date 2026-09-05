@@ -38,14 +38,16 @@ export function useKeyboard(
         target.isContentEditable;
 
       for (const shortcut of shortcutsRef.current) {
-        const keyMatch = event.key === shortcut.key;
-        const ctrlMatch = (shortcut.ctrlKey ?? false) === event.ctrlKey;
+        const keyMatch = event.key.toLowerCase() === shortcut.key.toLowerCase();
+        const hasCtrlOrMeta = event.ctrlKey || event.metaKey;
+        const ctrlMatch = shortcut.ctrlKey ? hasCtrlOrMeta : (!event.ctrlKey && !event.metaKey);
         const altMatch = (shortcut.altKey ?? false) === event.altKey;
         const shiftMatch = (shortcut.shiftKey ?? false) === event.shiftKey;
 
         if (keyMatch && ctrlMatch && altMatch && shiftMatch) {
-          // Allow Escape even from inputs
-          if (isInputActive && shortcut.key !== 'Escape') continue;
+          // Allow Escape or Ctrl/Cmd+K even from inputs
+          const isKShortcut = shortcut.key.toLowerCase() === 'k' && (shortcut.ctrlKey ?? false);
+          if (isInputActive && shortcut.key !== 'Escape' && !isKShortcut) continue;
           event.preventDefault();
           shortcut.handler(event);
           break;

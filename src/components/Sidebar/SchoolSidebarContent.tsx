@@ -1,5 +1,5 @@
 import { memo, useCallback } from 'react';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 import { POILayerPanel } from './POILayerPanel';
 import { schoolConfig, SCHOOL_CATEGORIES, getLevelColor } from '@/utils/schoolUtils';
 import type { School, SchoolLevel } from '@/types';

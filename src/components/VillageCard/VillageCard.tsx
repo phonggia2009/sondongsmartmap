@@ -2,7 +2,7 @@ import { memo } from 'react';
 import { motion } from 'framer-motion';
 import { MapPin, Users, BarChart3, ChevronRight } from 'lucide-react';
 import type { Village } from '@/types';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 
 // ============================================================
 //  VillageCard Component — Enhanced with richer visuals

@@ -5,7 +5,6 @@
 export interface Village {
   id: number;
   name: string;
-  image: string;           // filename only, e.g. "ngoai.png"
   area: string;            // e.g. "95 ha"
   partyMembers: number;
   households?: number;
@@ -107,8 +106,6 @@ export interface AnimationConfig {
 }
 
 export interface PathsConfig {
-  maps: string;
-  villages: string;
   data: string;
 }
 

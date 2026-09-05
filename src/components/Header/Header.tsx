@@ -9,8 +9,9 @@ import {
   Menu,
   X,
   HelpCircle,
+  Search,
 } from 'lucide-react';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 import { APP_CONFIG } from '@/config';
 
 // ============================================================
@@ -27,6 +28,7 @@ export const Header = memo(function Header() {
     sidebarOpen,
     toggleSidebar,
     startTour,
+    openGlobalSearch,
   } = useAppContext();
 
   return (
@@ -131,6 +133,27 @@ export const Header = memo(function Header() {
 
       {/* Right — Controls */}
       <div className="flex items-center gap-1 sm:gap-1.5" data-tour="header-controls">
+        {/* Global Search Button */}
+        <motion.button
+          onClick={openGlobalSearch}
+          className={`
+            flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-xl text-xs font-medium transition-all border
+            ${isDark
+              ? 'bg-gov-900/80 text-gov-300 border-gov-700/60 hover:bg-gov-800 hover:text-white'
+              : 'bg-gray-100/90 text-gray-600 border-gray-200/80 hover:bg-white hover:text-gray-900 shadow-sm'
+            }
+          `}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.97 }}
+          title="Tìm kiếm toàn bộ (Ctrl+K)"
+        >
+          <Search className="w-3.5 h-3.5 text-accent-500" />
+          <span className="hidden md:inline">Tìm kiếm...</span>
+          <kbd className={`hidden md:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono border ${isDark ? 'bg-gov-800 text-gov-400 border-gov-700' : 'bg-white text-gray-400 border-gray-200'}`}>
+            Ctrl K
+          </kbd>
+        </motion.button>
+
         {/* Help / Tour button */}
         <motion.button
           onClick={startTour}

@@ -5,7 +5,7 @@ import {
 } from 'react-leaflet';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Village } from '@/types';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 import { useGeoJSONLayers } from '@/hooks/useGeoJSONLayers';
 import { useIsMobile } from '@/hooks/useIsMobile';
 import { MapOverlayStats } from './MapOverlayStats';

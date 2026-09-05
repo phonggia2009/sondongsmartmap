@@ -1,5 +1,5 @@
 import { memo, useCallback } from 'react';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 import { POILayerPanel } from './POILayerPanel';
 import { healthStationConfig, HEALTH_STATION_CATEGORIES } from '@/utils/healthStationUtils';
 import type { HealthStation } from '@/types';

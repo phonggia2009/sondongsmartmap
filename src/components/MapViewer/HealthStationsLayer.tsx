@@ -1,8 +1,9 @@
-import { memo, useEffect, useRef, useState, useMemo, useCallback } from 'react';
-import { Marker, Popup, useMap } from 'react-leaflet';
+import { memo, useMemo, useCallback } from 'react';
+import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 import { useHealthStations } from '@/hooks/useHealthStations';
+import { useMapMarkerSync } from '@/hooks/useClusterLayer';
 import type { HealthStation } from '@/types';
 import { trackGetDirections } from '@/utils/analytics';
 
@@ -213,7 +214,6 @@ const HealthStationMarkerItem = memo(function HealthStationMarkerItem({
 // ============================================================
 
 export function HealthStationsLayer() {
-  const map = useMap();
   const {
     healthStationFilters,
     healthStationSearchQuery,
@@ -223,37 +223,7 @@ export function HealthStationsLayer() {
   } = useAppContext();
   const { healthStations } = useHealthStations();
 
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-  const markerRefs = useRef<Map<string, L.Marker>>(new Map());
-
-  const registerRef = useCallback((id: string, instance: L.Marker | null) => {
-    if (instance) {
-      markerRefs.current.set(id, instance);
-    } else {
-      markerRefs.current.delete(id);
-    }
-  }, []);
-
-  const handleHover = useCallback((id: string | null) => {
-    setHoveredId(id);
-  }, []);
-
-  // ── FlyTo and auto open popup when selectedHealthStation changes ──────
-  useEffect(() => {
-    if (!selectedHealthStation) return;
-    map.flyTo([selectedHealthStation.lat, selectedHealthStation.lng], 17, { duration: 0.8 });
-
-    const timer = setTimeout(() => {
-      const marker = markerRefs.current.get(selectedHealthStation.id);
-      if (marker) {
-        try {
-          marker.openPopup();
-        } catch {}
-      }
-    }, 850);
-
-    return () => clearTimeout(timer);
-  }, [selectedHealthStation, map]);
+  const { hoveredId, handleHover, registerRef } = useMapMarkerSync(selectedHealthStation);
 
   // ── Filter health stations by active filters & search query ────
   const filteredStations = useMemo(

@@ -1,5 +1,5 @@
 import { memo, useCallback } from 'react';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 import { POILayerPanel } from './POILayerPanel';
 import { relicConfig, RELIC_CATEGORIES } from '@/utils/relicUtils';
 import type { Relic, RelicType } from '@/types';

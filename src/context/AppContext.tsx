@@ -1,6 +1,4 @@
 import React, {
-  createContext,
-  useContext,
   useState,
   useCallback,
   useMemo,
@@ -15,95 +13,14 @@ import { DEFAULT_RELIC_FILTERS } from '@/utils/relicUtils';
 import { DEFAULT_GOV_UNIT_FILTERS } from '@/utils/govUnitUtils';
 import { trackViewLocation, trackOpenStoryMap } from '@/utils/analytics';
 import { useAnalyticsSearch } from '@/hooks/useAnalyticsSearch';
+import { AppContext, type AppContextValue, type SidebarTab } from './useAppContext';
+
+export type { SidebarTab };
 
 // ============================================================
-//  APP CONTEXT
-//  Global UI state shared across all components.
+//  APP PROVIDER
+//  Global UI state provider.
 // ============================================================
-
-export type SidebarTab = 'villages' | 'schools' | 'healthStations' | 'relics' | 'govUnits';
-
-interface AppContextValue {
-  // Village selection
-  selectedVillage: Village | null;
-  selectVillage: (village: Village | null) => void;
-
-  // School selection
-  selectedSchool: School | null;
-  selectSchool: (school: School | null) => void;
-
-  // Health station selection
-  selectedHealthStation: HealthStation | null;
-  selectHealthStation: (station: HealthStation | null) => void;
-
-  // Relic selection
-  selectedRelic: Relic | null;
-  selectRelic: (relic: Relic | null) => void;
-
-  // GovUnit selection
-  selectedGovUnit: GovUnit | null;
-  selectGovUnit: (unit: GovUnit | null) => void;
-
-  // School filters & search
-  schoolFilters: Record<SchoolLevel, boolean>;
-  toggleSchoolFilter: (level: SchoolLevel) => void;
-  setSchoolFilters: React.Dispatch<React.SetStateAction<Record<SchoolLevel, boolean>>>;
-  schoolSearchQuery: string;
-  setSchoolSearchQuery: (query: string) => void;
-
-  // Health station filters & search
-  healthStationFilters: Record<string, boolean>;
-  toggleHealthStationFilter: (category: string) => void;
-  setHealthStationFilters: React.Dispatch<React.SetStateAction<Record<string, boolean>>>;
-  healthStationSearchQuery: string;
-  setHealthStationSearchQuery: (query: string) => void;
-
-  // Relic filters & search
-  relicFilters: Record<RelicType, boolean>;
-  toggleRelicFilter: (type: RelicType) => void;
-  setRelicFilters: React.Dispatch<React.SetStateAction<Record<RelicType, boolean>>>;
-  relicSearchQuery: string;
-  setRelicSearchQuery: (query: string) => void;
-
-  // GovUnit filters & search
-  govUnitFilters: Record<GovUnitCategory, boolean>;
-  toggleGovUnitFilter: (category: GovUnitCategory) => void;
-  setGovUnitFilters: React.Dispatch<React.SetStateAction<Record<GovUnitCategory, boolean>>>;
-  govUnitSearchQuery: string;
-  setGovUnitSearchQuery: (query: string) => void;
-
-  // View mode
-  isOverview: boolean;
-
-  // Sidebar
-  sidebarOpen: boolean;
-  setSidebarOpen: (open: boolean) => void;
-  toggleSidebar: () => void;
-  activeSidebarTab: SidebarTab;
-  setActiveSidebarTab: (tab: SidebarTab) => void;
-
-  // Info panel
-  infoPanelOpen: boolean;
-  setInfoPanelOpen: (open: boolean) => void;
-  toggleInfoPanel: () => void;
-
-  // Theme
-  isDark: boolean;
-  toggleTheme: () => void;
-
-  // Fullscreen
-  isFullscreen: boolean;
-  toggleFullscreen: () => void;
-
-  // Onboarding Tour
-  isTourOpen: boolean;
-  startTour: () => void;
-  closeTour: () => void;
-  completeTour: () => void;
-  hasSeenTour: boolean;
-}
-
-const AppContext = createContext<AppContextValue | null>(null);
 
 const TOUR_STORAGE_KEY = 'storymap_tour_seen';
 
@@ -147,6 +64,29 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [activeSidebarTabState, setActiveSidebarTabState] = useState<SidebarTab>('villages');
   const [infoPanelOpen, setInfoPanelOpen]                = useState(true);
+
+  // Search focus trigger (Ctrl+K / Cmd+K)
+  const [searchFocusTrigger, setSearchFocusTrigger] = useState(0);
+  const triggerFocusSearch = useCallback(() => {
+    setSidebarOpen(true);
+    setActiveSidebarTabState('villages');
+    setSearchFocusTrigger(c => c + 1);
+  }, []);
+
+  // Global Search Modal (Command Palette)
+  const [isGlobalSearchOpen, setIsGlobalSearchOpen] = useState(false);
+  const openGlobalSearch = useCallback(() => setIsGlobalSearchOpen(true), []);
+  const closeGlobalSearch = useCallback(() => setIsGlobalSearchOpen(false), []);
+
+  // Clear all selections
+  const clearAllSelections = useCallback(() => {
+    setSelectedVillage(null);
+    setSelectedSchool(null);
+    setSelectedHealthStation(null);
+    setSelectedRelic(null);
+    setSelectedGovUnit(null);
+    setInfoPanelOpen(false);
+  }, []);
 
   // Onboarding Tour state
   const [isTourOpen, setIsTourOpen]   = useState(false);
@@ -211,11 +151,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSelectedHealthStation(null);
       setSelectedRelic(null);
       setSelectedGovUnit(null);
+      setInfoPanelOpen(true);
     }
-    setInfoPanelOpen(prev => {
-      if (village === null) return false;
-      return prev ? prev : true;
-    });
   }, [selectedVillage]);
 
   const selectSchool = useCallback((school: School | null) => {
@@ -228,6 +165,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSelectedHealthStation(null);
       setSelectedRelic(null);
       setSelectedGovUnit(null);
+      setInfoPanelOpen(true);
     }
   }, [selectedSchool]);
 
@@ -241,6 +179,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSelectedSchool(null);
       setSelectedRelic(null);
       setSelectedGovUnit(null);
+      setInfoPanelOpen(true);
     }
   }, [selectedHealthStation]);
 
@@ -254,6 +193,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSelectedSchool(null);
       setSelectedHealthStation(null);
       setSelectedGovUnit(null);
+      setInfoPanelOpen(true);
     }
   }, [selectedRelic]);
 
@@ -267,6 +207,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setSelectedSchool(null);
       setSelectedHealthStation(null);
       setSelectedRelic(null);
+      setInfoPanelOpen(true);
     }
   }, [selectedGovUnit]);
 
@@ -331,6 +272,12 @@ export function AppProvider({ children }: { children: ReactNode }) {
     toggleSidebar,
     activeSidebarTab: activeSidebarTabState,
     setActiveSidebarTab,
+    searchFocusTrigger,
+    triggerFocusSearch,
+    isGlobalSearchOpen,
+    openGlobalSearch,
+    closeGlobalSearch,
+    clearAllSelections,
     infoPanelOpen,
     setInfoPanelOpen,
     toggleInfoPanel,
@@ -354,6 +301,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
     relicFilters, toggleRelicFilter, relicSearchQuery, handleSetRelicSearchQuery,
     govUnitFilters, toggleGovUnitFilter, govUnitSearchQuery, handleSetGovUnitSearchQuery,
     sidebarOpen, setSidebarOpen, toggleSidebar, activeSidebarTabState, setActiveSidebarTab,
+    searchFocusTrigger, triggerFocusSearch,
+    isGlobalSearchOpen, openGlobalSearch, closeGlobalSearch, clearAllSelections,
     infoPanelOpen, setInfoPanelOpen, toggleInfoPanel,
     isDark, toggleTheme,
     isFullscreen, toggleFullscreen,
@@ -366,12 +315,3 @@ export function AppProvider({ children }: { children: ReactNode }) {
     </AppContext.Provider>
   );
 }
-
-export function useAppContext(): AppContextValue {
-  const ctx = useContext(AppContext);
-  if (!ctx) {
-    throw new Error('useAppContext must be used inside AppProvider');
-  }
-  return ctx;
-}
-

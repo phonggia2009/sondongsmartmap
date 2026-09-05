@@ -28,24 +28,11 @@ export const APP_CONFIG: AppConfig = {
 
   // ─── Public Asset Paths ────────────────────────────────────
   paths: {
-    maps: '/maps',
-    villages: '/villages',
     data: '/data',
   },
 };
 
 // ─── Derived helpers ───────────────────────────────────────────
-
-/** Returns the full URL for the overview map image.
- *  Looks for overview.png first. If missing, falls back to overview.svg.
- *  Replace public/maps/overview.png with your real map image.
- */
-export const getOverviewMapUrl = (): string =>
-  `${APP_CONFIG.paths.maps}/overview.png`;
-
-/** Returns the full URL for a village image by filename */
-export const getVillageImageUrl = (filename: string): string =>
-  `${APP_CONFIG.paths.villages}/${filename}`;
 
 /** Returns the full URL for the JSON data file */
 export const getDataUrl = (): string =>

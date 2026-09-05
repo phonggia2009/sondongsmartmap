@@ -1,7 +1,7 @@
-import { memo, useRef, useCallback } from 'react';
+import { memo, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Search } from 'lucide-react';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 
 // ============================================================
 //  SearchBox Component — Enhanced with glow focus
@@ -28,9 +28,20 @@ export const SearchBox = memo(function SearchBox({
   onMoveDown,
   inputRef,
 }: SearchBoxProps) {
-  const { isDark } = useAppContext();
+  const { isDark, searchFocusTrigger } = useAppContext();
   const localRef = useRef<HTMLInputElement>(null);
   const ref = inputRef ?? localRef;
+
+  useEffect(() => {
+    if (searchFocusTrigger > 0) {
+      // Small timeout ensures element is mounted/expanded if sidebar just opened
+      const t = setTimeout(() => {
+        ref.current?.focus();
+        ref.current?.select();
+      }, 50);
+      return () => clearTimeout(t);
+    }
+  }, [searchFocusTrigger, ref]);
 
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {

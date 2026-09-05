@@ -1,7 +1,7 @@
 import { memo, useMemo, useCallback } from 'react';
 import { Marker } from 'react-leaflet';
 import L from 'leaflet';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 import { useVillages } from '@/hooks/useVillages';
 import type { Village } from '@/types';
 

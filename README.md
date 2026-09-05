@@ -1,278 +1,150 @@
-# 🗺️ Hệ Thống Bản Đồ Hành Chính
+# 🗺️ Sơn Đồng SmartMap — Bản Đồ Số Hành Chính Xã Sơn Đồng
 
-**Story Map Presentation System for Vietnamese Government Agencies**
+> **Nền tảng WebGIS tương tác trực quan phục vụ công tác quản lý địa lý, hành chính và tra cứu thông tin dân sinh xã Sơn Đồng, huyện Hoài Đức, TP. Hà Nội.**
 
-> An interactive Story Map + GIS-like presentation platform for UBND, HĐND, and Ban Chỉ đạo. Built for presenting administrative boundaries of villages (thôn/xã) with professional animations, presentation mode, and real-time search.
-
-![Tech Stack](https://img.shields.io/badge/React-19-blue?logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript) ![Vite](https://img.shields.io/badge/Vite-6-purple?logo=vite) ![TailwindCSS](https://img.shields.io/badge/Tailwind-3-cyan?logo=tailwindcss)
+![Tech Stack](https://img.shields.io/badge/React-19-blue?logo=react) ![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?logo=typescript) ![Vite](https://img.shields.io/badge/Vite-6-purple?logo=vite) ![TailwindCSS](https://img.shields.io/badge/Tailwind-3-cyan?logo=tailwindcss) ![Leaflet](https://img.shields.io/badge/Leaflet-1.9-green?logo=leaflet)
 
 ---
 
-## ✨ Features
+## ✨ Tính Năng Nổi Bật
 
-| Feature | Description |
+| Tính năng | Mô tả chi tiết |
 |---|---|
-| **Story Map Mode** | Click a village → smooth cross-fade transition to village map |
-| **Presentation Mode** | Fullscreen mode with keyboard nav (← → ESC F) |
-| **Autoplay** | Configurable 5s / 10s / 15s / 30s auto-advance |
-| **Real-time Search** | Vietnamese diacritic-aware village search |
-| **Zoom & Pan** | Mouse wheel, pinch, double-click zoom on all maps |
-| **Dark Mode** | Persisted in localStorage, system preference aware |
-| **Fullscreen** | Native Fullscreen API support |
-| **Data-Driven** | Replace JSON + images — no code changes needed |
-| **GIS-Ready** | Architecture supports future Leaflet/MapLibre integration |
+| **Ranh giới hành chính 16 thôn** | Hiển thị đa giác GeoJSON ranh giới từng thôn/tổ dân phố, hiệu ứng marching-ants ranh giới xã, hover làm nổi bật và click xem chi tiết |
+| **5 Lớp dữ liệu chuyên đề** | Chuyển đổi linh hoạt giữa: Thôn xã (🗺️), Trường học (🏫), Trạm Y Tế (🏥), Di tích lịch sử (🏛️), Cơ quan HCSN (🏢) |
+| **Gom cụm điểm thông minh** | Tích hợp thư viện Supercluster tự động nhóm các điểm đánh dấu khi thu nhỏ bản đồ và giải cụm mượt mà khi phóng to |
+| **Tìm kiếm nhanh & Phím tắt** | Chuẩn hóa tiếng Việt có dấu/không dấu; phím tắt **`Ctrl+K`** (hoặc **`⌘K`** trên macOS) mở nhanh thanh tìm kiếm |
+| **Bản đồ nền đa dạng** | Tùy chọn 5 lớp nền: CartoDB Sáng, CartoDB Tối, Vệ tinh Esri World Imagery, Bản đồ đường phố Esri và OpenStreetMap |
+| **Chỉ đường Google Maps** | Tích hợp nút điều hướng tự động mở Google Maps với tọa độ chính xác của địa điểm đã chọn |
+| **Giao diện đáp ứng (Responsive)** | Tối ưu hóa cho máy tính để bàn (glassmorphism sidebar) và thiết bị di động (bottom sheet kéo vuốt tiện lợi) |
+| **Chế độ Sáng/Tối (Dark Mode)** | Tự động thích ứng sở thích hệ thống và lưu trạng thái vào `localStorage` |
+| **Hướng dẫn tương tác (Tour)** | Onboarding Tour 5 bước trực quan giúp người dùng mới nắm bắt toàn bộ tính năng |
 
 ---
 
-## 🚀 Quick Start
+## 🚀 Khởi Chạy Dự Án
 
-### Installation
+### Cài đặt môi trường
 
 ```bash
-# Clone or download the project
-cd your-project-folder
-
-# Install dependencies
+# Cài đặt các gói phụ thuộc
 npm install
 
-# Start development server
+# Khởi chạy máy chủ phát triển (Dev server)
 npm run dev
 ```
 
-The app runs at **http://localhost:5173**
+Ứng dụng chạy mặc định tại: **http://localhost:5173**
 
-### Production Build
+### Kiểm tra & Đóng gói sản phẩm (Production)
 
 ```bash
+# Kiểm tra kiểu TypeScript
+npm run type-check
+
+# Kiểm tra quy chuẩn mã nguồn ESLint
+npm run lint
+
+# Đóng gói sản xuất
 npm run build
+
+# Xem thử bản build
 npm run preview
 ```
 
 ---
 
-## 📁 Project Structure
+## 📁 Cấu Trúc Thư Mục
 
 ```
-story-map-gov/
+Map/
 ├── public/
 │   ├── data/
-│   │   └── villages.json          ← YOUR DATA FILE
-│   ├── maps/
-│   │   └── overview.png           ← YOUR OVERVIEW MAP
-│   └── villages/
-│       ├── ngoai.png              ← YOUR VILLAGE IMAGES
-│       ├── noi.png
-│       └── ...
+│   │   ├── villages.json                         ← Dữ liệu 16 thôn xã Sơn Đồng
+│   │   ├── danhsachtruongsausapxep.geojson       ← 14 trường học trên địa bàn
+│   │   ├── tramyte.geojson                       ← Trạm y tế xã
+│   │   ├── relics.json                           ← 24 di tích lịch sử xếp hạng
+│   │   ├── danhsachdonvihanhchinhsunghiep.geojson← Đơn vị hành chính sự nghiệp
+│   │   ├── danhgioixa.geojson                    ← Ranh giới toàn xã Sơn Đồng
+│   │   ├── ranhgioithon.geojson                  ← Ranh giới đa giác 16 thôn
+│   │   ├── thon_nhan_ten.geojson                 ← Điểm định vị nhãn tên thôn
+│   │   └── dsdiemsinhoatcongdong.geojson         ← Danh sách điểm sinh hoạt cộng đồng
+│   ├── favicon.svg & logo*.png                   ← Biểu trưng / Logo
 ├── src/
 │   ├── components/
-│   │   ├── Header/
-│   │   ├── Sidebar/
-│   │   ├── SearchBox/
-│   │   ├── MapViewer/
-│   │   ├── InformationPanel/
-│   │   ├── VillageCard/
-│   │   ├── Toolbar/
-│   │   ├── PresentationControls/
-│   │   ├── Loading/
-│   │   ├── EmptyState/
-│   │   └── Footer/
-│   ├── pages/
-│   │   ├── Home/HomePage.tsx
-│   │   └── Presentation/PresentationPage.tsx
-│   ├── hooks/
-│   │   ├── useVillages.ts
-│   │   ├── usePresentation.ts
-│   │   ├── useSearch.ts
-│   │   ├── useKeyboard.ts
-│   │   ├── useFullscreen.ts
-│   │   ├── useTheme.ts
-│   │   └── useImagePreloader.ts
+│   │   ├── Header/                               ← Thanh tiêu đề, logo, breadcrumb & nút tiện ích
+│   │   ├── Sidebar/                              ← Thanh điều hướng, phân loại 5 lớp dữ liệu
+│   │   ├── SearchBox/                            ← Hộp tìm kiếm tức thời với phím tắt Ctrl+K
+│   │   ├── MapViewer/                            ← Trình hiển thị bản đồ Leaflet & các lớp dữ liệu
+│   │   ├── InformationPanel/                     ← Bảng thông tin trượt chi tiết về thôn xã
+│   │   ├── VillageCard/                          ← Thẻ hiển thị thôn trong danh sách
+│   │   ├── Onboarding/                           ← Tour hướng dẫn tương tác cho người dùng mới
+│   │   └── Loading/                              ← Màn hình chờ tải dữ liệu
 │   ├── context/
-│   │   └── AppContext.tsx
+│   │   ├── useAppContext.ts                      ← Định nghĩa kiểu, Context và hook useAppContext
+│   │   └── AppContext.tsx                        ← AppProvider quản lý trạng thái giao diện toàn cục
+│   ├── hooks/
+│   │   ├── useVillages.ts                        ← React Query hook tải dữ liệu thôn
+│   │   ├── useSchools.ts                         ← Hook tải dữ liệu trường học
+│   │   ├── useHealthStations.ts                  ← Hook tải dữ liệu trạm y tế
+│   │   ├── useRelics.ts                          ← Hook tải dữ liệu di tích
+│   │   ├── useGovUnits.ts                        ← Hook tải dữ liệu cơ quan HCSN
+│   │   ├── useGeoJSONLayers.ts                   ← Hook tải các lớp GeoJSON ranh giới
+│   │   ├── useKeyboard.ts                        ← Lắng nghe phím tắt toàn cục
+│   │   ├── useTheme.ts                           ← Quản lý Dark/Light mode
+│   │   └── useFullscreen.ts                      ← Quản lý chế độ Toàn màn hình
 │   ├── services/
-│   │   └── dataService.ts
+│   │   └── dataService.ts                        ← Tầng kết nối & chuẩn hóa dữ liệu
 │   ├── config/
-│   │   └── index.ts               ← CUSTOMIZE HERE
+│   │   └── index.ts                              ← Tùy biến thông tin đơn vị & màu sắc chủ đạo
 │   └── types/
-│       └── index.ts
+│       ├── index.ts                              ← Kiểu dữ liệu chính cho thôn, POI và cấu hình
+│       └── poi.ts                                ← Kiểu dữ liệu lớp điểm POI
 └── README.md
 ```
 
 ---
 
-## 📊 JSON Data Format
+## ⌨️ Phím Tắt Tiện Ích
 
-Create your `public/data/villages.json` using this schema:
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Thôn Ngoại",
-    "image": "ngoai.png",
-    "area": "95 ha",
-    "partyMembers": 121,
-    "households": 342,
-    "population": 1256,
-    "north": "Giáp xã Bình Minh",
-    "south": "Giáp thôn Nội",
-    "east": "Giáp xã Tam Hưng",
-    "west": "Giáp sông Đáy",
-    "landmarks": ["Tỉnh lộ 422", "Đình làng Ngoại"],
-    "description": "Mô tả về thôn..."
-  }
-]
-```
-
-### Field Reference
-
-| Field | Type | Required | Description |
-|---|---|---|---|
-| `id` | `number` | ✅ | Unique village ID |
-| `name` | `string` | ✅ | Village display name |
-| `image` | `string` | ✅ | Image filename (placed in `public/villages/`) |
-| `area` | `string` | ✅ | Area (e.g., `"95 ha"`) |
-| `partyMembers` | `number` | ✅ | Party member count |
-| `households` | `number` | ☐ | Household count (optional) |
-| `population` | `number` | ☐ | Population count (optional) |
-| `north` | `string` | ✅ | Northern boundary description |
-| `south` | `string` | ✅ | Southern boundary description |
-| `east` | `string` | ✅ | Eastern boundary description |
-| `west` | `string` | ✅ | Western boundary description |
-| `landmarks` | `string[]` | ✅ | List of roads / notable places |
-| `description` | `string` | ✅ | Village description paragraph |
-| `coordinates` | `{ lat, lng }` | ☐ | Future GIS support |
-| `polygon` | `[number, number][]` | ☐ | Future GeoJSON polygon |
+| Phím tắt | Thao tác |
+|---|---|
+| `Ctrl + K` / `⌘ + K` | Mở nhanh hộp tìm kiếm và đưa con trỏ vào ô nhập |
+| `Escape` | Hủy chọn thôn / Đóng cửa sổ chi tiết / Xóa từ khóa tìm kiếm |
+| `Mũi tên lên / xuống` | Di chuyển giữa các kết quả tìm kiếm trong danh sách |
 
 ---
 
-## 🖼️ Image Specification
+## ⚙️ Tùy Biến Đơn Vị Quản Lý
 
-### Overview Map (`public/maps/overview.png`)
-- **Recommended size**: 1600×900 px (16:9)
-- **Format**: PNG or JPEG
-- **Content**: Full administrative map showing all village boundaries
-
-### Village Images (`public/villages/`)
-- **Recommended size**: 1280×720 px minimum
-- **Format**: PNG or JPEG
-- **Naming**: Must match `"image"` field in `villages.json`
-
-> ⚠️ If an image is missing, the app displays a professional placeholder — **it will never crash**.
-
----
-
-## ⚙️ Customization
-
-Edit `src/config/index.ts` to customize the app without touching any component:
+Bạn có thể chỉnh sửa tệp `src/config/index.ts` để cập nhật thông tin chính quyền địa phương:
 
 ```typescript
-export const APP_CONFIG = {
-  title: 'Hệ Thống Bản Đồ Hành Chính',
-  subtitle: 'Nền Tảng Trình Bày Ranh Giới Hành Chính',
-  organization: 'UBND Xã / Ban Chỉ Đạo',
-  logo: null,                    // Set to '/logo.png' to show a logo
+export const APP_CONFIG: AppConfig = {
+  title: 'Bản đồ xã Sơn Đồng',
+  subtitle: 'UBND Xã Sơn Đồng',
+  organization: 'Bản đồ hành chính sau sáp nhập',
+  logo: null,
 
   colors: {
-    primary: '#1e3a8a',          // Government deep blue
-    accent:  '#3b82f6',
-    gold:    '#f59e0b',
+    primary: '#1e3a8a',   // Màu xanh hành chính
+    accent:  '#3b82f6',   // Màu xanh tương tác
+    gold:    '#f59e0b',   // Màu vàng nhấn nổi bật
   },
 
   animation: {
-    duration: 400,               // Transition speed in ms
+    duration: 400,
     ease: 'easeInOut',
   },
 
-  presentation: {
-    interval: 10000,             // Default autoplay interval
-    autoPlay: false,
-    intervals: [5000, 10000, 15000, 30000],  // Available speeds
-  },
-
   paths: {
-    maps:     '/maps',           // Folder for overview map
-    villages: '/villages',       // Folder for village images
-    data:     '/data',           // Folder for JSON data
+    data: '/data',
   },
 };
 ```
 
 ---
 
-## ⌨️ Keyboard Shortcuts
+## 📝 Bản Quyền
 
-| Key | Action |
-|---|---|
-| `←` / `→` | Navigate between villages |
-| `ESC` | Return to overview / Exit presentation |
-| `Space` | Play / Pause autoplay (presentation mode) |
-| `F` | Toggle fullscreen (presentation mode) |
-
----
-
-## 🖥️ Presentation Mode
-
-1. Click **"Trình Chiếu"** in the sidebar
-2. Use `←` `→` to navigate manually
-3. Click **"Phát"** or press `Space` to enable autoplay
-4. Select speed: 5s / 10s / 15s / 30s
-5. Press `ESC` to exit presentation mode
-
----
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
-
-```bash
-npm run build
-# Upload dist/ to Vercel or connect GitHub repo
-```
-
-### Static Hosting (Apache/Nginx)
-
-```bash
-npm run build
-# Copy dist/ to your web server root
-```
-
-Configure your web server to redirect all routes to `index.html` for React Router:
-
-**Nginx:**
-```nginx
-location / {
-  try_files $uri $uri/ /index.html;
-}
-```
-
-**Apache (.htaccess):**
-```apache
-RewriteEngine On
-RewriteCond %{REQUEST_FILENAME} !-f
-RewriteRule . /index.html [L]
-```
-
----
-
-## 🔮 Future GIS Upgrade Path
-
-The architecture is designed to support future GIS integration without rewriting:
-
-1. **Add Leaflet/MapLibre** — Replace `MapViewer` center panel with an interactive map
-2. **GeoJSON polygons** — Use `"polygon"` field in `villages.json` to render clickable regions
-3. **Coordinate support** — Use `"coordinates"` field to place markers on the map
-4. **Tile layers** — Connect to OpenStreetMap, MapTiler, or ArcGIS tile services
-5. **WMS layers** — Add government WMS services for official administrative layers
-
-The `MapLayer` type in `src/types/index.ts` is ready for this integration.
-
----
-
-## 📝 License
-
-Government internal use. Customize freely for your administrative district.
-
----
-
-*Built with ❤️ for Vietnamese Government Digital Transformation*
+Hệ thống phục vụ công tác chuyển đổi số và quản lý nội bộ của UBND Xã Sơn Đồng.

@@ -12,7 +12,7 @@ import {
   CheckCircle2,
   Sparkles,
 } from 'lucide-react';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 import { useIsMobile } from '@/hooks/useIsMobile';
 
 // ============================================================
@@ -36,59 +36,60 @@ const TOUR_STEPS: TourStep[] = [
     id: 'welcome',
     title: 'Chào mừng đến với Bản đồ số Sơn Đồng',
     description:
-      'Khám phá không gian số Xã Sơn Đồng với dữ liệu địa lý chính xác, thông tin 16 thôn xã, hệ thống trường học và các trạm y tế trên địa bàn.',
+      'Khám phá không gian số Xã Sơn Đồng với dữ liệu địa lý chính xác, ranh giới 16 thôn, trường học, trạm y tế, di tích lịch sử và cơ quan hành chính sự nghiệp trên địa bàn.',
     icon: Sparkles,
     badge: 'Chào mừng',
     placement: 'center',
     features: [
       'Bản đồ ranh giới hành chính 16 thôn/tổ dân phố',
-      'Tra cứu hệ thống trường học & Trạm Y Tế địa phương',
-      'Liên hệ Bác sĩ phụ trách & Gọi điện trực tiếp cho Trạm Y Tế',
+      'Tra cứu 5 lớp dữ liệu: Thôn, Trường học, Y tế, Di tích & Cơ quan HCSN',
+      'Phím tắt Ctrl+K (⌘K trên Mac) để tìm kiếm nhanh',
       'Giao diện hiện đại hỗ trợ Chế độ Tối (Dark mode)',
     ],
   },
   {
     id: 'sidebar-search',
-    title: 'Danh mục & Thanh công cụ',
+    title: 'Danh mục & Lớp bản đồ',
     description:
-      'Sử dụng thanh công cụ icon đứng bên trái để chuyển nhanh giữa Thôn xã (🗺️), Trường học (🏫) và Trạm Y Tế (🏥). Mở rộng danh mục để tra cứu và lọc từ khóa.',
+      'Sử dụng thanh biểu tượng bên trái hoặc danh mục để chuyển đổi giữa 5 lớp dữ liệu: Thôn xã (🗺️), Trường học (🏫), Trạm Y tế (🏥), Di tích lịch sử (🏛️) và Cơ quan HCSN (🏢).',
     targetSelector: '[data-tour="sidebar"]',
     icon: Search,
     badge: 'Bước 1 / 4',
     placement: 'right',
     features: [
-      'Chuyển đổi nhanh 3 lớp dữ liệu: Thôn xã, Trường học & Trạm Y Tế',
-      'Tìm kiếm theo tên thôn, tên trường, tên bác sĩ hoặc số điện thoại',
-      'Tra cứu Bác sĩ phụ trách Trạm Y Tế & Nút gọi điện trực tiếp',
-      'Click từng thẻ để phóng to tự động đến vị trí trên bản đồ',
+      'Chuyển đổi 5 lớp dữ liệu chuyên đề đa dạng',
+      'Phím tắt Ctrl+K / ⌘K mở nhanh thanh tìm kiếm',
+      'Bộ lọc trường theo cấp học & di tích theo loại hình',
+      'Click từng mục để bản đồ tự động bay tới vị trí',
     ],
   },
   {
     id: 'map-controls',
-    title: 'Thao tác & Marker trên Bản đồ',
+    title: 'Thao tác & Điểm đánh dấu trên Bản đồ',
     description:
-      'Bạn có thể di chuyển (pan), phóng to/thu nhỏ (zoom) hoặc nhấp vào vùng thôn, trường học và marker trạm y tế để xem thông tin chi tiết.',
+      'Bạn có thể kéo di chuyển (pan), phóng to/thu nhỏ (zoom), nhấp vào ranh giới thôn hoặc các điểm đánh dấu (marker) để xem thông tin chi tiết.',
     targetSelector: '[data-tour="map-viewport"]',
     icon: Compass,
     badge: 'Bước 2 / 4',
     placement: 'top',
     features: [
-      'Công cụ góc dưới bên phải để phóng to/thu nhỏ & đặt lại góc nhìn',
-      'Marker Trạm Y Tế (🏥) tích hợp Popup thông tin Bác sĩ & SĐT',
-      'Nút Chỉ đường Google Maps đến từng địa điểm',
+      'Phóng to/thu nhỏ bằng con lăn chuột hoặc nút điều khiển góc trái',
+      'Chuyển đổi 5 lớp nền góc dưới: Bản đồ sáng, tối, vệ tinh Esri & OSM',
+      'Tích hợp nút chỉ đường Google Maps đến từng địa điểm',
     ],
   },
   {
     id: 'info-panel',
-    title: 'Bảng Thông tin chi tiết',
+    title: 'Bảng Thông tin chi tiết Thôn',
     description:
-      'Khi chọn một thôn xã, Bảng thông tin chi tiết sẽ xuất hiện ở bên trái hiển thị hình ảnh, diện tích, dân số, số hộ dân và danh sách công trình nổi bật.',
+      'Khi chọn một thôn xã, Bảng thông tin chi tiết sẽ xuất hiện ở bên trái hiển thị diện tích, dân số, số hộ dân, nhà văn hóa và ranh giới tiếp giáp.',
     icon: Info,
     badge: 'Bước 3 / 4',
     placement: 'center',
     features: [
-      'Thống kê diện tích, dân số và số hộ dân chính xác',
-      'Danh sách trường học và cơ sở hạ tầng trong khu vực',
+      'Thống kê diện tích, đảng viên, dân số và số hộ dân chính xác',
+      'Vị trí & nút chỉ đường tới Nhà văn hóa / Điểm sinh hoạt cộng đồng',
+      'Mô tả chi tiết ranh giới tiếp giáp 4 hướng: Đông, Tây, Nam, Bắc',
       'Đóng/Mở linh hoạt bằng nút biểu tượng Thông tin',
     ],
   },

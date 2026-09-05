@@ -1,11 +1,11 @@
-import { memo, useEffect, useRef, useState, useMemo, useCallback } from 'react';
-import { Marker, Popup, useMap, useMapEvents } from 'react-leaflet';
-import useSupercluster from 'use-supercluster';
+import { memo, useMemo, useCallback } from 'react';
+import { Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 import { useSchools } from '@/hooks/useSchools';
+import { useClusterLayer } from '@/hooks/useClusterLayer';
 import { getLevelColor, getLevelBgColor, getLevelEmoji } from '@/utils/schoolUtils';
-import type { SchoolLevel } from '@/types';
+import type { SchoolLevel, School } from '@/types';
 import { trackGetDirections } from '@/utils/analytics';
 
 // ============================================================
@@ -241,65 +241,10 @@ const SchoolMarkerItem = memo(function SchoolMarkerItem({
 // ============================================================
 
 export function SchoolsLayer() {
-  const map = useMap();
   const { schoolFilters, schoolSearchQuery, selectedSchool, selectSchool, isDark } = useAppContext();
   const { schools } = useSchools();
 
-  const [bounds, setBounds] = useState<[number, number, number, number] | undefined>(undefined);
-  const [zoom, setZoom] = useState(map.getZoom());
-  const [hoveredId, setHoveredId] = useState<string | null>(null);
-
-  // Ref map: schoolId → Leaflet marker instance, used to auto-open popup after flyTo
-  const markerRefs = useRef<Map<string, L.Marker>>(new Map());
-
-  const registerRef = useCallback((id: string, instance: L.Marker | null) => {
-    if (instance) {
-      markerRefs.current.set(id, instance);
-    } else {
-      markerRefs.current.delete(id);
-    }
-  }, []);
-
-  const handleSelectSchool = useCallback((schoolId: string) => {
-    const school = schools.find(s => s.id === schoolId);
-    if (school) selectSchool(school);
-  }, [schools, selectSchool]);
-
-  const handleHoverSchool = useCallback((schoolId: string | null) => {
-    setHoveredId(schoolId);
-  }, []);
-
-  // ── Map state sync ─────────────────────────────────────────
-  const updateMapState = useCallback(() => {
-    const b = map.getBounds();
-    setBounds([
-      b.getSouthWest().lng, b.getSouthWest().lat,
-      b.getNorthEast().lng, b.getNorthEast().lat,
-    ]);
-    setZoom(map.getZoom());
-  }, [map]);
-
-  useMapEvents({ moveend: updateMapState, zoomend: updateMapState });
-  useEffect(() => { updateMapState(); }, [updateMapState]);
-
-  // ── FlyTo and auto open popup when selectedSchool changes ──
-  useEffect(() => {
-    if (!selectedSchool) return;
-    map.flyTo([selectedSchool.lat, selectedSchool.lng], 17, { duration: 0.8 });
-
-    const timer = setTimeout(() => {
-      const marker = markerRefs.current.get(selectedSchool.id);
-      if (marker) {
-        try {
-          marker.openPopup();
-        } catch { }
-      }
-    }, 850);
-
-    return () => clearTimeout(timer);
-  }, [selectedSchool, map]);
-
-  // ── Filter by sidebar checkboxes & search query ────────────
+  // Filter by sidebar checkboxes & search query
   const filteredSchools = useMemo(
     () => schools.filter(s => {
       if (selectedSchool?.id === s.id) return true;
@@ -312,34 +257,26 @@ export function SchoolsLayer() {
     [schools, schoolFilters, schoolSearchQuery, selectedSchool],
   );
 
-  // ── Convert to GeoJSON points for supercluster ─────────────
-  const points = useMemo(() =>
-    filteredSchools.map(school => ({
-      type: 'Feature' as const,
-      properties: {
-        cluster: false,
-        schoolId: school.id,
-        name: school.name,
-        level: school.level,
-        principal: school.principal,
-        phone: school.phone,
-      },
-      geometry: {
-        type: 'Point' as const,
-        coordinates: [school.lng, school.lat],
-      },
-    })),
-    [filteredSchools],
-  );
-
-  const { clusters, supercluster } = useSupercluster({
-    points,
-    bounds,
+  const {
+    clusters,
+    hoveredId,
+    handleHover,
+    registerRef,
+    handleClusterClick,
+    itemsMap,
     zoom,
-    options: { radius: 60, maxZoom: 16 },
+  } = useClusterLayer<School>({
+    items: filteredSchools,
+    selectedItem: selectedSchool,
+    clusterRadius: 60,
+    clusterMaxZoom: 16,
   });
 
-  // ── Render ─────────────────────────────────────────────────
+  const handleSelectSchool = useCallback((schoolId: string) => {
+    const school = itemsMap.get(schoolId);
+    if (school) selectSchool(school);
+  }, [itemsMap, selectSchool]);
+
   return (
     <>
       {clusters.map((cluster) => {
@@ -347,9 +284,6 @@ export function SchoolsLayer() {
         const properties = cluster.properties as any;
         const isCluster = Boolean(properties.cluster);
         const pointCount = properties.point_count;
-        const {
-          schoolId, name, level, principal, phone,
-        } = properties;
 
         // ── Cluster marker ─────────────────────────────────
         if (isCluster) {
@@ -381,44 +315,40 @@ export function SchoolsLayer() {
                 iconAnchor: [0, 0],
               })}
               eventHandlers={{
-                click: () => {
-                  if (supercluster) {
-                    const expansionZoom = Math.min(
-                      supercluster.getClusterExpansionZoom(cluster.id as number), 18,
-                    );
-                    map.setView([latitude, longitude], expansionZoom, { animate: true });
-                  }
-                },
+                click: () => handleClusterClick(cluster.id as number, [longitude, latitude]),
               }}
             />
           );
         }
 
         // ── Individual school marker ───────────────────────
-        const isSelected = selectedSchool?.id === schoolId;
-        const isHovered = hoveredId === schoolId;
+        const school = itemsMap.get(properties.itemId);
+        if (!school) return null;
+
+        const isSelected = selectedSchool?.id === school.id;
+        const isHovered = hoveredId === school.id;
         const showLabel = zoom >= 15 || isHovered || isSelected;
-        const color = getLevelColor(level as SchoolLevel);
-        const emoji = getLevelEmoji(level as SchoolLevel);
+        const color = getLevelColor(school.level);
+        const emoji = getLevelEmoji(school.level);
 
         return (
           <SchoolMarkerItem
-            key={`school-${schoolId}`}
-            schoolId={schoolId}
-            latitude={latitude}
-            longitude={longitude}
-            name={name}
-            level={level}
+            key={`school-${school.id}`}
+            schoolId={school.id}
+            latitude={school.lat}
+            longitude={school.lng}
+            name={school.name}
+            level={school.level}
             isSelected={isSelected}
             isHovered={isHovered}
             showLabel={showLabel}
             isDark={isDark}
             color={color}
             emoji={emoji}
-            principal={principal}
-            phone={phone}
+            principal={school.principal}
+            phone={school.phone}
             onSelect={handleSelectSchool}
-            onHover={handleHoverSchool}
+            onHover={handleHover}
             registerRef={registerRef}
           />
         );

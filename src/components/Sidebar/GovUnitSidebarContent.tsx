@@ -1,5 +1,5 @@
 import { memo, useCallback } from 'react';
-import { useAppContext } from '@/context/AppContext';
+import { useAppContext } from '@/context/useAppContext';
 import { POILayerPanel } from './POILayerPanel';
 import { govUnitConfig, GOV_UNIT_CATEGORIES } from '@/utils/govUnitUtils';
 import type { GovUnit, GovUnitCategory } from '@/types';

@@ -10,7 +10,7 @@ import {
   Landmark,
   Building2,
 } from 'lucide-react';
-import { useAppContext, SidebarTab } from '@/context/AppContext';
+import { useAppContext, SidebarTab } from '@/context/useAppContext';
 import { SearchBox } from '@/components/SearchBox/SearchBox';
 import { VillageCard } from '@/components/VillageCard/VillageCard';
 import { EmptyState } from '@/components/EmptyState/EmptyState';
